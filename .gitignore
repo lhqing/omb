@@ -126,4 +126,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 .DS_Store
-Data/Dataset/Prepare.ipynb
+local*ipynb
