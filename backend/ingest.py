@@ -1,5 +1,5 @@
 """
-Ingest user input data to standard internal Dataset
+Ingest user input data to standard internal Dataset, so everything after ingest is automatic
 
 Several main things
 # Coords file
@@ -19,10 +19,13 @@ Several main things
 - Int id map to real str id
 - Associated with continuous variable, categorical variable, and region values
 
-# Region
-    ## Gene
-        - Int id map to real str id
-        - Genome coords
+# Gene
+- TODO
+
+# Additional Genome Region
+- With cell level value or without cell level value?
+- If without cell level value, the value must associate to certain category var.
+- TODO
 
 """
 import pandas as pd
@@ -103,6 +106,7 @@ def ingest_variables(cell_to_int, output_dir, categorical_path=None, continuous_
     variables_to_cat = []
 
     if categorical_path is not None:
+        # TODO change to csv
         categorical_df = pd.read_hdf(categorical_path, key='data').astype('category')
         # validate cell ids before conversion
         cell_not_in_coords = categorical_df.index[~categorical_df.index.isin(cell_to_int)]
@@ -119,6 +123,7 @@ def ingest_variables(cell_to_int, output_dir, categorical_path=None, continuous_
             variables_to_cat.append(categorical_df)
 
     if continuous_path is not None:
+        # TODO change to csv
         continuous_df = pd.read_hdf(continuous_path, key='data').astype(CONTINUOUS_VAR_DTYPE)
         # validate cell ids before conversion
         cell_not_in_coords = continuous_df.index[~continuous_df.index.isin(cell_to_int)]
@@ -145,6 +150,7 @@ def ingest_variables(cell_to_int, output_dir, categorical_path=None, continuous_
 
 def ingest_palette(total_variables, output_dir, palette_path=None):
     if palette_path is not None:
+        # TODO change to json
         palette = read_msgpack(palette_path)
 
         categorical_variables = total_variables.select_dtypes('category')
@@ -162,6 +168,11 @@ def ingest_palette(total_variables, output_dir, palette_path=None):
         palette = {}
 
     write_msgpack(output_dir / PALETTE_PATH, palette)
+    return
+
+
+def ingest_genes():
+    # TODO
     return
 
 
