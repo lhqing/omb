@@ -28,18 +28,22 @@ Several main things
 - TODO
 
 """
-import pandas as pd
-import numpy as np
 import warnings
+
+import numpy as np
+import pandas as pd
+
+import omb
 from .utilities import *
 
 """
 File names in ingested dataset dir
 """
-COORDS_PATH = 'Coords.h5'
-CELL_ID_PATH = 'CellIDMap.msg'
-VARIABLE_PATH = 'Variables.h5'
-PALETTE_PATH = 'Palette.msg'
+DATASET_DIR = f'{omb.__path__[0]}/Data/Dataset/'
+COORDS_PATH = f'{DATASET_DIR}/Coords.h5'
+CELL_ID_PATH = f'{DATASET_DIR}/CellIDMap.msg'
+VARIABLE_PATH = f'{DATASET_DIR}/Variables.h5'
+PALETTE_PATH = f'{DATASET_DIR}/Palette.msg'
 
 """
 Default data types
@@ -48,15 +52,13 @@ COORDS_DTYPE = np.float16
 CONTINUOUS_VAR_DTYPE = np.float32
 
 
-def ingest_cell_coords(coords_dir, output_dir):
+def ingest_cell_coords(coords_dir):
     """
     Load all the coords, use union of cell ids and map all cell id into int internally, return the cell map dict.
     Parameters
     ----------
     coords_dir
         User input dir path
-    output_dir
-        Standard output dir path
     Returns
     -------
     cell_to_int: dict
@@ -92,17 +94,17 @@ def ingest_cell_coords(coords_dir, output_dir):
         v.index = v.index.map(cell_to_int)
 
     print(f'Saving coords and cell ids')
-    with pd.HDFStore(output_dir / COORDS_PATH, 'w') as hdf:
+    with pd.HDFStore(COORDS_PATH, 'w') as hdf:
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             for k, v in coords_dict.items():
                 hdf[k] = v
-    write_msgpack(output_dir / CELL_ID_PATH, cell_to_int)
+    write_msgpack(CELL_ID_PATH, cell_to_int)
 
     return cell_to_int
 
 
-def ingest_variables(cell_to_int, output_dir, categorical_path=None, continuous_path=None):
+def ingest_variables(cell_to_int, categorical_path=None, continuous_path=None):
     variables_to_cat = []
 
     if categorical_path is not None:
@@ -144,11 +146,11 @@ def ingest_variables(cell_to_int, output_dir, categorical_path=None, continuous_
     else:
         total_variables = pd.DataFrame([], index=cell_to_int.values())
 
-    total_variables.to_hdf(output_dir / VARIABLE_PATH, key='data', format="table")
+    total_variables.to_hdf(VARIABLE_PATH, key='data', format="table")
     return total_variables
 
 
-def ingest_palette(total_variables, output_dir, palette_path=None):
+def ingest_palette(total_variables, palette_path=None):
     if palette_path is not None:
         # TODO change to json
         palette = read_msgpack(palette_path)
@@ -167,7 +169,7 @@ def ingest_palette(total_variables, output_dir, palette_path=None):
         # make an empty palette anyway, prevent file not found
         palette = {}
 
-    write_msgpack(output_dir / PALETTE_PATH, palette)
+    write_msgpack(PALETTE_PATH, palette)
     return
 
 
