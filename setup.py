@@ -15,12 +15,13 @@ setup(
         '': ['*.msg', '*.h5', '*.csv']
     },
     install_requires=[
-        'dash==1.9.1',
-        'numpy==1.18.1',
-        'pandas==1.0.2',
-        'tables==3.6.1',  # required by pandas to read hdf5
-        'xarray==0.15.0',
-        'msgpack==1.0.0', 'plotly'
+        'dash',
+        'numpy',
+        'pandas',
+        'tables',  # required by pandas to read hdf5
+        'xarray',
+        'msgpack',
+        'plotly'
     ],
 )
 
