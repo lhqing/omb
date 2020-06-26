@@ -4,9 +4,9 @@ import dash_html_components as html
 import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
+
 from dash.exceptions import PreventUpdate
-import pandas as pd
-from .app import app
+from omb.app import app
 from .default_values import *
 
 CELL_TYPE_LEVELS = ['CellClass', 'MajorType', 'SubType']
@@ -17,7 +17,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', ]
 home_app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 home_app.layout = html.Div(children=[
-    # first column
+    # first column 2/12
     html.Div(children=[
         html.Div(
             [html.H6(id="n_cells", children=N_CELLS), html.P("Nuclei")],
@@ -85,22 +85,22 @@ home_app.layout = html.Div(children=[
             id='control_graph2',
             className="mini_container",
         ),
-    ], className='two columns'),
+    ], className='two columns pretty_container control_panel'),
 
-    # Second column
+    # Second column 5/12
     html.Div(children=[
         dcc.Graph(
             id='homepage_graph1'
         )
-    ], id='homepage_graph1_div', className='five columns bg-grey'),
+    ], id='homepage_graph1_div', className='five columns pretty_container data_panel'),
 
-    # Third column
+    # Third column 5/12
     html.Div(children=[
         dcc.Graph(
             id='homepage_graph2'
         )
-    ], id='homepage_graph2_div', className='five columns bg-grey'),
-], className='row')
+    ], id='homepage_graph2_div', className='five columns pretty_container data_panel'),
+])
 
 
 @app.callback(
@@ -217,8 +217,14 @@ def update_graph_2_scatter_plot(coord_base, color_name, marker_size):
 def update_sunburst_click(click_data, sunburst_type):
     if click_data is None:
         raise PreventUpdate
+
     click_label = click_data['points'][0]['label']
-    level = click_data['points'][0]['currentPath'].count('/') - 1  # this number corresponding to the level number
+    try:
+        level = click_data['points'][0]['currentPath'].count('/') - 1  # this number corresponding to the level number
+    except KeyError:
+        # there is a 'currentPath' key error, it happens when clicking the same label twice, so no update
+        print(click_data)
+        raise PreventUpdate
     if sunburst_type == 'cell_type':
         col_name = CELL_TYPE_LEVELS[level]
     elif sunburst_type == 'region':
@@ -229,16 +235,21 @@ def update_sunburst_click(click_data, sunburst_type):
     _col = dataset.get_variables(col_name)
     # this is the corresponding cell ids from sunburst click
     cell_ids = _col[_col == click_label].index
+    print(len(cell_ids))
+    return {'points': cell_ids}
 
 
-@app.callback(
-    Output('n_cells', 'children'),
-    [Input('homepage_graph2', 'selectedData')]
-)
-def update_scatter_click(selected_data):
-    if not selected_data:
-        raise PreventUpdate
-    return len(selected_data['points'])
+# @app.callback(
+#     Output('n_cells', 'children'),
+#     Output('n_cells', 'children'),
+#     [Input('homepage_graph2', 'selectedData')]
+# )
+# def update_scatter_click(selected_data):
+#     if not selected_data:
+#         raise PreventUpdate
+#     print(len(selected_data['points']))
+#     print(selected_data.keys())
+#     return len(selected_data['points'])
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-from ..App import dataset
+from ..backend import dataset
 
 
 N_CELLS = dataset.n_cells

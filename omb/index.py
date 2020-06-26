@@ -5,8 +5,9 @@ Main app entry point and routing control
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-
-from omb.App import *
+from omb.backend import dataset
+from omb.app import app
+from omb.apps import *
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -22,6 +23,12 @@ def display_page(pathname):
         return test_app.layout
     if pathname == '/home':
         return home_app.layout
+    if pathname == '/brain_table':
+        return brain_table_app_layout
+    if pathname == '/brain_region':
+        return region_browser_app.layout
+    if pathname == '/':
+        return test_app.layout
     else:
         return '404'
 

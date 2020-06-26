@@ -9,7 +9,7 @@ import pathlib
 
 import pandas as pd
 
-from .ingest import DATASET_DIR, COORDS_PATH, CELL_ID_PATH, VARIABLE_PATH, PALETTE_PATH
+from .ingest import DATASET_DIR, COORDS_PATH, CELL_ID_PATH, VARIABLE_PATH, PALETTE_PATH, BRAIN_REGION_PATH
 from .utilities import *
 
 
@@ -55,8 +55,22 @@ class Dataset:
         # load palette for Categorical var
         self._palette = read_msgpack(self.dataset_dir / PALETTE_PATH)
 
-        print(self.categorical_var)
-        print(self.continuous_var)
+        # separate table for region and cluster annotation
+        # brain region table, index is Region Name
+        self._brain_region_table = pd.read_csv(BRAIN_REGION_PATH, index_col=0)
+        self.dissection_regions = self._brain_region_table.index.tolist()
+        self.major_regions = list(self._brain_region_table['Major Region'].unique())
+        self.sub_regions = list(self._brain_region_table['Sub-Region'].unique())
+
+        self.dissection_region_to_major_region = self._brain_region_table['Major Region'].to_dict()
+        self.dissection_region_to_sub_region = self._brain_region_table['Sub-Region'].to_dict()
+
+        # cell type maps
+        self.sub_type_to_major_type = self._variables.set_index('SubType')['MajorType'].to_dict()
+        self.sub_type_to_cell_class = self._variables.set_index('SubType')['CellClass'].to_dict()
+
+        print('dataset.categorical_var', self.categorical_var)
+        print('dataset.continuous_var', self.continuous_var)
 
         return
 
@@ -68,3 +82,18 @@ class Dataset:
 
     def get_variables(self, name):
         return self._variables[name].copy()
+
+    @property
+    def brain_region_table(self):
+        return self._brain_region_table.copy()
+
+    @property
+    def region_label_to_dissection_region_dict(self):
+        total_dict = {'ALL REGIONS': self._brain_region_table.index.tolist()}
+        for major_region, sub_df in self._brain_region_table.groupby('Major Region'):
+            total_dict[major_region] = sub_df.index.tolist()
+        for sub_region, sub_df in self._brain_region_table.groupby('Sub-Region'):
+            total_dict[sub_region] = sub_df.index.tolist()
+        for region in self.dissection_regions:
+            total_dict[region] = [region]
+        return total_dict
