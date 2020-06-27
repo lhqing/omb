@@ -1,6 +1,7 @@
 """
 Main Dash apps
 """
+print('app.py start')
 
 import dash
 
