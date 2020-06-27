@@ -6,7 +6,7 @@ print('index.py start')
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-
+from dash.exceptions import PreventUpdate
 from omb.app import app, server
 from omb.apps import *
 
@@ -37,6 +37,8 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
+    if pathname is None:
+        raise PreventUpdate
     print('Input pathname', pathname)
     pathname = '/' + pathname.split('/')[-1]
     print('Used pathname', pathname)
