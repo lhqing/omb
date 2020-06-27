@@ -10,6 +10,8 @@ import dash
 
 APP_ROOT_NAME = 'omb'
 
+print(__name__)
+
 app = dash.Dash(
     __name__,
     meta_tags=[
