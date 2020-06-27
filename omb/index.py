@@ -6,13 +6,27 @@ print('index.py start')
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from omb.backend import dataset
+
 from omb.app import app, server
 from omb.apps import *
 
 # make sure pycharm do not remove the import line...
 type(server)
 
+# this is only based on my own server
+# server deploy setting, change APP_NAME based on the routing config in apache
+APP_NAME = 'omb'
+
+app.config.suppress_callback_exceptions = True
+app.config.update({
+    # remove the default of '/'
+    'routes_pathname_prefix': f'/{APP_NAME}/',
+
+    # remove the default of '/'
+    'requests_pathname_prefix': f'/{APP_NAME}/'
+})
+
+print(app.config)
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

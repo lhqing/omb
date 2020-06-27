@@ -20,19 +20,4 @@ app = dash.Dash(
     # external_stylesheets=external_stylesheets
 )
 
-# this is only based on my own server
-# server deploy setting, change APP_NAME based on the routing config in apache
-APP_NAME = 'omb'
-
-app.config.suppress_callback_exceptions = True
-app.config.update({
-    # remove the default of '/'
-    'routes_pathname_prefix': f'/{APP_NAME}/',
-
-    # remove the default of '/'
-    'requests_pathname_prefix': f'/{APP_NAME}/'
-})
-
-print(app.config)
-
 server = app.server
