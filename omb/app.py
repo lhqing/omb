@@ -4,8 +4,9 @@ Main Dash apps
 
 import dash
 
-#external_stylesheets = ['https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/s1.css',
+# external_stylesheets = ['https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/s1.css',
 #                        'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/styles.css']
+
 
 app = dash.Dash(
     __name__,
@@ -15,11 +16,8 @@ app = dash.Dash(
             "content": "width=device-width"
         }
     ],
-    #external_stylesheets=external_stylesheets
+    # external_stylesheets=external_stylesheets
 )
-
-server = app.server
-app.config.suppress_callback_exceptions = True
 
 # this is only based on my own server
 # server deploy setting, change APP_NAME based on the routing config in apache
@@ -32,3 +30,5 @@ app.config.update({
     'requests_pathname_prefix': f'/{APP_NAME}/'
 })
 
+server = app.server
+app.config.suppress_callback_exceptions = True

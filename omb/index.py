@@ -24,8 +24,8 @@ app.layout = html.Div([
 def display_page(pathname):
     print('Input pathname', pathname)
     pathname = '/' + pathname.split('/')[-1]
-    print('Used pathname', )
-    
+    print('Used pathname', pathname)
+
     if pathname == '/test':
         return test_app.layout
     if pathname == '/home':
