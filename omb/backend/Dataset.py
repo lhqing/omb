@@ -9,7 +9,7 @@ import pathlib
 
 import pandas as pd
 
-from .ingest import DATASET_DIR, COORDS_PATH, CELL_ID_PATH, VARIABLE_PATH, PALETTE_PATH, BRAIN_REGION_PATH
+from .ingest import DATASET_DIR, COORDS_PATH, CELL_ID_PATH, VARIABLE_PATH, PALETTE_PATH, BRAIN_REGION_PATH, CELL_TYPE_PATH
 from .utilities import *
 
 
@@ -66,6 +66,7 @@ class Dataset:
         self.dissection_region_to_sub_region = self._brain_region_table['Sub-Region'].to_dict()
 
         # cell type maps
+        self._cell_type_table = pd.read_csv(CELL_TYPE_PATH, index_col=0)
         self.sub_type_to_major_type = self._variables.set_index('SubType')['MajorType'].to_dict()
         self.sub_type_to_cell_class = self._variables.set_index('SubType')['CellClass'].to_dict()
 
@@ -86,6 +87,10 @@ class Dataset:
     @property
     def brain_region_table(self):
         return self._brain_region_table.copy()
+
+    @property
+    def cell_type_table(self):
+        return self._cell_type_table.copy()
 
     @property
     def region_label_to_dissection_region_dict(self):

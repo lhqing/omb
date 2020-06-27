@@ -1,6 +1,10 @@
+from functools import lru_cache
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import dash_table
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
@@ -8,14 +12,14 @@ from dash.dependencies import State
 from dash.exceptions import PreventUpdate
 
 from .default_values import *
-from ..app import app, APP_ROOT_NAME
+from ..app import app
 
 CELL_TYPE_LEVELS = ['CellClass', 'MajorType', 'SubType']
 REGION_LEVELS = ['MajorRegion', 'SubRegion', 'Region']
 DEFAULT_BRAIN_REGION_IMG_TITLE = 'Click a cell on the left to display its dissection region'
-DEFAULT_BRAIN_REGION_IMG_SRC = \
-    f'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/dissection_region_img/brain_region_demo.jpg'
+
 DOWN_SAMPLE = 10000
+cell_type_table = dataset.cell_type_table.reset_index()
 
 region_browser_app = dash.Dash(__name__)
 
@@ -49,7 +53,7 @@ region_browser_app.layout = html.Div(children=[
                 options=[{'label': region, 'value': region}
                          for region in dataset.region_label_to_dissection_region_dict.keys()],
                 id="region_selector",
-                value=['ALL REGIONS'],
+                value=[],
                 multi=True,
                 placeholder='Showing all regions',
                 className="dcc_control",
@@ -146,34 +150,67 @@ region_browser_app.layout = html.Div(children=[
             style={'margin': '2px',
                    'padding': '2px'}),
 
-        # third row is for cell type barplot
+        # third row is for cell type table
         html.Div(
             children=[
-
+                dash_table.DataTable(
+                    id='cell_type_table',
+                    style_cell={
+                        'whiteSpace': 'normal',
+                        # 'height': 'auto',
+                        'textAlign': 'left',
+                    },
+                    style_header={
+                        'fontWeight': 'bold',
+                        'height': '50px'
+                    },
+                    style_data_conditional=[
+                        {
+                            'if': {'row_index': 'odd'},
+                            'backgroundColor': 'rgb(248, 248, 248)'
+                        }
+                    ],
+                    filter_action='native',
+                    sort_action="native",
+                    sort_mode="multi",
+                    style_as_list_view=True,
+                    columns=[{"name": i, "id": i} for i in cell_type_table.columns],
+                    data=cell_type_table.to_dict('records'),
+                    page_size=20
+                )
             ],
-            id='cell_type_bar_row',
-            className='row pretty_container container-display'),
-
-        # fourth row is for cell type table
-        html.Div(
-            children=[
-
-            ],
-            id='cell_type_table_row',
             className='row pretty_container container-display'),
     ], id='data_panel', className='nine columns')
 ], id='region_browser_div')
 
 
-def get_split_plot_df(coord_base, variable_name, selected_regions, hover_cols=('RegionName', 'SubType')):
+@lru_cache()
+def cached_getting_cells(region_tuple):
+    cell_region_names = dataset.get_variables('RegionName')
+    selected_cells = cell_region_names.index[cell_region_names.isin(region_tuple)]
+    return selected_cells
+
+
+def get_selected_cells_from_selected_brain_regions(data):
+    if data is not None:
+        # this is the initial fire where data haven't been initiated
+        # showing all regions by default
+        selected_regions = data['regions']
+    else:
+        selected_regions = dataset.dissection_regions
+
+    selected_cells = cached_getting_cells(tuple(selected_regions))
+    return selected_cells
+
+
+def get_split_plot_df(coord_base, variable_name, selected_cells, hover_cols=('RegionName', 'SubType')):
     hue_palette = dataset.get_palette(variable_name)
     plot_df = dataset.get_coords(coord_base)
 
     cell_region_names = dataset.get_variables('RegionName')
-    selected_cell_ids = cell_region_names[cell_region_names.isin(selected_regions)].index
 
     # some coords do not have all cell so selected index need to be updated
-    selected_cell_index = selected_cell_ids & plot_df.index
+    selected_cell_index = selected_cells & plot_df.index
     if len(selected_cell_index) == 0:
         raise PreventUpdate
     unselected_cell_index = plot_df.index[~plot_df.index.isin(selected_cell_index)]
@@ -291,15 +328,12 @@ def update_selected_regions(region_selected):
                State('region_level_selector', 'value'),
                State('selected_brain_regions', 'data')])
 def update_region_scatter(n_clicks, coord_base, region_level, data):
-    if data is None:
-        # this is the initial fire where data haven't been initiated
-        # showing all regions by default
-        data = {'regions': dataset.dissection_regions}
+    selected_cells = get_selected_cells_from_selected_brain_regions(data)
 
     selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
         coord_base=coord_base,
         variable_name=region_level,
-        selected_regions=data['regions'],
+        selected_cells=selected_cells,
         hover_cols=('RegionName', 'SubType'))
 
     if selected_plot_df.shape[0] > DOWN_SAMPLE:
@@ -344,15 +378,12 @@ def validate_coord_base_and_region_selection(coord_base, region_selected):
                State('selected_brain_regions', 'data')])
 def update_cell_type_scatter(n_clicks, coord_base, cell_type_level, data):
     print(n_clicks, 'update_cell_type_scatter')
-    if data is None:
-        # this is the initial fire where data haven't been initiated
-        # showing all regions by default
-        data = {'regions': dataset.dissection_regions}
+    selected_cells = get_selected_cells_from_selected_brain_regions(data)
 
     selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
         coord_base=coord_base,
         variable_name=cell_type_level,
-        selected_regions=data['regions'],
+        selected_cells=selected_cells,
         hover_cols=('RegionName', 'SubType'))
 
     if selected_plot_df.shape[0] > DOWN_SAMPLE:
@@ -434,15 +465,7 @@ def create_sunburst(levels, selected_cells):
     [State('selected_brain_regions', 'data')]
 )
 def update_cell_type_sunburst(n_clicks, data):
-    if data is not None:
-        # this is the initial fire where data haven't been initiated
-        # showing all regions by default
-        selected_regions = data['regions']
-    else:
-        selected_regions = dataset.dissection_regions
-
-    cell_region_names = dataset.get_variables('RegionName')
-    selected_cells = cell_region_names.index[cell_region_names.isin(selected_regions)]
+    selected_cells = get_selected_cells_from_selected_brain_regions(data)
 
     levels = CELL_TYPE_LEVELS
     fig = create_sunburst(
@@ -484,7 +507,24 @@ def update_brain_region_img(clicked_cell_id, n_clicks):
     major_region = dataset.dissection_region_to_major_region[dissection_region]
 
     title = f'A "{subtype}" ({cell_class}) cell from {dissection_region} ({major_region})'
-    src = f'https://raw.githubusercontent.com/lhqing/omb/master/' \
-          f'omb/assets/dissection_region_img/{dissection_region}.jpeg'
+    src = BRAIN_REGION_IMG_PATTERN.format(dissection_region=dissection_region)
 
     return title, src
+
+
+@app.callback(
+    Output('cell_type_table', 'data'),
+    [Input('update_button', 'n_clicks')],
+    [State('selected_brain_regions', 'data')]
+)
+def update_data_table(n_clicks, data):
+    selected_cells = get_selected_cells_from_selected_brain_regions(data)
+
+    new_cell_counts = pd.concat([
+        dataset.get_variables(column).loc[selected_cells].astype(str).value_counts()
+        for column in CELL_TYPE_LEVELS
+    ])
+    _cell_type_table = cell_type_table.copy()
+    _cell_type_table['Number of total cells'] = new_cell_counts.reindex(pd.Index(cell_type_table['UniqueName'])).values
+    _cell_type_table = _cell_type_table.dropna(subset=['Number of total cells'])
+    return _cell_type_table.to_dict('records')

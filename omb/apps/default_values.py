@@ -7,3 +7,8 @@ N_MAJOR_TYPE = dataset.get_variables('MajorType').unique().size
 
 _subtypes = dataset.get_variables('SubType')
 N_SUBTYPE = _subtypes[_subtypes.apply(lambda i: 'Outlier' not in i)].unique().size
+
+DEFAULT_BRAIN_REGION_IMG_SRC = \
+    f'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/dissection_region_img/brain_region_demo.jpg'
+BRAIN_REGION_IMG_PATTERN = 'https://raw.githubusercontent.com/lhqing/omb/master/' \
+                           'omb/assets/dissection_region_img/{dissection_region}.jpeg'

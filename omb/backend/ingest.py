@@ -45,6 +45,7 @@ CELL_ID_PATH = f'{DATASET_DIR}/CellIDMap.msg'
 VARIABLE_PATH = f'{DATASET_DIR}/Variables.h5'
 PALETTE_PATH = f'{DATASET_DIR}/Palette.msg'
 BRAIN_REGION_PATH = f'{DATASET_DIR}/BrainRegion.csv'
+CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
 
 """
 Default data types
