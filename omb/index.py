@@ -7,7 +7,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
-from omb.app import app, server
+from omb.app import app, server, APP_ROOT_NAME
 from omb.apps import *
 
 # make sure pycharm do not remove the import line...
@@ -15,15 +15,15 @@ type(server)
 
 # this is only based on my own server
 # server deploy setting, change APP_NAME based on the routing config in apache
-APP_NAME = 'omb'
+
 
 app.config.suppress_callback_exceptions = True
 app.config.update({
     # remove the default of '/'
-    'routes_pathname_prefix': f'/{APP_NAME}/',
+    'routes_pathname_prefix': f'/{APP_ROOT_NAME}/',
 
     # remove the default of '/'
-    'requests_pathname_prefix': f'/{APP_NAME}/'
+    'requests_pathname_prefix': f'/{APP_ROOT_NAME}/'
 })
 
 print(app.config)

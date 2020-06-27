@@ -8,12 +8,12 @@ from dash.dependencies import State
 from dash.exceptions import PreventUpdate
 
 from .default_values import *
-from ..app import app
+from ..app import app, APP_ROOT_NAME
 
 CELL_TYPE_LEVELS = ['CellClass', 'MajorType', 'SubType']
 REGION_LEVELS = ['MajorRegion', 'SubRegion', 'Region']
 DEFAULT_BRAIN_REGION_IMG_TITLE = 'Click a cell on the left to display its dissection region'
-DEFAULT_BRAIN_REGION_IMG_SRC = '/assets/dissection_region_img/brain_region_demo.jpg'
+DEFAULT_BRAIN_REGION_IMG_SRC = f'{APP_ROOT_NAME}/assets/dissection_region_img/brain_region_demo.jpg'
 DOWN_SAMPLE = 10000
 
 region_browser_app = dash.Dash(__name__)
@@ -483,6 +483,6 @@ def update_brain_region_img(clicked_cell_id, n_clicks):
     major_region = dataset.dissection_region_to_major_region[dissection_region]
 
     title = f'A "{subtype}" ({cell_class}) cell from {dissection_region} ({major_region})'
-    src = f'/assets/dissection_region_img/{dissection_region}.jpeg'
+    src = f'{APP_ROOT_NAME}/assets/dissection_region_img/{dissection_region}.jpeg'
 
     return title, src

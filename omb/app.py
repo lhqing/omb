@@ -8,6 +8,7 @@ import dash
 # external_stylesheets = ['https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/s1.css',
 #                        'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/styles.css']
 
+APP_ROOT_NAME = 'omb'
 
 app = dash.Dash(
     __name__,
