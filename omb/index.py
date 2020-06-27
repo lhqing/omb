@@ -5,10 +5,9 @@ Main app entry point and routing control
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
-from omb.backend import dataset
-from omb.app import app
-from omb.apps import *
-from omb.app import server
+from .backend import dataset
+from .app import app, server
+from .apps import *
 
 # make sure pycharm do not remove the import line...
 type(server)
