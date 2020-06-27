@@ -8,6 +8,11 @@ from dash.dependencies import Input, Output
 from omb.backend import dataset
 from omb.app import app
 from omb.apps import *
+from omb.app import server
+
+# make sure pycharm do not remove the import line...
+type(server)
+
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),

@@ -3,4 +3,4 @@
 import sys
 sys.path.insert(0, "/var/www/html/omb")
 
-from app import server as application
+from index import server as application
