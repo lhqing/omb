@@ -485,6 +485,6 @@ def update_brain_region_img(clicked_cell_id, n_clicks):
 
     title = f'A "{subtype}" ({cell_class}) cell from {dissection_region} ({major_region})'
     src = f'https://raw.githubusercontent.com/lhqing/omb/master/' \
-          f'omb/assets/dissection_region_img/{dissection_region}.jpg'
+          f'omb/assets/dissection_region_img/{dissection_region}.jpeg'
 
     return title, src
