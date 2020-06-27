@@ -461,7 +461,7 @@ def update_brain_region_img(clicked_cell_id, n_clicks):
     # if the update_button triggered this callback, reset the img
     if dash.callback_context.triggered[0]['prop_id'] == 'update_button.n_clicks':
         return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
-    
+
     # example input from clickData
     # {'points': [{'curveNumber': 5,
     #              'pointNumber': 246,
