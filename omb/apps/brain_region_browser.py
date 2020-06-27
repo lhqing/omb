@@ -459,13 +459,9 @@ def update_cell_type_sunburst(n_clicks, data):
 )
 def update_brain_region_img(clicked_cell_id, n_clicks):
     # if the update_button triggered this callback, reset the img
-    try:
-        if dash.callback_context.triggered[0]['prop_id'] == 'update_button.n_clicks':
-            return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
-    except TypeError:
-        # init trigger where this no clicked data
+    if dash.callback_context.triggered[0]['prop_id'] == 'update_button.n_clicks':
         return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
-        
+    
     # example input from clickData
     # {'points': [{'curveNumber': 5,
     #              'pointNumber': 246,
@@ -477,7 +473,11 @@ def update_brain_region_img(clicked_cell_id, n_clicks):
     # print('click', clicked_cell_id)
 
     # this is always dissection region unless the above code changed.
-    dissection_region, subtype = clicked_cell_id['points'][0]['customdata'][:2]
+    try:
+        dissection_region, subtype = clicked_cell_id['points'][0]['customdata'][:2]
+    except TypeError:
+        # init trigger where this no clicked data
+        return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
 
     cell_class = dataset.sub_type_to_cell_class[subtype]
     major_region = dataset.dissection_region_to_major_region[dissection_region]
