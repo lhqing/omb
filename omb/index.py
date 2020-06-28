@@ -18,9 +18,15 @@ app.layout = html.Div([
 
 @app.callback(
     Output('page-content', 'children'),
-    [Input('url', 'pathname')])
-def display_page(pathname):
+    [Input('url', 'pathname')],
+    # [State('url', 'search')]
+)
+def display_page(pathname, search):
+    # print('url.pathname', pathname)
+    # print('url.search', search)
+
     if pathname is None:
+        # init callback url is None
         raise PreventUpdate
 
     if pathname == '/test':

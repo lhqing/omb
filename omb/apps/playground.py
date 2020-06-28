@@ -1,10 +1,6 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import dash
-from dash.dependencies import Input, State, Output
-import dash_html_components as html
-import dash_core_components as dcc
 import pandas as pd
 
 df = pd.DataFrame({
@@ -13,7 +9,6 @@ df = pd.DataFrame({
     'group-1': ['/', '/exhibit-b', '/exhibit-c', '/', '/exhibit-b', '/exhibit-c', '/', '/exhibit-b', '/exhibit-c'],
     'group-2': ['LA', 'LA', 'LA', 'London', 'London', 'London', 'Montreal', 'Montreal', 'Montreal'],
 })
-
 
 external_stylesheets = [
     'https://raw.githubusercontent.com/plotly/dash-sample-apps/master/apps/dash-oil-and-gas/assets/s1.css',

@@ -46,6 +46,9 @@ VARIABLE_PATH = f'{DATASET_DIR}/Variables.h5'
 PALETTE_PATH = f'{DATASET_DIR}/Palette.msg'
 BRAIN_REGION_PATH = f'{DATASET_DIR}/BrainRegion.csv'
 CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
+GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.csv'
+GENE_TO_MCDS_PATH = f'{DATASET_DIR}/GeneToMCDSName.json'  # int to name of the MCDS chunk that contain this gene
+GENE_MCDS_DIR = f'/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
 
 """
 Default data types

@@ -252,6 +252,7 @@ def n_cell_to_marker_size(n_cells):
 
 def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_name, hover_cols):
     # selected_plot_df is colored and hover_data
+
     fig = px.scatter(selected_plot_df,
                      x="x",
                      y="y",

@@ -5,11 +5,22 @@ Dataset load cell coords, user provided variables, and palettes into memory, ass
 Dataset load gene or other large data lazily from xarray netCDF file, with lru_cache
 Dataset only has "getter" but not "setter", TODO let's think about front-end user provided custom info later.
 """
+import json
 import pathlib
-
+import xarray as xr
 import pandas as pd
-
-from .ingest import DATASET_DIR, COORDS_PATH, CELL_ID_PATH, VARIABLE_PATH, PALETTE_PATH, BRAIN_REGION_PATH, CELL_TYPE_PATH
+from functools import lru_cache
+from .ingest import \
+    DATASET_DIR, \
+    COORDS_PATH, \
+    CELL_ID_PATH, \
+    VARIABLE_PATH, \
+    PALETTE_PATH, \
+    BRAIN_REGION_PATH, \
+    CELL_TYPE_PATH, \
+    GENE_MCDS_DIR, \
+    GENE_META_PATH, \
+    GENE_TO_MCDS_PATH
 from .utilities import *
 
 
@@ -70,6 +81,16 @@ class Dataset:
         self.sub_type_to_major_type = self._variables.set_index('SubType')['MajorType'].to_dict()
         self.sub_type_to_cell_class = self._variables.set_index('SubType')['CellClass'].to_dict()
 
+        # gene rate
+        self._gene_meta_table = pd.read_csv(GENE_META_PATH, index_col=0)  # index is gene int gene_id is a column
+        self._gene_id_to_int = {v: k for k, v in self._gene_meta_table['gene_id'].items()}
+        # TODO gene name is not unique
+        self._gene_name_to_int = {v: k for k, v in self._gene_meta_table['gene_name'].items()}
+
+        with open(GENE_TO_MCDS_PATH) as f:
+            gene_to_mcds_name = json.load(f)
+            self._gene_to_mcds_path = {g: f'{GENE_MCDS_DIR}/{n}' for g, n in gene_to_mcds_name.items()}
+
         print('dataset.categorical_var', self.categorical_var)
         print('dataset.continuous_var', self.continuous_var)
 
@@ -84,6 +105,20 @@ class Dataset:
     def get_variables(self, name):
         return self._variables[name].copy()
 
+    @lru_cache(maxsize=256)
+    def get_gene_rate(self, gene, mc_type='CHN'):
+        if gene.startswith('ENSMUSG'):
+            gene_int = self._gene_id_to_int[gene]
+        else:
+            gene_int = self._gene_name_to_int[gene]
+        mcds_path = self._gene_to_mcds_path[gene_int]
+
+        # it took 250ms to get a gene value series for 100k cell
+        # because MCDS is re chunked and saved based on gene chunks rather than cell chunk
+        # see prepare_gene_rate_for_browser.ipynb
+        data = xr.open_dataset(mcds_path)['gene_da'].sel(gene=gene_int, mc_type=mc_type).to_pandas()
+        return data
+
     @property
     def brain_region_table(self):
         return self._brain_region_table.copy()
@@ -91,6 +126,10 @@ class Dataset:
     @property
     def cell_type_table(self):
         return self._cell_type_table.copy()
+
+    @property
+    def gene_meta_table(self):
+        return self._gene_meta_table.copy()
 
     @property
     def region_label_to_dissection_region_dict(self):
