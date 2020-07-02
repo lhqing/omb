@@ -9,6 +9,7 @@ import json
 import pathlib
 import xarray as xr
 import pandas as pd
+import numpy as np
 from functools import lru_cache
 from .ingest import \
     DATASET_DIR, \
@@ -89,7 +90,7 @@ class Dataset:
 
         with open(GENE_TO_MCDS_PATH) as f:
             gene_to_mcds_name = json.load(f)
-            self._gene_to_mcds_path = {g: f'{GENE_MCDS_DIR}/{n}' for g, n in gene_to_mcds_name.items()}
+            self._gene_to_mcds_path = {int(g): f'{GENE_MCDS_DIR}/{n}' for g, n in gene_to_mcds_name.items()}
 
         print('dataset.categorical_var', self.categorical_var)
         print('dataset.continuous_var', self.continuous_var)
@@ -107,7 +108,9 @@ class Dataset:
 
     @lru_cache(maxsize=256)
     def get_gene_rate(self, gene, mc_type='CHN'):
-        if gene.startswith('ENSMUSG'):
+        if isinstance(gene, int):
+            gene_int = gene
+        elif gene.startswith('ENSMUSG'):
             gene_int = self._gene_id_to_int[gene]
         else:
             gene_int = self._gene_name_to_int[gene]
@@ -117,7 +120,9 @@ class Dataset:
         # because MCDS is re chunked and saved based on gene chunks rather than cell chunk
         # see prepare_gene_rate_for_browser.ipynb
         data = xr.open_dataset(mcds_path)['gene_da'].sel(gene=gene_int, mc_type=mc_type).to_pandas()
-        return data
+
+        # return np.float16 to reduce data transfer
+        return data.astype(np.float16)
 
     @property
     def brain_region_table(self):
@@ -141,3 +146,4 @@ class Dataset:
         for region in self.dissection_regions:
             total_dict[region] = [region]
         return total_dict
+
