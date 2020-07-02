@@ -105,3 +105,5 @@ def create_cell_type_browser_layout(cell_type_name):
         ], id='dmg_box_plots')
     ])
     return layout
+
+def rank_dmg_for_clusters(hypo_clusters, hyper_clusters, cluster_level, top_n=100, protein_coding=True, )
