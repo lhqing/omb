@@ -30,6 +30,31 @@ def search_to_dict(search):
     return search_dict
 
 
+def get_header():
+    return html.Div(
+        children=[
+            html.Div(children=[
+                dcc.Link(
+                    "Home",
+                    href="/home",
+                    className="tab first",
+                ),
+                dcc.Link(
+                    "Brain Region Browser",
+                    href="/brain_region",
+                    className="tab",
+                ),
+                dcc.Link(
+                    "Cell Type Browser",
+                    href="/cell_type?ct=Exc",
+                    className="tab",
+                )
+            ],
+                className="row all-tabs")
+        ]
+    )
+
+
 @app.callback(
     Output('page-content', 'children'),
     [Input('url', 'pathname')],
@@ -39,20 +64,15 @@ def search_to_dict(search):
 def display_page(pathname, search, total_url):
     # print('url.pathname', pathname)
     # print('url.search', search)
-
+    app_layout = get_header()
     if pathname is None:
         # init callback url is None
         raise PreventUpdate
-
-    if pathname == '/test':
-        return test_app.layout
-    if pathname == '/home':
-        return home_app.layout
-    if pathname == '/brain_table':
-        return brain_table_app_layout
-    if pathname == '/brain_region':
-        return region_browser_app.layout
-    if pathname == '/cell_type':
+    elif pathname == '/home':
+        pass
+    elif pathname == '/brain_region':
+        app_layout.children.append(region_browser_app.layout)
+    elif pathname == '/cell_type':
         search_dict = search_to_dict(search)
         if search_dict is None:
             return '404'
@@ -63,11 +83,12 @@ def display_page(pathname, search, total_url):
         if layout is None:
             return '404'
         else:
-            return layout
-    if pathname == '/':
-        return test_app.layout
+            app_layout.children.append(layout)
+    elif pathname == '/test':
+        app_layout.children.append(test_app.layout)
     else:
         return '404'
+    return app_layout
 
 
 if __name__ == '__main__':

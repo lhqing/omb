@@ -210,7 +210,7 @@ def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_n
                      color_discrete_map=palette,
                      hover_name=hover_name,
                      hover_data=hover_cols)
-    fig.update_layout(showlegend=False,
+    fig.update_layout(showlegend=True,
                       margin=dict(t=15, l=0, r=0, b=15),
                       xaxis=go.layout.XAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
                       yaxis=go.layout.YAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
