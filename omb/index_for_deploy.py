@@ -51,17 +51,17 @@ def get_header():
             html.Div(children=[
                 dcc.Link(
                     "Home",
-                    href="/home",
+                    href=f'/{APP_ROOT_NAME}/home',
                     className="tab first",
                 ),
                 dcc.Link(
                     "Brain Region Browser",
-                    href="/brain_region",
+                    href=f'/{APP_ROOT_NAME}/brain_region',
                     className="tab",
                 ),
                 dcc.Link(
                     "Cell Type Browser",
-                    href="/cell_type?ct=Exc",
+                    href=f'/{APP_ROOT_NAME}/cell_type?ct=Exc',
                     className="tab",
                 )
             ],
