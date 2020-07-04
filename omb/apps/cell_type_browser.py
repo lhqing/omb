@@ -75,9 +75,40 @@ def _prepare_cell_type_markdown(cell_type_name, total_url):
     return cell_type_markdown
 
 
+def _determine_default_dmg_comparison(cell_type_name):
+    cluster_level = dataset.cluster_name_to_level[cell_type_name]
+    if cluster_level == 'CellClass':
+        dmg_level = 'MajorType'
+        hypo_clusters = dataset.parent_to_children_list[cell_type_name]
+        hyper_clusters = []
+        for sibling in ['Exc', 'Inh']:
+            if sibling != cell_type_name:
+                hyper_clusters += dataset.parent_to_children_list[sibling]
+    else:
+        dmg_level = cluster_level
+        hypo_clusters = [cell_type_name]
+        parent = dataset.child_to_parent[cell_type_name]
+        hyper_clusters = [ct for ct in dataset.parent_to_children_list[parent]
+                          if ct != cell_type_name]
+    return dmg_level, hypo_clusters, hyper_clusters
+
+
 TOTAL_GENE_OPTIONS = [{'label': gene_name, 'value': gene_int}
                       for gene_int, gene_name in
                       dataset.gene_meta_table['gene_name'].iteritems()]
+DMG_COLUMNS = {
+    'gene_name': 'Name',
+    'gene_id': 'Ensembl ID',
+    'mgi_id': 'MGI ID',
+    'gene_size': 'Gene Size',
+    'chrom': 'Chrom',
+    'start': 'Start',
+    'end': 'End',
+    'strand': 'Strand',
+    'gene_type': 'Gene Type',
+    'level': 'GENCODE Level',
+    'tag': 'Gencode Tag',
+    'rank': 'Rank'}
 
 
 def create_cell_type_browser_layout(cell_type_name, total_url):
@@ -89,14 +120,16 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
     coord_and_cluster_levels = [f"{coord} - {'SubType' if coord.startswith('L3') else 'MajorType'}"
                                 for coord in occur_coords]
     if cluster_level == 'CellClass':
-        default_choice = 'L1UMAP - MajorType'
+        default_layout_choice = 'L1UMAP - MajorType'
     elif cluster_level == 'MajorType':
-        default_choice = [x for x in coord_and_cluster_levels if x.startswith('L2UMAP')][
+        default_layout_choice = [x for x in coord_and_cluster_levels if x.startswith('L2UMAP')][
             0]  # should only have one choice
     else:
-        default_choice = [x for x in coord_and_cluster_levels if x.startswith('L3UMAP')][
+        default_layout_choice = [x for x in coord_and_cluster_levels if x.startswith('L3UMAP')][
             0]  # should only have one choice
 
+    # default dmg comparison
+    dmg_level, hypo_clusters, hyper_clusters = _determine_default_dmg_comparison(cell_type_name)
     cell_type_markdown = _prepare_cell_type_markdown(cell_type_name, total_url)
 
     layout = html.Div(children=[
@@ -138,7 +171,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                             options=[{'label': coord_and_level, 'value': coord_and_level}
                                      for coord_and_level in coord_and_cluster_levels],
                             clearable=False,
-                            value=default_choice,
+                            value=default_layout_choice,
                             id='coords_cluster_level_dropdown',
                             className="dcc_control"),
                         html.H6('Gene Body of',
@@ -204,44 +237,85 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 # control panel of the dmg table
                 html.Div(
                     children=[
-                        html.P('Load preset or choose any cluster combination below'),
+                        html.H6('CH-DMG Control',
+                                className="control_label"),
+                        dcc.Markdown(children=f'DMG Comparison Level: **{dmg_level}**',
+                                     id='dmg_level_markdown',
+                                     className="control_label"),
+                        html.P('Cluster set A (hypo-methylated)',
+                               className="control_label"),
                         html.Div(
-                            children=[
-                                html.Button('Parent Marker', id='parent_marker_button', n_clicks=0),
-                                html.Button('Sibling Marker', id='sibling_marker_button', n_clicks=0),
-                            ],
-                            className='row'
-                        ),
-                        html.P('Cluster set A (hypo-methylated)'),
-                        html.Div(dcc.Dropdown(id='hypo_cluster_dropdown')),
-                        html.P('Cluster set B (hyper-methylated)'),
-                        html.Div(dcc.Dropdown(id='hyper_cluster_dropdown'))
+                            dcc.Dropdown(
+                                options=[{'label': ct, 'value': ct}
+                                         for ct in dataset.get_variables(dmg_level).unique()],
+                                value=hypo_clusters,
+                                multi=True,
+                                id='hypo_cluster_dropdown'
+                            ),
+                            className="dcc_control"),
+                        html.P('Cluster set B (hyper-methylated)',
+                               className="control_label"),
+                        html.Div(
+                            dcc.Dropdown(
+                                options=[{'label': ct, 'value': ct}
+                                         for ct in dataset.get_variables(dmg_level).unique()],
+                                value=hyper_clusters,
+                                multi=True,
+                                id='hyper_cluster_dropdown'
+                            ),
+                            className="dcc_control"),
+                        html.P('Gene Type',
+                               className="control_label"),
+                        html.Div(
+                            dcc.Dropdown(
+                                options=[{'label': 'All Genes', 'value': 'All'},
+                                         {'label': 'Protein Coding Genes Only', 'value': 'ProteinCoding'}],
+                                multi=False,
+                                clearable=False,
+                                value='ProteinCoding',
+                                id='gene_type_dropdown'
+                            ),
+                            className="dcc_control"),
+                        html.Button(children='Update DMG Table',
+                                    id='dmg_trigger_button',
+                                    n_clicks=0,
+                                    className='offset-by-two columns eight columns')
                     ],
                     className='pretty_container three columns'
                 ),
                 # dmg table
                 html.Div(
                     children=[
-                        html.P('DMG Table'),
-                        dash_table.DataTable(id='dmg_table')
+                        html.H6('DMG Table (Click on gene name to view scatter plot)'),
+                        dash_table.DataTable(
+                            id='dmg_table',
+                            style_cell={
+                                'whiteSpace': 'normal',
+                                # 'height': 'auto',
+                                'textAlign': 'left',
+                            },
+                            style_header={
+                                'fontWeight': 'bold',
+                                'height': '50px'
+                            },
+                            style_data_conditional=[
+                                {
+                                    'if': {'row_index': 'odd'},
+                                    'backgroundColor': 'rgb(248, 248, 248)'
+                                }
+                            ],
+                            filter_action='native',
+                            sort_action="native",
+                            sort_mode="multi",
+                            style_as_list_view=True,
+                            columns=[{"name": name, "id": col} for col, name in DMG_COLUMNS.items()],
+                            data=[],
+                            page_size=20)
                     ],
                     className='pretty_container nine columns'
                 )
             ], className='row container-display'
-        ),
-
-        # fourth row contain gene scatter plot
-        html.Div(children=[
-            # some example layout
-            html.Div(children=[
-                html.Div(dcc.Graph(), className='pretty_container six columns'),
-                html.Div(dcc.Graph(), className='pretty_container six columns'),
-            ], className='row container-display'),
-            html.Div(children=[
-                html.Div(dcc.Graph(), className='pretty_container six columns'),
-                html.Div(dcc.Graph(), className='pretty_container six columns'),
-            ], className='row container-display'),
-        ], id='dmg_box_plots')
+        )
     ])
     return layout
 
@@ -483,7 +557,7 @@ def update_scatter_plot_1(coord_and_cell_type_level, cell_type_name):
      Input('mc_range_slider', 'value')],
     [State('cell_type_name', 'children')]
 )
-def update_scatter_plot_1(coord_and_cell_type_level, gene_int, mc_type, hue_norm, cell_type_name):
+def update_scatter_plot_2(coord_and_cell_type_level, gene_int, mc_type, hue_norm, cell_type_name):
     gene_name = dataset.gene_meta_table.loc[gene_int, 'gene_name']
 
     if not gene_int:
@@ -532,3 +606,41 @@ def update_scatter_plot_1(coord_and_cell_type_level, gene_int, mc_type, hue_norm
     violin_fig.update_xaxes(range=[-0.5, 0.5])
     violin_fig.update_yaxes(range=[0, 3])
     return scatter_fig, violin_fig
+
+
+@app.callback(
+    Output('dmg_table', 'data'),
+    [Input('dmg_trigger_button', 'n_clicks')],
+    [State('hypo_cluster_dropdown', 'value'),
+     State('hyper_cluster_dropdown', 'value'),
+     State('gene_type_dropdown', 'value'),
+     State('dmg_level_markdown', 'children')]
+)
+def update_dmg_table(_, hypo_clusters, hyper_clusters, gene_type, dmg_level_str):
+    if gene_type == 'ProteinCoding':
+        protein_coding = True
+    else:
+        protein_coding = False
+
+    cluster_level = dmg_level_str.split(': ')[-1].strip('*')
+
+    dmg_table = dataset.query_dmg(hypo_clusters=hypo_clusters,
+                                  hyper_clusters=hyper_clusters,
+                                  cluster_level=cluster_level,
+                                  top_n=100,
+                                  protein_coding=protein_coding)
+    return dmg_table.to_dict('records')
+
+
+@app.callback(
+    Output('dynamic_gene_dropdown', 'value'),
+    [Input('dmg_table', 'active_cell')],
+    [State('dmg_table', 'data')]
+)
+def update_gene_selection(active_cell, table_data):
+    if not active_cell:
+        raise PreventUpdate
+
+    gene_name = table_data[active_cell['row']][active_cell['column_id']]
+    gene_int = dataset.gene_name_to_int[gene_name]
+    return gene_int

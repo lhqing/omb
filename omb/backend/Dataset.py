@@ -101,9 +101,9 @@ class Dataset:
 
         # gene rate
         self._gene_meta_table = pd.read_csv(GENE_META_PATH, index_col=0)  # index is gene int gene_id is a column
-        self._gene_id_to_int = {v: k for k, v in self._gene_meta_table['gene_id'].items()}
+        self.gene_id_to_int = {v: k for k, v in self._gene_meta_table['gene_id'].items()}
         # TODO gene name is not unique
-        self._gene_name_to_int = {v: k for k, v in self._gene_meta_table['gene_name'].items()}
+        self.gene_name_to_int = {v: k for k, v in self._gene_meta_table['gene_name'].items()}
 
         with open(GENE_TO_MCDS_PATH) as f:
             gene_to_mcds_name = json.load(f)
@@ -215,5 +215,9 @@ class Dataset:
         final_genes = sorted_genes[sorted_genes > 0][:top_n]  # size <= top_n
 
         final_meta_table = self.gene_meta_table.loc[final_genes.index].reset_index(drop=True)
-        final_meta_table['Rank'] = (final_meta_table.index + 1).astype(int)
+        final_meta_table['rank'] = (final_meta_table.index + 1).astype(int)
+
+        # add gene size
+        final_meta_table['gene_size'] = final_meta_table['end'] - final_meta_table['start']
+
         return final_meta_table
