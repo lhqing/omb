@@ -86,14 +86,14 @@ def display_page(pathname, search, total_url):
     print('url.href', total_url)
 
     pathname = pathname.split('/')[-1]
-    app_layout = get_header()
     print('processed pathname', pathname)
 
-    if pathname == 'home':
+    app_layout = get_header()
+    if pathname == f'/{APP_ROOT_NAME}/home':
         pass
-    elif pathname == 'brain_region':
+    elif pathname == f'/{APP_ROOT_NAME}/brain_region':
         app_layout.children.append(region_browser_app.layout)
-    elif pathname == 'cell_type':
+    elif pathname == f'/{APP_ROOT_NAME}/cell_type':
         search_dict = search_to_dict(search)
         if search_dict is None:
             return '404'
@@ -105,7 +105,7 @@ def display_page(pathname, search, total_url):
             return '404'
         else:
             app_layout.children.append(layout)
-    elif pathname == 'test':
+    elif pathname == f'/{APP_ROOT_NAME}/test':
         app_layout.children.append(test_app.layout)
     else:
         return '404'
