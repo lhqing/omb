@@ -24,7 +24,6 @@ app.config.update({
     # remove the default of '/'
     'requests_pathname_prefix': f'/{APP_ROOT_NAME}/'
 })
-print(app.config)
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -81,7 +80,9 @@ def display_page(pathname, search, total_url):
     print('url.pathname', pathname)
     print('url.search', search)
     print('url.href', total_url)
-    
+
+    pathname = pathname.split('/')[-1]
+
     app_layout = get_header()
     if pathname is None:
         # init callback url is None
