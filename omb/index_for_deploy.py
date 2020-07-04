@@ -81,10 +81,10 @@ def display_page(pathname, search, total_url):
         # init callback url is None
         raise PreventUpdate
 
-    print('url.pathname', pathname)
-    print('url.search', search)
-    print('url.href', total_url)
-    
+    # print('url.pathname', pathname)
+    # print('url.search', search)
+    # print('url.href', total_url)
+
     app_layout = get_header()
     if pathname == f'/{APP_ROOT_NAME}/home':
         pass

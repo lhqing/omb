@@ -32,7 +32,7 @@ import warnings
 
 import numpy as np
 import pandas as pd
-
+import pathlib
 import omb
 from .utilities import *
 
@@ -49,7 +49,12 @@ BRAIN_REGION_PATH = f'{DATASET_DIR}/BrainRegion.csv'
 CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
 GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.csv'
 GENE_TO_MCDS_PATH = f'{DATASET_DIR}/GeneToMCDSName.json'  # int to name of the MCDS chunk that contain this gene
-GENE_MCDS_DIR = f'/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
+GENE_MCDS_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
+
+if not pathlib.Path(GENE_MCDS_DIR).exists():
+    # neomorph location
+    GENE_MCDS_DIR = '/home/hanliu/gene_rate_for_app/CEMBA_RS1_45Region'
+
 # pairwise DMG
 CLUSTER_DIST_PATH = f'{DATASET_DIR}/ClusterDistance.h5'
 TOTAL_PAIRWISE_DMG_PATH = f'{DATASET_DIR}/TotalPairwiseDMG.h5'
