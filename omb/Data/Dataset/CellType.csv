@@ -1,206 +1,206 @@
 UniqueName,Cluster Level,Parent,Signature mCH Gene (Neuron),Number of total cells
-Exc,L1-CellClass,-,Slc17a7,67472
-Inh,L1-CellClass,-,Gad1,28343
-NonN,L1-CellClass,-,-,8167
-IT-L23,L2-Majortype,Exc,Prex1,11919
-IT-L4,L2-Majortype,Exc,Cadps2,4347
-IT-L5,L2-Majortype,Exc,Sulf2,6640
-IT-L6,L2-Majortype,Exc,Xkr7,4947
-PT-L5,L2-Majortype,Exc,Bcl6,2638
-CT-L6,L2-Majortype,Exc,Tle4,8716
-NP-L6,L2-Majortype,Exc,Tshz2,1819
-L6b,L2-Majortype,Exc,Galnt10,1069
-EP,L2-Majortype,Exc,Npsr1,666
-CLA,L2-Majortype,Exc,B3gat2,945
-OLF-Exc,L2-Majortype,Exc,Ntng1,9681
-Gfra1,L2-Majortype,Exc,Gfra1,110
-IG-CA2,L2-Majortype,Exc,Cacng5,745
-DG-po,L2-Majortype,Exc,Ptpro,145
-CA3,L2-Majortype,Exc,Rerg,2423
-CA3-St18,L2-Majortype,Exc,St18,408
-CA1,L2-Majortype,Exc,Mpped1,4075
-MGE-Pvalb,L2-Majortype,Inh,Pvalb,2636
-MGE-Sst,L2-Majortype,Inh,Grin3a,2931
-CGE-Vip,L2-Majortype,Inh,Vip,1746
-CGE-Lamp5,L2-Majortype,Inh,Lamp5,1449
-Unc5c,L2-Majortype,Inh,Unc5c,219
-Chd7,L2-Majortype,Inh,Chd7,386
-LSX-Inh,L2-Majortype,Inh,Clic4,2143
-PAL-Inh,L2-Majortype,Inh,-,4481
-Foxp2,L2-Majortype,Inh,Foxp2,1964
-MSN-D1,L2-Majortype,Inh,Drd1,3139
-MSN-D2,L2-Majortype,Inh,Drd2,3340
-D1L-Fstl4,L2-Majortype,Inh,Fstl4,1962
-D1L-PAL,L2-Majortype,Inh,Sgcd,495
-DG,L2-Majortype,Exc,Tenm2,6179
-ANP,L2-Majortype,NonN,-,331
-OLF,L2-Majortype,Inh,-,1452
-ASC,L2-Majortype,NonN,-,2215
-ODC,L2-Majortype,NonN,-,3082
-OPC,L2-Majortype,NonN,-,777
-MGC,L2-Majortype,NonN,-,853
-PC,L2-Majortype,NonN,-,170
-EC,L2-Majortype,NonN,-,95
-VLMC,L2-Majortype,NonN,-,419
-VLMC-Pia,L2-Majortype,NonN,-,225
-CA1 Ak5,L3-Subtype,CA1,Ak5,419
-CA1 Chrm3,L3-Subtype,CA1,Chrm3,2765
-CA1 Kif26a,L3-Subtype,CA1,Kif26a,133
-CA1 Lingo2,L3-Subtype,CA1,Lingo2,54
-CA1 Ptprg,L3-Subtype,CA1,Ptprg,568
-CA3 Cadm2,L3-Subtype,CA3,Cadm2,2284
-CA3 Efnb2,L3-Subtype,CA3,Efnb2,139
-CA3-St18 Epha5,L3-Subtype,CA3-St18,Epha5,107
-CA3-St18 Nuak1,L3-Subtype,CA3-St18,Nuak1,81
-CA3-St18 Tead1,L3-Subtype,CA3-St18,Tead1,220
-CLA Bcl11a,L3-Subtype,CLA,Bcl11a,118
-CLA Cdh8,L3-Subtype,CLA,Cdh8,505
-CLA Nrp2,L3-Subtype,CLA,Nrp2,322
-CT-L6 Hcrtr2,L3-Subtype,CT-L6,Hcrtr2,664
-CT-L6 Il1rap,L3-Subtype,CT-L6,Il1rap,4361
-CT-L6 Map4,L3-Subtype,CT-L6,Map4,869
-CT-L6 Megf9,L3-Subtype,CT-L6,Megf9,2822
-DG dg-all,L3-Subtype,DG,dg-all,6179
-DG-po Bcl11a,L3-Subtype,DG-po,Bcl11a,55
-DG-po Calb2,L3-Subtype,DG-po,Calb2,51
-DG-po Kctd8,L3-Subtype,DG-po,Kctd8,39
-EP Adcy8,L3-Subtype,EP,Adcy8,144
-EP Rgs8,L3-Subtype,EP,Rgs8,224
-EP Tspan5,L3-Subtype,EP,Tspan5,298
-Gfra1 Gfra1,L3-Subtype,Gfra1,Gfra1,110
-IG-CA2 Chrm3,L3-Subtype,IG-CA2,Chrm3,369
-IG-CA2 Peak1,L3-Subtype,IG-CA2,Peak1,224
-IG-CA2 Xpr1,L3-Subtype,IG-CA2,Xpr1,152
-IT-L23 Cux1,L3-Subtype,IT-L23,Cux1,6551
-IT-L23 Foxp1,L3-Subtype,IT-L23,Foxp1,1528
-IT-L23 Ptprt,L3-Subtype,IT-L23,Ptprt,1503
-IT-L23 Tenm2,L3-Subtype,IT-L23,Tenm2,2337
-IT-L4 Astn2,L3-Subtype,IT-L4,Astn2,2742
-IT-L4 Shc3,L3-Subtype,IT-L4,Shc3,1605
-IT-L5 Cdh8,L3-Subtype,IT-L5,Cdh8,2535
-IT-L5 Etv1,L3-Subtype,IT-L5,Etv1,2216
-IT-L5 Grik3,L3-Subtype,IT-L5,Grik3,1889
-IT-L6 Cadps2,L3-Subtype,IT-L6,Cadps2,865
-IT-L6 Fstl4,L3-Subtype,IT-L6,Fstl4,1197
-IT-L6 Man1c1,L3-Subtype,IT-L6,Man1c1,2676
-IT-L6 Oxr1,L3-Subtype,IT-L6,Oxr1,209
-L6b Adcy8,L3-Subtype,L6b,Adcy8,398
-L6b Kcnk2,L3-Subtype,L6b,Kcnk2,177
-L6b Nrp2,L3-Subtype,L6b,Nrp2,457
-L6b Pkhd1,L3-Subtype,L6b,Pkhd1,37
-NP-L6 Boc,L3-Subtype,NP-L6,Boc,294
-NP-L6 Cntnap4,L3-Subtype,NP-L6,Cntnap4,146
-NP-L6 Cntnap5a,L3-Subtype,NP-L6,Cntnap5a,367
-NP-L6 Cyp7b1,L3-Subtype,NP-L6,Cyp7b1,193
-NP-L6 Kcnab1,L3-Subtype,NP-L6,Kcnab1,446
-NP-L6 Olfml2b,L3-Subtype,NP-L6,Olfml2b,373
-OLF-Exc Bmpr1b,L3-Subtype,OLF-Exc,Bmpr1b,3017
-OLF-Exc Cdh9,L3-Subtype,OLF-Exc,Cdh9,730
-OLF-Exc Cux2,L3-Subtype,OLF-Exc,Cux2,394
-OLF-Exc Lrrtm3,L3-Subtype,OLF-Exc,Lrrtm3,1681
-OLF-Exc Pld5,L3-Subtype,OLF-Exc,Pld5,137
-OLF-Exc Rmst,L3-Subtype,OLF-Exc,Rmst,359
-OLF-Exc Sgcd,L3-Subtype,OLF-Exc,Sgcd,2395
-OLF-Exc Unc13c,L3-Subtype,OLF-Exc,Unc13c,957
-PT-L5 Abca12,L3-Subtype,PT-L5,Abca12,144
-PT-L5 Astn2,L3-Subtype,PT-L5,Astn2,125
-PT-L5 Kcnh1,L3-Subtype,PT-L5,Kcnh1,406
-PT-L5 Nectin1,L3-Subtype,PT-L5,Nectin1,271
-PT-L5 Plcb4,L3-Subtype,PT-L5,Plcb4,266
-PT-L5 Ptprt,L3-Subtype,PT-L5,Ptprt,385
-PT-L5 Tenm2,L3-Subtype,PT-L5,Tenm2,631
-PT-L5 Tmtc2,L3-Subtype,PT-L5,Tmtc2,204
-PT-L5 Unc5b,L3-Subtype,PT-L5,Unc5b,205
-CGE-Lamp5 Dock5,L3-Subtype,CGE-Lamp5,Dock5,243
-CGE-Lamp5 Grid1,L3-Subtype,CGE-Lamp5,Grid1,237
-CGE-Lamp5 Grk5,L3-Subtype,CGE-Lamp5,Grk5,732
-CGE-Lamp5 Nrxn3,L3-Subtype,CGE-Lamp5,Nrxn3,83
-CGE-Lamp5 Sorcs1,L3-Subtype,CGE-Lamp5,Sorcs1,154
-CGE-Vip Ccser1,L3-Subtype,CGE-Vip,Ccser1,180
-CGE-Vip Clstn2,L3-Subtype,CGE-Vip,Clstn2,181
-CGE-Vip Fstl4,L3-Subtype,CGE-Vip,Fstl4,234
-CGE-Vip Galnt17,L3-Subtype,CGE-Vip,Galnt17,379
-CGE-Vip Grm8,L3-Subtype,CGE-Vip,Grm8,103
-CGE-Vip Ntng1,L3-Subtype,CGE-Vip,Ntng1,65
-CGE-Vip Ptprm,L3-Subtype,CGE-Vip,Ptprm,421
-CGE-Vip Robo1,L3-Subtype,CGE-Vip,Robo1,183
-Chd7 Kcnc2,L3-Subtype,Chd7,Kcnc2,79
-Chd7 Megf11,L3-Subtype,Chd7,Megf11,153
-Chd7 Trpc7,L3-Subtype,Chd7,Trpc7,154
-D1L-Fstl4 Cadm1,L3-Subtype,D1L-Fstl4,Cadm1,197
-D1L-Fstl4 Crim1,L3-Subtype,D1L-Fstl4,Crim1,386
-D1L-Fstl4 Grm3,L3-Subtype,D1L-Fstl4,Grm3,416
-D1L-Fstl4 Sipa1l2,L3-Subtype,D1L-Fstl4,Sipa1l2,660
-D1L-Fstl4 Trps1,L3-Subtype,D1L-Fstl4,Trps1,303
-D1L-PAL Flrt2,L3-Subtype,D1L-PAL,Flrt2,246
-D1L-PAL Plcxd3,L3-Subtype,D1L-PAL,Plcxd3,249
-Foxp2 Dchs2,L3-Subtype,Foxp2,Dchs2,704
-Foxp2 Homer2,L3-Subtype,Foxp2,Homer2,312
-Foxp2 Inpp4b,L3-Subtype,Foxp2,Inpp4b,431
-Foxp2 Trpc7,L3-Subtype,Foxp2,Trpc7,517
-LSX-Inh Cacna1i,L3-Subtype,LSX-Inh,Cacna1i,333
-LSX-Inh Dock10,L3-Subtype,LSX-Inh,Dock10,440
-LSX-Inh Enox1,L3-Subtype,LSX-Inh,Enox1,296
-LSX-Inh Foxp2,L3-Subtype,LSX-Inh,Foxp2,272
-LSX-Inh Lats2,L3-Subtype,LSX-Inh,Lats2,95
-LSX-Inh Nxph1,L3-Subtype,LSX-Inh,Nxph1,432
-LSX-Inh Zeb2,L3-Subtype,LSX-Inh,Zeb2,275
-MGE-Pvalb Cacna1i,L3-Subtype,MGE-Pvalb,Cacna1i,236
-MGE-Pvalb Cnih3,L3-Subtype,MGE-Pvalb,Cnih3,423
-MGE-Pvalb Entpd3,L3-Subtype,MGE-Pvalb,Entpd3,355
-MGE-Pvalb Gfra2,L3-Subtype,MGE-Pvalb,Gfra2,472
-MGE-Pvalb Ptprk,L3-Subtype,MGE-Pvalb,Ptprk,84
-MGE-Pvalb Sema5a,L3-Subtype,MGE-Pvalb,Sema5a,415
-MGE-Pvalb Thsd7a,L3-Subtype,MGE-Pvalb,Thsd7a,648
-MGE-Sst Bmper,L3-Subtype,MGE-Sst,Bmper,282
-MGE-Sst Chodl,L3-Subtype,MGE-Sst,Chodl,94
-MGE-Sst Dock4,L3-Subtype,MGE-Sst,Dock4,374
-MGE-Sst Etv1,L3-Subtype,MGE-Sst,Etv1,80
-MGE-Sst Frmd6,L3-Subtype,MGE-Sst,Frmd6,695
-MGE-Sst Kcnip4,L3-Subtype,MGE-Sst,Kcnip4,230
-MGE-Sst Ptpre,L3-Subtype,MGE-Sst,Ptpre,152
-MGE-Sst Rerg,L3-Subtype,MGE-Sst,Rerg,281
-MGE-Sst Rxra,L3-Subtype,MGE-Sst,Rxra,224
-MGE-Sst Ubtd1,L3-Subtype,MGE-Sst,Ubtd1,387
-MGE-Sst Unc5b,L3-Subtype,MGE-Sst,Unc5b,128
-MSN-D1 Hrh1,L3-Subtype,MSN-D1,Hrh1,1349
-MSN-D1 Khdrbs3,L3-Subtype,MSN-D1,Khdrbs3,541
-MSN-D1 Ntn1,L3-Subtype,MSN-D1,Ntn1,322
-MSN-D1 Plxnc1,L3-Subtype,MSN-D1,Plxnc1,926
-MSN-D2 Casz1,L3-Subtype,MSN-D2,Casz1,242
-MSN-D2 Col14a1,L3-Subtype,MSN-D2,Col14a1,598
-MSN-D2 Nrp2,L3-Subtype,MSN-D2,Nrp2,431
-MSN-D2 Slc24a2,L3-Subtype,MSN-D2,Slc24a2,2069
-OLF Gabbr2,L3-Subtype,OLF,Gabbr2,86
-OLF Kcnd3,L3-Subtype,OLF,Kcnd3,99
-OLF Mapk10,L3-Subtype,OLF,Mapk10,60
-OLF Pag1,L3-Subtype,OLF,Pag1,60
-OLF Trpc4,L3-Subtype,OLF,Trpc4,1017
-OLF Xkr6,L3-Subtype,OLF,Xkr6,46
-PAL-Inh Chat,L3-Subtype,PAL-Inh,Chat,197
-PAL-Inh Deptor,L3-Subtype,PAL-Inh,Deptor,84
-PAL-Inh Igdcc3,L3-Subtype,PAL-Inh,Igdcc3,407
-PAL-Inh Meis1,L3-Subtype,PAL-Inh,Meis1,246
-PAL-Inh Meis2,L3-Subtype,PAL-Inh,Meis2,1969
-PAL-Inh Onecut2,L3-Subtype,PAL-Inh,Onecut2,187
-PAL-Inh Ptprd,L3-Subtype,PAL-Inh,Ptprd,365
-PAL-Inh Rarb,L3-Subtype,PAL-Inh,Rarb,242
-PAL-Inh Tcf7l2,L3-Subtype,PAL-Inh,Tcf7l2,185
-PAL-Inh Tmem178,L3-Subtype,PAL-Inh,Tmem178,425
-Unc5c Unc5c,L3-Subtype,Unc5c,Unc5c,219
-ANP anp-dg,L3-Subtype,ANP,-,121
-ANP anp-olf-cnu,L3-Subtype,ANP,-,210
-ASC cortex-olf,L3-Subtype,ASC,-,406
-ASC mid,L3-Subtype,ASC,-,734
-ASC str-hpf,L3-Subtype,ASC,-,1075
-EC Abhd2,L3-Subtype,EC,Abhd2,83
-EC Sema3g,L3-Subtype,EC,Sema3g,12
-MGC mgc-all,L3-Subtype,MGC,-,853
-ODC odc-large,L3-Subtype,ODC,-,2216
-ODC odc-small,L3-Subtype,ODC,-,866
-OPC opc-large,L3-Subtype,OPC,-,688
-OPC opc-small,L3-Subtype,OPC,-,89
-PC pc-all,L3-Subtype,PC,-,170
-VLMC Col4a1,L3-Subtype,VLMC,Col4a1,175
-VLMC Mapk4,L3-Subtype,VLMC,Mapk4,244
-VLMC-Pia vlmc-pia-all,L3-Subtype,VLMC-Pia,-,225
+Exc,CellClass,-,Slc17a7,67472
+Inh,CellClass,-,Gad1,28343
+NonN,CellClass,-,-,8167
+IT-L23,MajorType,Exc,Prex1,11919
+IT-L4,MajorType,Exc,Cadps2,4347
+IT-L5,MajorType,Exc,Sulf2,6640
+IT-L6,MajorType,Exc,Xkr7,4947
+PT-L5,MajorType,Exc,Bcl6,2638
+CT-L6,MajorType,Exc,Tle4,8716
+NP-L6,MajorType,Exc,Tshz2,1819
+L6b,MajorType,Exc,Galnt10,1069
+EP,MajorType,Exc,Npsr1,666
+CLA,MajorType,Exc,B3gat2,945
+OLF-Exc,MajorType,Exc,Ntng1,9681
+Gfra1,MajorType,Exc,Gfra1,110
+IG-CA2,MajorType,Exc,Cacng5,745
+DG-po,MajorType,Exc,Ptpro,145
+CA3,MajorType,Exc,Rerg,2423
+CA3-St18,MajorType,Exc,St18,408
+CA1,MajorType,Exc,Mpped1,4075
+MGE-Pvalb,MajorType,Inh,Pvalb,2636
+MGE-Sst,MajorType,Inh,Grin3a,2931
+CGE-Vip,MajorType,Inh,Vip,1746
+CGE-Lamp5,MajorType,Inh,Lamp5,1449
+Unc5c,MajorType,Inh,Unc5c,219
+Chd7,MajorType,Inh,Chd7,386
+LSX-Inh,MajorType,Inh,Clic4,2143
+PAL-Inh,MajorType,Inh,-,4481
+Foxp2,MajorType,Inh,Foxp2,1964
+MSN-D1,MajorType,Inh,Drd1,3139
+MSN-D2,MajorType,Inh,Drd2,3340
+D1L-Fstl4,MajorType,Inh,Fstl4,1962
+D1L-PAL,MajorType,Inh,Sgcd,495
+DG,MajorType,Exc,Tenm2,6179
+ANP,MajorType,NonN,-,331
+OLF,MajorType,Inh,-,1452
+ASC,MajorType,NonN,-,2215
+ODC,MajorType,NonN,-,3082
+OPC,MajorType,NonN,-,777
+MGC,MajorType,NonN,-,853
+PC,MajorType,NonN,-,170
+EC,MajorType,NonN,-,95
+VLMC,MajorType,NonN,-,419
+VLMC-Pia,MajorType,NonN,-,225
+CA1 Ak5,SubType,CA1,Ak5,419
+CA1 Chrm3,SubType,CA1,Chrm3,2765
+CA1 Kif26a,SubType,CA1,Kif26a,133
+CA1 Lingo2,SubType,CA1,Lingo2,54
+CA1 Ptprg,SubType,CA1,Ptprg,568
+CA3 Cadm2,SubType,CA3,Cadm2,2284
+CA3 Efnb2,SubType,CA3,Efnb2,139
+CA3-St18 Epha5,SubType,CA3-St18,Epha5,107
+CA3-St18 Nuak1,SubType,CA3-St18,Nuak1,81
+CA3-St18 Tead1,SubType,CA3-St18,Tead1,220
+CLA Bcl11a,SubType,CLA,Bcl11a,118
+CLA Cdh8,SubType,CLA,Cdh8,505
+CLA Nrp2,SubType,CLA,Nrp2,322
+CT-L6 Hcrtr2,SubType,CT-L6,Hcrtr2,664
+CT-L6 Il1rap,SubType,CT-L6,Il1rap,4361
+CT-L6 Map4,SubType,CT-L6,Map4,869
+CT-L6 Megf9,SubType,CT-L6,Megf9,2822
+DG dg-all,SubType,DG,dg-all,6179
+DG-po Bcl11a,SubType,DG-po,Bcl11a,55
+DG-po Calb2,SubType,DG-po,Calb2,51
+DG-po Kctd8,SubType,DG-po,Kctd8,39
+EP Adcy8,SubType,EP,Adcy8,144
+EP Rgs8,SubType,EP,Rgs8,224
+EP Tspan5,SubType,EP,Tspan5,298
+Gfra1 Gfra1,SubType,Gfra1,Gfra1,110
+IG-CA2 Chrm3,SubType,IG-CA2,Chrm3,369
+IG-CA2 Peak1,SubType,IG-CA2,Peak1,224
+IG-CA2 Xpr1,SubType,IG-CA2,Xpr1,152
+IT-L23 Cux1,SubType,IT-L23,Cux1,6551
+IT-L23 Foxp1,SubType,IT-L23,Foxp1,1528
+IT-L23 Ptprt,SubType,IT-L23,Ptprt,1503
+IT-L23 Tenm2,SubType,IT-L23,Tenm2,2337
+IT-L4 Astn2,SubType,IT-L4,Astn2,2742
+IT-L4 Shc3,SubType,IT-L4,Shc3,1605
+IT-L5 Cdh8,SubType,IT-L5,Cdh8,2535
+IT-L5 Etv1,SubType,IT-L5,Etv1,2216
+IT-L5 Grik3,SubType,IT-L5,Grik3,1889
+IT-L6 Cadps2,SubType,IT-L6,Cadps2,865
+IT-L6 Fstl4,SubType,IT-L6,Fstl4,1197
+IT-L6 Man1c1,SubType,IT-L6,Man1c1,2676
+IT-L6 Oxr1,SubType,IT-L6,Oxr1,209
+L6b Adcy8,SubType,L6b,Adcy8,398
+L6b Kcnk2,SubType,L6b,Kcnk2,177
+L6b Nrp2,SubType,L6b,Nrp2,457
+L6b Pkhd1,SubType,L6b,Pkhd1,37
+NP-L6 Boc,SubType,NP-L6,Boc,294
+NP-L6 Cntnap4,SubType,NP-L6,Cntnap4,146
+NP-L6 Cntnap5a,SubType,NP-L6,Cntnap5a,367
+NP-L6 Cyp7b1,SubType,NP-L6,Cyp7b1,193
+NP-L6 Kcnab1,SubType,NP-L6,Kcnab1,446
+NP-L6 Olfml2b,SubType,NP-L6,Olfml2b,373
+OLF-Exc Bmpr1b,SubType,OLF-Exc,Bmpr1b,3017
+OLF-Exc Cdh9,SubType,OLF-Exc,Cdh9,730
+OLF-Exc Cux2,SubType,OLF-Exc,Cux2,394
+OLF-Exc Lrrtm3,SubType,OLF-Exc,Lrrtm3,1681
+OLF-Exc Pld5,SubType,OLF-Exc,Pld5,137
+OLF-Exc Rmst,SubType,OLF-Exc,Rmst,359
+OLF-Exc Sgcd,SubType,OLF-Exc,Sgcd,2395
+OLF-Exc Unc13c,SubType,OLF-Exc,Unc13c,957
+PT-L5 Abca12,SubType,PT-L5,Abca12,144
+PT-L5 Astn2,SubType,PT-L5,Astn2,125
+PT-L5 Kcnh1,SubType,PT-L5,Kcnh1,406
+PT-L5 Nectin1,SubType,PT-L5,Nectin1,271
+PT-L5 Plcb4,SubType,PT-L5,Plcb4,266
+PT-L5 Ptprt,SubType,PT-L5,Ptprt,385
+PT-L5 Tenm2,SubType,PT-L5,Tenm2,631
+PT-L5 Tmtc2,SubType,PT-L5,Tmtc2,204
+PT-L5 Unc5b,SubType,PT-L5,Unc5b,205
+CGE-Lamp5 Dock5,SubType,CGE-Lamp5,Dock5,243
+CGE-Lamp5 Grid1,SubType,CGE-Lamp5,Grid1,237
+CGE-Lamp5 Grk5,SubType,CGE-Lamp5,Grk5,732
+CGE-Lamp5 Nrxn3,SubType,CGE-Lamp5,Nrxn3,83
+CGE-Lamp5 Sorcs1,SubType,CGE-Lamp5,Sorcs1,154
+CGE-Vip Ccser1,SubType,CGE-Vip,Ccser1,180
+CGE-Vip Clstn2,SubType,CGE-Vip,Clstn2,181
+CGE-Vip Fstl4,SubType,CGE-Vip,Fstl4,234
+CGE-Vip Galnt17,SubType,CGE-Vip,Galnt17,379
+CGE-Vip Grm8,SubType,CGE-Vip,Grm8,103
+CGE-Vip Ntng1,SubType,CGE-Vip,Ntng1,65
+CGE-Vip Ptprm,SubType,CGE-Vip,Ptprm,421
+CGE-Vip Robo1,SubType,CGE-Vip,Robo1,183
+Chd7 Kcnc2,SubType,Chd7,Kcnc2,79
+Chd7 Megf11,SubType,Chd7,Megf11,153
+Chd7 Trpc7,SubType,Chd7,Trpc7,154
+D1L-Fstl4 Cadm1,SubType,D1L-Fstl4,Cadm1,197
+D1L-Fstl4 Crim1,SubType,D1L-Fstl4,Crim1,386
+D1L-Fstl4 Grm3,SubType,D1L-Fstl4,Grm3,416
+D1L-Fstl4 Sipa1l2,SubType,D1L-Fstl4,Sipa1l2,660
+D1L-Fstl4 Trps1,SubType,D1L-Fstl4,Trps1,303
+D1L-PAL Flrt2,SubType,D1L-PAL,Flrt2,246
+D1L-PAL Plcxd3,SubType,D1L-PAL,Plcxd3,249
+Foxp2 Dchs2,SubType,Foxp2,Dchs2,704
+Foxp2 Homer2,SubType,Foxp2,Homer2,312
+Foxp2 Inpp4b,SubType,Foxp2,Inpp4b,431
+Foxp2 Trpc7,SubType,Foxp2,Trpc7,517
+LSX-Inh Cacna1i,SubType,LSX-Inh,Cacna1i,333
+LSX-Inh Dock10,SubType,LSX-Inh,Dock10,440
+LSX-Inh Enox1,SubType,LSX-Inh,Enox1,296
+LSX-Inh Foxp2,SubType,LSX-Inh,Foxp2,272
+LSX-Inh Lats2,SubType,LSX-Inh,Lats2,95
+LSX-Inh Nxph1,SubType,LSX-Inh,Nxph1,432
+LSX-Inh Zeb2,SubType,LSX-Inh,Zeb2,275
+MGE-Pvalb Cacna1i,SubType,MGE-Pvalb,Cacna1i,236
+MGE-Pvalb Cnih3,SubType,MGE-Pvalb,Cnih3,423
+MGE-Pvalb Entpd3,SubType,MGE-Pvalb,Entpd3,355
+MGE-Pvalb Gfra2,SubType,MGE-Pvalb,Gfra2,472
+MGE-Pvalb Ptprk,SubType,MGE-Pvalb,Ptprk,84
+MGE-Pvalb Sema5a,SubType,MGE-Pvalb,Sema5a,415
+MGE-Pvalb Thsd7a,SubType,MGE-Pvalb,Thsd7a,648
+MGE-Sst Bmper,SubType,MGE-Sst,Bmper,282
+MGE-Sst Chodl,SubType,MGE-Sst,Chodl,94
+MGE-Sst Dock4,SubType,MGE-Sst,Dock4,374
+MGE-Sst Etv1,SubType,MGE-Sst,Etv1,80
+MGE-Sst Frmd6,SubType,MGE-Sst,Frmd6,695
+MGE-Sst Kcnip4,SubType,MGE-Sst,Kcnip4,230
+MGE-Sst Ptpre,SubType,MGE-Sst,Ptpre,152
+MGE-Sst Rerg,SubType,MGE-Sst,Rerg,281
+MGE-Sst Rxra,SubType,MGE-Sst,Rxra,224
+MGE-Sst Ubtd1,SubType,MGE-Sst,Ubtd1,387
+MGE-Sst Unc5b,SubType,MGE-Sst,Unc5b,128
+MSN-D1 Hrh1,SubType,MSN-D1,Hrh1,1349
+MSN-D1 Khdrbs3,SubType,MSN-D1,Khdrbs3,541
+MSN-D1 Ntn1,SubType,MSN-D1,Ntn1,322
+MSN-D1 Plxnc1,SubType,MSN-D1,Plxnc1,926
+MSN-D2 Casz1,SubType,MSN-D2,Casz1,242
+MSN-D2 Col14a1,SubType,MSN-D2,Col14a1,598
+MSN-D2 Nrp2,SubType,MSN-D2,Nrp2,431
+MSN-D2 Slc24a2,SubType,MSN-D2,Slc24a2,2069
+OLF Gabbr2,SubType,OLF,Gabbr2,86
+OLF Kcnd3,SubType,OLF,Kcnd3,99
+OLF Mapk10,SubType,OLF,Mapk10,60
+OLF Pag1,SubType,OLF,Pag1,60
+OLF Trpc4,SubType,OLF,Trpc4,1017
+OLF Xkr6,SubType,OLF,Xkr6,46
+PAL-Inh Chat,SubType,PAL-Inh,Chat,197
+PAL-Inh Deptor,SubType,PAL-Inh,Deptor,84
+PAL-Inh Igdcc3,SubType,PAL-Inh,Igdcc3,407
+PAL-Inh Meis1,SubType,PAL-Inh,Meis1,246
+PAL-Inh Meis2,SubType,PAL-Inh,Meis2,1969
+PAL-Inh Onecut2,SubType,PAL-Inh,Onecut2,187
+PAL-Inh Ptprd,SubType,PAL-Inh,Ptprd,365
+PAL-Inh Rarb,SubType,PAL-Inh,Rarb,242
+PAL-Inh Tcf7l2,SubType,PAL-Inh,Tcf7l2,185
+PAL-Inh Tmem178,SubType,PAL-Inh,Tmem178,425
+Unc5c Unc5c,SubType,Unc5c,Unc5c,219
+ANP anp-dg,SubType,ANP,-,121
+ANP anp-olf-cnu,SubType,ANP,-,210
+ASC cortex-olf,SubType,ASC,-,406
+ASC mid,SubType,ASC,-,734
+ASC str-hpf,SubType,ASC,-,1075
+EC Abhd2,SubType,EC,Abhd2,83
+EC Sema3g,SubType,EC,Sema3g,12
+MGC mgc-all,SubType,MGC,-,853
+ODC odc-large,SubType,ODC,-,2216
+ODC odc-small,SubType,ODC,-,866
+OPC opc-large,SubType,OPC,-,688
+OPC opc-small,SubType,OPC,-,89
+PC pc-all,SubType,PC,-,170
+VLMC Col4a1,SubType,VLMC,Col4a1,175
+VLMC Mapk4,SubType,VLMC,Mapk4,244
+VLMC-Pia vlmc-pia-all,SubType,VLMC-Pia,-,225

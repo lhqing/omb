@@ -25,7 +25,7 @@ def search_to_dict(search):
         try:
             k, v = kv.split('=')
             search_dict[k] = v
-        except IndexError:
+        except (IndexError, ValueError):
             return None
     return search_dict
 
@@ -33,9 +33,10 @@ def search_to_dict(search):
 @app.callback(
     Output('page-content', 'children'),
     [Input('url', 'pathname')],
-    [State('url', 'search')]
+    [State('url', 'search'),
+     State('url', 'href')]
 )
-def display_page(pathname, search):
+def display_page(pathname, search, total_url):
     # print('url.pathname', pathname)
     # print('url.search', search)
 
@@ -58,7 +59,11 @@ def display_page(pathname, search):
         # validate key here:
         if 'ct' not in search_dict:
             return '404'
-        return create_cell_type_browser_layout(cell_type_name=search_dict['ct'])
+        layout = create_cell_type_browser_layout(cell_type_name=search_dict['ct'], total_url=total_url)
+        if layout is None:
+            return '404'
+        else:
+            return layout
     if pathname == '/':
         return test_app.layout
     else:

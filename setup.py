@@ -12,7 +12,7 @@ setup(
     long_description=open('README.md').read(),
     include_package_data=True,
     package_data={
-        '': ['*.msg', '*.h5', '*.csv', '*.css', '*.js', '*.png', '*.jpeg']
+        '': ['*.msg', '*.h5', '*.csv', '*.json', '*.lib', '*.css', '*.js', '*.png', '*.jpeg']
     },
     install_requires=[
         'dash',
@@ -21,7 +21,8 @@ setup(
         'tables',  # required by pandas to read hdf5
         'xarray',
         'msgpack',
-        'plotly'
+        'plotly',
+        'joblib'
     ],
 )
 

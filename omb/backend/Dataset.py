@@ -7,13 +7,16 @@ Dataset only has "getter" but not "setter", TODO let's think about front-end use
 """
 import json
 import pathlib
-import xarray as xr
-import pandas as pd
-import numpy as np
 from functools import lru_cache
+
+import numpy as np
+import pandas as pd
+import xarray as xr
+import joblib
 from .ingest import \
     DATASET_DIR, \
     COORDS_PATH, \
+    COORDS_CELL_TYPE_PATH, \
     CELL_ID_PATH, \
     VARIABLE_PATH, \
     PALETTE_PATH, \
@@ -21,7 +24,10 @@ from .ingest import \
     CELL_TYPE_PATH, \
     GENE_MCDS_DIR, \
     GENE_META_PATH, \
-    GENE_TO_MCDS_PATH
+    GENE_TO_MCDS_PATH, \
+    CLUSTER_DIST_PATH, \
+    TOTAL_PAIRWISE_DMG_PATH, \
+    PROTEIN_CODING_PAIRWISE_DMG_PATH
 from .utilities import *
 
 
@@ -49,6 +55,8 @@ class Dataset:
             coord_dict = {k.lstrip('/'): hdf[k] for k in hdf.keys()}
         self._coord_dict = coord_dict
         self.coord_names = list(coord_dict.keys())
+        # key is coord name, value is cell type list that occur in this coord
+        self.coord_cell_type_occur = joblib.load(COORDS_CELL_TYPE_PATH)
 
         # load cell ids
         self._cell_id_to_int = read_msgpack(self.dataset_dir / CELL_ID_PATH)
@@ -64,23 +72,32 @@ class Dataset:
         self.continuous_var = self._variables.columns[self._variables.dtypes != 'category'].tolist()
         self.n_continuous_var = len(self.continuous_var)
 
-        # load palette for Categorical var
-        self._palette = read_msgpack(self.dataset_dir / PALETTE_PATH)
-
         # separate table for region and cluster annotation
         # brain region table, index is Region Name
         self._brain_region_table = pd.read_csv(BRAIN_REGION_PATH, index_col=0)
         self.dissection_regions = self._brain_region_table.index.tolist()
         self.major_regions = list(self._brain_region_table['Major Region'].unique())
         self.sub_regions = list(self._brain_region_table['Sub-Region'].unique())
-
+        self.region_label_to_cemba_name = self._brain_region_table['Dissection Region ID'].to_dict()
+        self.cemba_name_to_region_label = {v: k for k, v in self.region_label_to_cemba_name.items()}
         self.dissection_region_to_major_region = self._brain_region_table['Major Region'].to_dict()
         self.dissection_region_to_sub_region = self._brain_region_table['Sub-Region'].to_dict()
 
         # cell type maps
         self._cell_type_table = pd.read_csv(CELL_TYPE_PATH, index_col=0)
-        self.sub_type_to_major_type = self._variables.set_index('SubType')['MajorType'].to_dict()
+        self.child_to_parent = self._cell_type_table.loc[
+            self._cell_type_table['Cluster Level'] == 'SubType', 'Parent'].to_dict()
+        self.child_to_parent.update(self._cell_type_table.loc[
+                                        self._cell_type_table['Cluster Level'] == 'MajorType', 'Parent'].to_dict())
         self.sub_type_to_cell_class = self._variables.set_index('SubType')['CellClass'].to_dict()
+        self.parent_to_children_list = self._cell_type_table.groupby('Parent').apply(
+            lambda i: i.index.tolist()).to_dict()
+        self.cluster_name_to_level = self._cell_type_table['Cluster Level'].to_dict()
+
+        # load palette for Categorical var
+        self._palette = read_msgpack(self.dataset_dir / PALETTE_PATH)
+        self._palette['RegionName'] = {self.cemba_name_to_region_label[k]: v
+                                       for k, v in self._palette['Region'].items()}
 
         # gene rate
         self._gene_meta_table = pd.read_csv(GENE_META_PATH, index_col=0)  # index is gene int gene_id is a column
@@ -91,6 +108,9 @@ class Dataset:
         with open(GENE_TO_MCDS_PATH) as f:
             gene_to_mcds_name = json.load(f)
             self._gene_to_mcds_path = {int(g): f'{GENE_MCDS_DIR}/{n}' for g, n in gene_to_mcds_name.items()}
+
+        # Pairwise DMG
+        self._cluster_dist = pd.read_hdf(CLUSTER_DIST_PATH)
 
         print('dataset.categorical_var', self.categorical_var)
         print('dataset.continuous_var', self.continuous_var)
@@ -147,3 +167,53 @@ class Dataset:
             total_dict[region] = [region]
         return total_dict
 
+    def query_dmg(self, hypo_clusters, hyper_clusters, cluster_level, top_n=100, protein_coding=True):
+        """
+        Given two set of clusters in the same level, order CH DMGs and return a gene meta table
+
+        Parameters
+        ----------
+        hypo_clusters
+            List of cluster names, need to be the same level
+        hyper_clusters
+            List of cluster names, need to be the same level
+        cluster_level
+            CellClass, Subtype or MajorType
+        top_n
+            Top N genes to return, the actual number <= top_n
+        protein_coding
+            If True, only return protein coding genes
+        Returns
+        -------
+        Ranked DMG metadata table
+        """
+
+        if protein_coding:
+            hdf_path = PROTEIN_CODING_PAIRWISE_DMG_PATH
+        else:
+            hdf_path = TOTAL_PAIRWISE_DMG_PATH
+
+        # rank gene based on all possible pair AUROC weighted by
+        records = {}
+        with pd.HDFStore(hdf_path) as hdf:
+            # this HDF contain pairwise DMG results
+            for hypo in hypo_clusters:
+                for hyper in hyper_clusters:
+                    # if hypo hyper from different cell class, then use the major type to calculate
+                    if cluster_level == 'SubType':
+                        hypo_cell_class = self.sub_type_to_cell_class[hypo]
+                        hyper_cell_class = self.sub_type_to_cell_class[hyper]
+                        if hypo_cell_class != hyper_cell_class:
+                            hypo = self.sub_type_to_major_type[hypo]
+                            hyper = self.sub_type_to_major_type[hyper]
+
+                    # weight on DMG for similar clusters (dist close to 1)
+                    this_dist = self._cluster_dist[(hypo, hyper)]  # this is symmetric
+                    records[(hypo, hyper)] = hdf[f'{hypo} vs {hyper}'] * this_dist  # AUROC * dist
+                    records[(hyper, hypo)] = hdf[f'{hyper} vs {hypo}'] * -this_dist
+        sorted_genes = pd.DataFrame(records).sum(axis=1).sort_values(ascending=False)
+        final_genes = sorted_genes[sorted_genes > 0][:top_n]  # size <= top_n
+
+        final_meta_table = self.gene_meta_table.loc[final_genes.index].reset_index(drop=True)
+        final_meta_table['Rank'] = (final_meta_table.index + 1).astype(int)
+        return final_meta_table

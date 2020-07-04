@@ -9,16 +9,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 from dash.dependencies import State
-from dash.exceptions import PreventUpdate
 
 from .default_values import *
+from .sunburst import create_sunburst
+from .utilities import n_cell_to_marker_size, get_split_plot_df
 from ..app import app
 
-CELL_TYPE_LEVELS = ['CellClass', 'MajorType', 'SubType']
-REGION_LEVELS = ['MajorRegion', 'SubRegion', 'Region']
 DEFAULT_BRAIN_REGION_IMG_TITLE = 'Click a cell on the left to display its dissection region'
 
-DOWN_SAMPLE = 10000
 cell_type_table = dataset.cell_type_table.reset_index()
 
 region_browser_app = dash.Dash(__name__)
@@ -203,56 +201,8 @@ def get_selected_cells_from_selected_brain_regions(data):
     return selected_cells
 
 
-def get_split_plot_df(coord_base, variable_name, selected_cells, hover_cols=('RegionName', 'SubType')):
-    hue_palette = dataset.get_palette(variable_name)
-    plot_df = dataset.get_coords(coord_base)
-
-    cell_region_names = dataset.get_variables('RegionName')
-
-    # some coords do not have all cell so selected index need to be updated
-    selected_cell_index = selected_cells & plot_df.index
-    if len(selected_cell_index) == 0:
-        raise PreventUpdate
-    unselected_cell_index = plot_df.index[~plot_df.index.isin(selected_cell_index)]
-
-    hover_cols = list(hover_cols)
-    # add hover data and color data
-    if variable_name not in hover_cols:
-        hover_cols.append(variable_name)
-    for col_name in hover_cols:
-        plot_df[col_name] = dataset.get_variables(col_name).astype(str)
-
-    # selected
-    selected_plot_df = plot_df.loc[selected_cell_index]
-    unselected_plot_df = plot_df.loc[unselected_cell_index]
-    return selected_plot_df, unselected_plot_df, hover_cols, hue_palette
-
-
-def n_cell_to_marker_size(n_cells):
-    if n_cells > 20000:
-        size = 1
-    elif n_cells > 10000:
-        size = 2
-    elif n_cells > 5000:
-        size = 3
-    elif n_cells > 1000:
-        size = 4
-    elif n_cells > 500:
-        size = 5
-    elif n_cells > 100:
-        size = 6
-    elif n_cells > 50:
-        size = 7
-    elif n_cells > 10:
-        size = 8
-    else:
-        size = 9
-    return size
-
-
 def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_name, hover_cols):
     # selected_plot_df is colored and hover_data
-
     fig = px.scatter(selected_plot_df,
                      x="x",
                      y="y",
@@ -377,8 +327,7 @@ def validate_coord_base_and_region_selection(coord_base, region_selected):
               [State('coord_selector', 'value'),
                State('cell_type_level_selector', 'value'),
                State('selected_brain_regions', 'data')])
-def update_cell_type_scatter(n_clicks, coord_base, cell_type_level, data):
-    print(n_clicks, 'update_cell_type_scatter')
+def update_cell_type_scatter(_, coord_base, cell_type_level, data):
     selected_cells = get_selected_cells_from_selected_brain_regions(data)
 
     selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
@@ -400,63 +349,6 @@ def update_cell_type_scatter(n_clicks, coord_base, cell_type_level, data):
         palette=palette,
         hover_name=cell_type_level,
         hover_cols=hover_cols)
-    return fig
-
-
-def create_sunburst(levels, selected_cells):
-    data = dataset.get_variables(levels).loc[selected_cells]
-    if 'SubType' in levels:
-        data = data[data['SubType'].apply(lambda c: 'Outlier' not in c)]
-
-    # prepare count table
-    count_df = data.groupby(levels).apply(lambda i: i.shape[0]).reset_index()
-    count_df.columns = levels + ['Cell Number']
-
-    # prepare total palette
-    total_palette = {}
-    for level in levels:
-        total_palette.update(dataset.get_palette(level))
-
-    # prepare sunburst
-    labels = []
-    parents = []
-    values = []
-    colors = []
-    for level, parent_level in zip(levels[::-1], levels[1::-1] + [None]):
-        this_level_sum = count_df.groupby(level)['Cell Number'].sum().to_dict()
-        this_level_sum = {k: v for k, v in this_level_sum.items() if v != 0}
-        if parent_level is not None:
-            this_parent_dict = count_df.set_index(level)[parent_level].to_dict()
-        else:
-            this_parent_dict = {label: '' for label in count_df[level].unique()}
-        for label in this_level_sum.keys():
-            labels.append(label)
-            parents.append(this_parent_dict[label])
-            values.append(this_level_sum[label])
-            try:
-                colors.append(total_palette[label])
-            except KeyError:
-                colors.append('#D3D3D3')
-
-    # Here is a sunburst example
-    # fig = go.Figure(go.Sunburst(
-    #     labels=["Eve", "Cain", "Seth", "Enos", "Noam", "Abel", "Awan", "Enoch", "Azura"],
-    #     parents=["", "Eve", "Eve", "Seth", "Seth", "Eve", "Eve", "Awan", "Eve"],
-    #     values=[65, 14, 12, 10, 2, 6, 6, 4, 4],
-    #     branchvalues="total",
-    # ))
-    fig = go.Figure(go.Sunburst(
-        labels=labels,
-        parents=parents,
-        values=values,
-        marker={'colors': colors},  # only in this way, I can precisely control the color
-        branchvalues="total",
-    ))
-    # Update layout for tight margin
-    # See https://plotly.com/python/creating-and-updating-figures/
-    fig.update_layout(margin=dict(t=15, l=0, r=0, b=15),
-                      plot_bgcolor='rgba(0,0,0,0)',
-                      paper_bgcolor='rgba(0,0,0,0)')
     return fig
 
 
