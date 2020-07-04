@@ -8,6 +8,7 @@ APP_ROOT_NAME = 'omb'
 
 app = dash.Dash(
     __name__,
+    suppress_callback_exceptions=True,
     meta_tags=[
         {
             "name": "viewport",
