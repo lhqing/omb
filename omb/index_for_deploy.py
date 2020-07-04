@@ -78,8 +78,10 @@ def get_header():
      State('url', 'href')]
 )
 def display_page(pathname, search, total_url):
-    # print('url.pathname', pathname)
-    # print('url.search', search)
+    print('url.pathname', pathname)
+    print('url.search', search)
+    print('url.href', total_url)
+    
     app_layout = get_header()
     if pathname is None:
         # init callback url is None
