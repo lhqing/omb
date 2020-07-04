@@ -77,17 +77,18 @@ def get_header():
      State('url', 'href')]
 )
 def display_page(pathname, search, total_url):
+    if pathname is None:
+        # init callback url is None
+        raise PreventUpdate
+
     print('url.pathname', pathname)
     print('url.search', search)
     print('url.href', total_url)
 
     pathname = pathname.split('/')[-1]
-
     app_layout = get_header()
-    if pathname is None:
-        # init callback url is None
-        raise PreventUpdate
-    elif pathname == '/home':
+
+    if pathname == '/home':
         pass
     elif pathname == '/brain_region':
         app_layout.children.append(region_browser_app.layout)
