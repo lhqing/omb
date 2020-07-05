@@ -48,3 +48,4 @@ def n_cell_to_marker_size(n_cells):
     else:
         size = 9
     return size
+

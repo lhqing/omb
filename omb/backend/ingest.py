@@ -28,11 +28,12 @@ Several main things
 - TODO
 
 """
+import pathlib
 import warnings
 
 import numpy as np
 import pandas as pd
-import pathlib
+
 import omb
 from .utilities import *
 
@@ -59,6 +60,10 @@ if not pathlib.Path(GENE_MCDS_DIR).exists():
 CLUSTER_DIST_PATH = f'{DATASET_DIR}/ClusterDistance.h5'
 TOTAL_PAIRWISE_DMG_PATH = f'{DATASET_DIR}/TotalPairwiseDMG.h5'
 PROTEIN_CODING_PAIRWISE_DMG_PATH = f'{DATASET_DIR}/ProteinCodingPairwiseDMG.h5'
+
+# AnnoJ
+ANNOJ_META_PATH = f'{DATASET_DIR}/AnnoJMeta.csv'
+ANNOJ_URL_BASE = 'http://neomorph.salk.edu/mouse_brain.php'
 """
 Default data types
 """

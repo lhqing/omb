@@ -1,0 +1,164 @@
+id,name,type,path,data,iconCls,height,scale,showControls,boxWidthMin,single,showWalks,class,policy
+1_1,Gene Models (mm15),ModelsTrack,Annotation Models,/aj2/models/mm15-simple.php,silk_bricks,100,1,1.0,,,,,
+1_2,Vista Enhancers,ModelsTrack,Annotation Models,/aj2/tracks/hchen/mm_chol/Annotation_Models/VistaEnhancers.php,silk_bricks,28,1,,1.0,1.0,1.0,,
+2_1,CA1_Ptprg,MethTrack,Excitatory Neuron/CA1,/aj2/tracks/hchen/mouse_brain_161/mC/CA1_Ptprg.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+2_2,CA1_Lingo2,MethTrack,Excitatory Neuron/CA1,/aj2/tracks/hchen/mouse_brain_161/mC/CA1_Lingo2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+2_3,CA1_Chrm3,MethTrack,Excitatory Neuron/CA1,/aj2/tracks/hchen/mouse_brain_161/mC/CA1_Chrm3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+2_4,CA1_Kif26a,MethTrack,Excitatory Neuron/CA1,/aj2/tracks/hchen/mouse_brain_161/mC/CA1_Kif26a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+2_5,CA1_Ak5,MethTrack,Excitatory Neuron/CA1,/aj2/tracks/hchen/mouse_brain_161/mC/CA1_Ak5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+3_1,CA3_Efnb2,MethTrack,Excitatory Neuron/CA3,/aj2/tracks/hchen/mouse_brain_161/mC/CA3_Efnb2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+3_2,CA3_Cadm2,MethTrack,Excitatory Neuron/CA3,/aj2/tracks/hchen/mouse_brain_161/mC/CA3_Cadm2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+4_1,CA3-St18_Tead1,MethTrack,Excitatory Neuron/CA3-St18,/aj2/tracks/hchen/mouse_brain_161/mC/CA3-St18_Tead1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+4_2,CA3-St18_Nuak1,MethTrack,Excitatory Neuron/CA3-St18,/aj2/tracks/hchen/mouse_brain_161/mC/CA3-St18_Nuak1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+4_3,CA3-St18_Epha5,MethTrack,Excitatory Neuron/CA3-St18,/aj2/tracks/hchen/mouse_brain_161/mC/CA3-St18_Epha5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+5_1,CLA_Nrp2,MethTrack,Excitatory Neuron/CLA,/aj2/tracks/hchen/mouse_brain_161/mC/CLA_Nrp2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+5_2,CLA_Cdh8,MethTrack,Excitatory Neuron/CLA,/aj2/tracks/hchen/mouse_brain_161/mC/CLA_Cdh8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+5_3,CLA_Bcl11a,MethTrack,Excitatory Neuron/CLA,/aj2/tracks/hchen/mouse_brain_161/mC/CLA_Bcl11a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+6_1,CT-L6_Megf9,MethTrack,Excitatory Neuron/CT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/CT-L6_Megf9.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+6_2,CT-L6_Map4,MethTrack,Excitatory Neuron/CT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/CT-L6_Map4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+6_3,CT-L6_Il1rap,MethTrack,Excitatory Neuron/CT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/CT-L6_Il1rap.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+6_4,CT-L6_Hcrtr2,MethTrack,Excitatory Neuron/CT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/CT-L6_Hcrtr2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+7_1,DG_dg-all,MethTrack,Excitatory Neuron/DG,/aj2/tracks/hchen/mouse_brain_161/mC/DG_dg-all.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+8_1,DG-po_Kctd8,MethTrack,Excitatory Neuron/DG-po,/aj2/tracks/hchen/mouse_brain_161/mC/DG-po_Kctd8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+8_2,DG-po_Bcl11a,MethTrack,Excitatory Neuron/DG-po,/aj2/tracks/hchen/mouse_brain_161/mC/DG-po_Bcl11a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+8_3,DG-po_Calb2,MethTrack,Excitatory Neuron/DG-po,/aj2/tracks/hchen/mouse_brain_161/mC/DG-po_Calb2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+9_1,EP_Tspan5,MethTrack,Excitatory Neuron/EP,/aj2/tracks/hchen/mouse_brain_161/mC/EP_Tspan5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+9_2,EP_Adcy8,MethTrack,Excitatory Neuron/EP,/aj2/tracks/hchen/mouse_brain_161/mC/EP_Adcy8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+9_3,EP_Rgs8,MethTrack,Excitatory Neuron/EP,/aj2/tracks/hchen/mouse_brain_161/mC/EP_Rgs8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+10_1,Gfra1_Gfra1,MethTrack,Excitatory Neuron/Gfra1,/aj2/tracks/hchen/mouse_brain_161/mC/Gfra1_Gfra1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+11_1,IG-CA2_Xpr1,MethTrack,Excitatory Neuron/IG-CA2,/aj2/tracks/hchen/mouse_brain_161/mC/IG-CA2_Xpr1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+11_2,IG-CA2_Chrm3,MethTrack,Excitatory Neuron/IG-CA2,/aj2/tracks/hchen/mouse_brain_161/mC/IG-CA2_Chrm3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+11_3,IG-CA2_Peak1,MethTrack,Excitatory Neuron/IG-CA2,/aj2/tracks/hchen/mouse_brain_161/mC/IG-CA2_Peak1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+12_1,IT-L23_Tenm2,MethTrack,Excitatory Neuron/IT-L23,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L23_Tenm2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+12_2,IT-L23_Cux1,MethTrack,Excitatory Neuron/IT-L23,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L23_Cux1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+12_3,IT-L23_Ptprt,MethTrack,Excitatory Neuron/IT-L23,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L23_Ptprt.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+12_4,IT-L23_Foxp1,MethTrack,Excitatory Neuron/IT-L23,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L23_Foxp1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+13_1,IT-L4_Shc3,MethTrack,Excitatory Neuron/IT-L4,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L4_Shc3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+13_2,IT-L4_Astn2,MethTrack,Excitatory Neuron/IT-L4,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L4_Astn2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+14_1,IT-L5_Etv1,MethTrack,Excitatory Neuron/IT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L5_Etv1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+14_2,IT-L5_Cdh8,MethTrack,Excitatory Neuron/IT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L5_Cdh8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+14_3,IT-L5_Grik3,MethTrack,Excitatory Neuron/IT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L5_Grik3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+15_1,IT-L6_Man1c1,MethTrack,Excitatory Neuron/IT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L6_Man1c1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+15_2,IT-L6_Cadps2,MethTrack,Excitatory Neuron/IT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L6_Cadps2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+15_3,IT-L6_Fstl4,MethTrack,Excitatory Neuron/IT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L6_Fstl4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+15_4,IT-L6_Oxr1,MethTrack,Excitatory Neuron/IT-L6,/aj2/tracks/hchen/mouse_brain_161/mC/IT-L6_Oxr1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+16_1,L6b_Pkhd1,MethTrack,Excitatory Neuron/L6b,/aj2/tracks/hchen/mouse_brain_161/mC/L6b_Pkhd1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+16_2,L6b_Nrp2,MethTrack,Excitatory Neuron/L6b,/aj2/tracks/hchen/mouse_brain_161/mC/L6b_Nrp2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+16_3,L6b_Kcnk2,MethTrack,Excitatory Neuron/L6b,/aj2/tracks/hchen/mouse_brain_161/mC/L6b_Kcnk2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+16_4,L6b_Adcy8,MethTrack,Excitatory Neuron/L6b,/aj2/tracks/hchen/mouse_brain_161/mC/L6b_Adcy8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_1,NP-L6_Boc,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Boc.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_2,NP-L6_Cntnap4,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Cntnap4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_3,NP-L6_Cntnap5a,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Cntnap5a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_4,NP-L6_Cyp7b1,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Cyp7b1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_5,NP-L6_Kcnab1,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Kcnab1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+17_6,NP-L6_Olfml2b,MethTrack,Excitatory Neuron/NP-L6,/aj2/tracks/hchen/mouse_brain_161/mC/NP-L6_Olfml2b.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_1,OLF-Exc_Bmpr1b,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Bmpr1b.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_2,OLF-Exc_Cdh9,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Cdh9.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_3,OLF-Exc_Cux2,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Cux2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_4,OLF-Exc_Lrrtm3,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Lrrtm3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_5,OLF-Exc_Pld5,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Pld5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_6,OLF-Exc_Rmst,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Rmst.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_7,OLF-Exc_Sgcd,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Sgcd.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+18_8,OLF-Exc_Unc13c,MethTrack,Excitatory Neuron/OLF-Exc,/aj2/tracks/hchen/mouse_brain_161/mC/OLF-Exc_Unc13c.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_1,PT-L5_Unc5b,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Unc5b.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_2,PT-L5_Tmtc2,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Tmtc2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_3,PT-L5_Tenm2,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Tenm2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_4,PT-L5_Ptprt,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Ptprt.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_5,PT-L5_Plcb4,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Plcb4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_6,PT-L5_Nectin1,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Nectin1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_7,PT-L5_Kcnh1,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Kcnh1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_8,PT-L5_Astn2,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Astn2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+19_9,PT-L5_Abca12,MethTrack,Excitatory Neuron/PT-L5,/aj2/tracks/hchen/mouse_brain_161/mC/PT-L5_Abca12.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+20_1,CGE-Lamp5_Grk5,MethTrack,Inhibitory Neuron/CGE-Lamp5,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Lamp5_Grk5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+20_2,CGE-Lamp5_Grid1,MethTrack,Inhibitory Neuron/CGE-Lamp5,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Lamp5_Grid1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+20_3,CGE-Lamp5_Nrxn3,MethTrack,Inhibitory Neuron/CGE-Lamp5,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Lamp5_Nrxn3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+20_4,CGE-Lamp5_Dock5,MethTrack,Inhibitory Neuron/CGE-Lamp5,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Lamp5_Dock5.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+20_5,CGE-Lamp5_Sorcs1,MethTrack,Inhibitory Neuron/CGE-Lamp5,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Lamp5_Sorcs1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_1,CGE-Vip_Robo1,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Robo1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_2,CGE-Vip_Ptprm,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Ptprm.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_3,CGE-Vip_Ccser1,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Ccser1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_4,CGE-Vip_Ntng1,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Ntng1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_5,CGE-Vip_Fstl4,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Fstl4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_6,CGE-Vip_Grm8,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Grm8.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_7,CGE-Vip_Galnt17,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Galnt17.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+21_8,CGE-Vip_Clstn2,MethTrack,Inhibitory Neuron/CGE-Vip,/aj2/tracks/hchen/mouse_brain_161/mC/CGE-Vip_Clstn2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+22_1,Chd7_Trpc7,MethTrack,Inhibitory Neuron/Chd7,/aj2/tracks/hchen/mouse_brain_161/mC/Chd7_Trpc7.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+22_2,Chd7_Kcnc2,MethTrack,Inhibitory Neuron/Chd7,/aj2/tracks/hchen/mouse_brain_161/mC/Chd7_Kcnc2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+22_3,Chd7_Megf11,MethTrack,Inhibitory Neuron/Chd7,/aj2/tracks/hchen/mouse_brain_161/mC/Chd7_Megf11.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+23_1,D1L-Fstl4_Trps1,MethTrack,Inhibitory Neuron/D1L-Fstl4,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-Fstl4_Trps1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+23_2,D1L-Fstl4_Sipa1l2,MethTrack,Inhibitory Neuron/D1L-Fstl4,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-Fstl4_Sipa1l2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+23_3,D1L-Fstl4_Grm3,MethTrack,Inhibitory Neuron/D1L-Fstl4,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-Fstl4_Grm3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+23_4,D1L-Fstl4_Crim1,MethTrack,Inhibitory Neuron/D1L-Fstl4,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-Fstl4_Crim1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+23_5,D1L-Fstl4_Cadm1,MethTrack,Inhibitory Neuron/D1L-Fstl4,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-Fstl4_Cadm1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+24_1,D1L-PAL_Plcxd3,MethTrack,Inhibitory Neuron/D1L-PAL,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-PAL_Plcxd3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+24_2,D1L-PAL_Flrt2,MethTrack,Inhibitory Neuron/D1L-PAL,/aj2/tracks/hchen/mouse_brain_161/mC/D1L-PAL_Flrt2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+25_1,Foxp2_Homer2,MethTrack,Inhibitory Neuron/Foxp2,/aj2/tracks/hchen/mouse_brain_161/mC/Foxp2_Homer2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+25_2,Foxp2_Inpp4b,MethTrack,Inhibitory Neuron/Foxp2,/aj2/tracks/hchen/mouse_brain_161/mC/Foxp2_Inpp4b.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+25_3,Foxp2_Dchs2,MethTrack,Inhibitory Neuron/Foxp2,/aj2/tracks/hchen/mouse_brain_161/mC/Foxp2_Dchs2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+25_4,Foxp2_Trpc7,MethTrack,Inhibitory Neuron/Foxp2,/aj2/tracks/hchen/mouse_brain_161/mC/Foxp2_Trpc7.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_1,LSX-Inh_Zeb2,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Zeb2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_2,LSX-Inh_Cacna1i,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Cacna1i.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_3,LSX-Inh_Dock10,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Dock10.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_4,LSX-Inh_Nxph1,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Nxph1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_5,LSX-Inh_Foxp2,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Foxp2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_6,LSX-Inh_Enox1,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Enox1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+26_7,LSX-Inh_Lats2,MethTrack,Inhibitory Neuron/LSX-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/LSX-Inh_Lats2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_1,MGE-Pvalb_Thsd7a,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Thsd7a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_2,MGE-Pvalb_Gfra2,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Gfra2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_3,MGE-Pvalb_Cnih3,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Cnih3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_4,MGE-Pvalb_Cacna1i,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Cacna1i.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_5,MGE-Pvalb_Ptprk,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Ptprk.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_6,MGE-Pvalb_Sema5a,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Sema5a.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_7,MGE-Pvalb_Entpd3,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Pvalb_Entpd3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+27_8,MGE-Sst_Unc5b,MethTrack,Inhibitory Neuron/MGE-Pvalb,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Unc5b.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_1,MGE-Sst_Etv1,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Etv1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_2,MGE-Sst_Kcnip4,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Kcnip4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_3,MGE-Sst_Frmd6,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Frmd6.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_4,MGE-Sst_Chodl,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Chodl.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_5,MGE-Sst_Bmper,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Bmper.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_6,MGE-Sst_Ptpre,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Ptpre.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_7,MGE-Sst_Dock4,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Dock4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_8,MGE-Sst_Rerg,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Rerg.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_9,MGE-Sst_Ubtd1,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Ubtd1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+28_10,MGE-Sst_Rxra,MethTrack,Inhibitory Neuron/MGE-Sst,/aj2/tracks/hchen/mouse_brain_161/mC/MGE-Sst_Rxra.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+29_1,Unc5c_Unc5c,MethTrack,Inhibitory Neuron/Unc5c,/aj2/tracks/hchen/mouse_brain_161/mC/Unc5c_Unc5c.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+30_1,MSN-D2_Casz1,MethTrack,Inhibitory Neuron/MSN-D2,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D2_Casz1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+30_2,MSN-D2_Col14a1,MethTrack,Inhibitory Neuron/MSN-D2,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D2_Col14a1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+30_3,MSN-D2_Nrp2,MethTrack,Inhibitory Neuron/MSN-D2,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D2_Nrp2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+30_4,MSN-D2_Slc24a2,MethTrack,Inhibitory Neuron/MSN-D2,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D2_Slc24a2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+31_1,MSN-D1_Hrh1,MethTrack,Inhibitory Neuron/MSN-D1,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D1_Hrh1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+31_2,MSN-D1_Khdrbs3,MethTrack,Inhibitory Neuron/MSN-D1,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D1_Khdrbs3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+31_3,MSN-D1_Ntn1,MethTrack,Inhibitory Neuron/MSN-D1,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D1_Ntn1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+31_4,MSN-D1_Plxnc1,MethTrack,Inhibitory Neuron/MSN-D1,/aj2/tracks/hchen/mouse_brain_161/mC/MSN-D1_Plxnc1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_1,PAL-Inh_Tmem178,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Tmem178.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_2,PAL-Inh_Rarb,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Rarb.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_3,PAL-Inh_Tcf7l2,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Tcf7l2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_4,PAL-Inh_Meis2,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Meis2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_5,PAL-Inh_Igdcc3,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Igdcc3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_6,PAL-Inh_Onecut2,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Onecut2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_7,PAL-Inh_Ptprd,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Ptprd.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_8,PAL-Inh_Meis1,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Meis1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_9,PAL-Inh_Deptor,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Deptor.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+32_10,PAL-Inh_Chat,MethTrack,Inhibitory Neuron/PAL-Inh,/aj2/tracks/hchen/mouse_brain_161/mC/PAL-Inh_Chat.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_1,OLF_Gabbr2,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Gabbr2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_2,OLF_Kcnd3,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Kcnd3.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_3,OLF_Trpc4,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Trpc4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_4,OLF_Xkr6,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Xkr6.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_5,OLF_Pag1,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Pag1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+33_6,OLF_Mapk10,MethTrack,Inhibitory Neuron/OLF,/aj2/tracks/hchen/mouse_brain_161/mC/OLF_Mapk10.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+34_1,ANP_anp-olf-cnu,MethTrack,Non-neuron/ANP,/aj2/tracks/hchen/mouse_brain_161/mC/ANP_anp-olf-cnu.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+34_2,ANP_anp-dg,MethTrack,Non-neuron/ANP,/aj2/tracks/hchen/mouse_brain_161/mC/ANP_anp-dg.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+35_1,ASC_str-hpf,MethTrack,Non-neuron/ASC,/aj2/tracks/hchen/mouse_brain_161/mC/ASC_str-hpf.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+35_2,ASC_mid,MethTrack,Non-neuron/ASC,/aj2/tracks/hchen/mouse_brain_161/mC/ASC_mid.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+35_3,ASC_cortex-olf,MethTrack,Non-neuron/ASC,/aj2/tracks/hchen/mouse_brain_161/mC/ASC_cortex-olf.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+36_1,EC_Sema3g,MethTrack,Non-neuron/EC,/aj2/tracks/hchen/mouse_brain_161/mC/EC_Sema3g.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+36_2,EC_Abhd2,MethTrack,Non-neuron/EC,/aj2/tracks/hchen/mouse_brain_161/mC/EC_Abhd2.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+37_1,MGC_mgc-all,MethTrack,Non-neuron/MGC,/aj2/tracks/hchen/mouse_brain_161/mC/MGC_mgc-all.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+38_1,OPC_opc-large,MethTrack,Non-neuron/OPC,/aj2/tracks/hchen/mouse_brain_161/mC/OPC_opc-large.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+38_2,OPC_opc-small,MethTrack,Non-neuron/OPC,/aj2/tracks/hchen/mouse_brain_161/mC/OPC_opc-small.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+39_1,ODC_odc-large,MethTrack,Non-neuron/ODC,/aj2/tracks/hchen/mouse_brain_161/mC/ODC_odc-large.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+39_2,ODC_odc-small,MethTrack,Non-neuron/ODC,/aj2/tracks/hchen/mouse_brain_161/mC/ODC_odc-small.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+40_1,PC_pc-all,MethTrack,Non-neuron/PC,/aj2/tracks/hchen/mouse_brain_161/mC/PC_pc-all.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+41_1,VLMC_Mapk4,MethTrack,Non-neuron/VLMC,/aj2/tracks/hchen/mouse_brain_161/mC/VLMC_Mapk4.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+41_2,VLMC-Pia_vlmc-pia-all,MethTrack,Non-neuron/VLMC,/aj2/tracks/hchen/mouse_brain_161/mC/VLMC-Pia_vlmc-pia-all.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10
+41_3,VLMC_Col4a1,MethTrack,Non-neuron/VLMC,/aj2/tracks/hchen/mouse_brain_161/mC/VLMC_Col4a1.php,salk_meth,40,1,,,,,CG CH -coverage,1:1:10

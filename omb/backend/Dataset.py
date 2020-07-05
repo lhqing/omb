@@ -9,10 +9,11 @@ import json
 import pathlib
 from functools import lru_cache
 
+import joblib
 import numpy as np
 import pandas as pd
 import xarray as xr
-import joblib
+
 from .ingest import \
     DATASET_DIR, \
     COORDS_PATH, \
@@ -27,7 +28,9 @@ from .ingest import \
     GENE_TO_MCDS_PATH, \
     CLUSTER_DIST_PATH, \
     TOTAL_PAIRWISE_DMG_PATH, \
-    PROTEIN_CODING_PAIRWISE_DMG_PATH
+    PROTEIN_CODING_PAIRWISE_DMG_PATH, \
+    ANNOJ_META_PATH, \
+    ANNOJ_URL_BASE
 from .utilities import *
 
 
@@ -112,8 +115,14 @@ class Dataset:
         # Pairwise DMG
         self._cluster_dist = pd.read_hdf(CLUSTER_DIST_PATH)
 
-        print('dataset.categorical_var', self.categorical_var)
-        print('dataset.continuous_var', self.continuous_var)
+        # AnnoJ metadata
+        self._annoj_track_meta = pd.read_csv(ANNOJ_META_PATH, index_col=0)
+        self._annoj_gene_track_id = self._annoj_track_meta.loc['Gene', 'id']
+        self._subtype_to_annoj_track_id = self._annoj_track_meta[self._annoj_track_meta['type'] == 'MethTrack'][
+            'id'].to_dict()
+
+        # print('dataset.categorical_var', self.categorical_var)
+        # print('dataset.continuous_var', self.continuous_var)
 
         return
 
@@ -221,3 +230,71 @@ class Dataset:
         final_meta_table['gene_size'] = final_meta_table['end'] - final_meta_table['start']
 
         return final_meta_table
+
+    def cluster_name_to_subtype(self, cluster_name):
+        total_children = []
+        if self.cluster_name_to_level[cluster_name] == 'SubType':
+            total_children.append(cluster_name)
+        else:
+            for child in self.parent_to_children_list[cluster_name]:
+                total_children += self.cluster_name_to_subtype(child)
+        return total_children
+
+    def annoj_url(self, active_clusters, chrom, start, end, track_type='CG', mc_track_height=50,
+                  hide_sidebar=True, hide_toolbar=False, cell_type_color=True):
+        # chrom, annoj removed chr...
+        chrom = chrom.strip('chr')
+
+        # active_clusters to track ids
+        active_subtypes = []
+        for cluster in active_clusters:
+            active_subtypes += self.cluster_name_to_subtype(cluster)
+        active_track_ids = [self._subtype_to_annoj_track_id[c] for c in active_subtypes]
+
+        # track_type to mc_track_class
+        if track_type.upper() == 'CG':
+            mc_track_class = 'CG -CH -coverage'
+        elif track_type.upper() == 'CH':
+            mc_track_class = '-CG CH -coverage'
+        elif track_type.lower():
+            mc_track_class = '-CG -CH coverage'
+        else:
+            raise ValueError(f'Unknown track type: {track_type}')
+
+        # color per track?
+        if cell_type_color:
+            track_palette = {self._subtype_to_annoj_track_id[k]: v[1:]  # remove # in hex
+                             for k, v in self._palette['SubType'].items()
+                             if k in active_subtypes}
+        else:
+            track_palette = None
+
+        # location
+        location = f'location={chrom}:{start}-{end}'
+
+        # settings
+        if hide_sidebar or hide_toolbar:
+            accordion = 'accordion:"hide"' if hide_sidebar else ''
+            toolbar = 'toolbar:"hide"' if hide_toolbar else ''
+            _str = ','.join([accordion, toolbar])
+            settings = 'settings={{{content}}}'.format(content=_str)
+        else:
+            settings = ''
+
+        # config
+        # All mC tracks
+        all_track_str = '{{type:"MethTrack",height:{mc_track_height},class:"{mc_track_class}"}}'.format(
+            mc_track_height=mc_track_height, mc_track_class=mc_track_class)
+        total_items = [all_track_str]
+        # specific track color
+        if track_palette is not None:
+            for track_id, color in track_palette.items():
+                track_str = '{id:"' + track_id + '",color:{' + track_type + ':"' + color + '",rColor:1}}'
+                total_items.append(track_str)
+        config = f'config=[{",".join(total_items)}]'
+
+        # active
+        active = f"""active=[{",".join([f'"{t}"' for t in active_track_ids])}]"""
+
+        total_url = f'{ANNOJ_URL_BASE}?{location}&{active}&{config}&{settings}'
+        return total_url
