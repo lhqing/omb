@@ -86,6 +86,9 @@ def display_page(pathname, search, total_url):
             app_layout.children.append(layout)
     elif pathname == '/test':
         app_layout.children.append(test_app.layout)
+    elif pathname == '/gene':
+        layout = create_gene_browser_layout()
+        app_layout.children.append(layout)
     else:
         return '404'
     return app_layout

@@ -642,5 +642,9 @@ def update_gene_selection(active_cell, table_data):
         raise PreventUpdate
 
     gene_name = table_data[active_cell['row']][active_cell['column_id']]
-    gene_int = dataset.gene_name_to_int[gene_name]
+    try:
+        gene_int = dataset.gene_name_to_int[gene_name]
+    except KeyError:
+        raise PreventUpdate
+
     return gene_int
