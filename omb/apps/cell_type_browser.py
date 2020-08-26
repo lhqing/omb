@@ -156,8 +156,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 html.Div(children=[
                     html.H6('Dissection Region'),
                     dcc.Graph(id='region_bar_plot',
-                              config={'displayModeBar': False},
-                              style={'overflowY': 'scroll', 'height': 450})
+                              config={'displayModeBar': False})
                 ], className='pretty_container two columns'),
                 html.Div(children=[
                     html.H6('Brain Region Composition'),
@@ -393,27 +392,25 @@ def update_metric_violin(cell_type_name):
     [Input('cell_type_name', 'children')]
 )
 def update_region_bar_plot(cell_type_name):
-    height_scale = 15
     cell_ids = _cell_type_name_to_cell_ids(cell_type_name)
     cell_disc_region = dataset.get_variables('RegionName').loc[cell_ids]
     disc_region_portion = cell_disc_region.astype(str).value_counts()
     disc_region_portion = disc_region_portion.reset_index()
     disc_region_portion.columns = ['Region Name', 'Count']
-    disc_region_portion['Portion'] = disc_region_portion['Count'] / cell_ids.size
+    disc_region_portion['Proportion'] = disc_region_portion['Count'] / cell_ids.size
     disc_region_portion['Color'] = disc_region_portion['Region Name'].map(dataset.region_label_to_cemba_name).map(
         dataset.get_palette('Region'))
     fig = px.bar(disc_region_portion,
-                 x='Portion',
+                 x='Proportion',
                  y='Region Name',
                  hover_name='Region Name',
-                 hover_data=['Count', 'Portion'],
+                 hover_data=['Count', 'Proportion'],
                  color='Region Name',
                  color_discrete_sequence=disc_region_portion['Color'].tolist(),
                  orientation='h')
     fig.update_layout(showlegend=False,
                       yaxis=dict(dtick=1),
-                      height=disc_region_portion.shape[0] * height_scale,  # show all label
-                      margin=dict(t=30, l=0, r=0, b=15),
+                      margin=dict(t=15, l=0, r=0, b=15),
                       plot_bgcolor='rgba(0,0,0,0)',
                       paper_bgcolor='rgba(0,0,0,0)')
     fig.update_traces(
@@ -573,7 +570,7 @@ def update_scatter_plot_2(coord_and_cell_type_level, gene_int, mc_type, hue_norm
     selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols = _prepare_for_both_scatter(
         coord_and_cell_type_level, cell_type_name)
 
-    gene_data = dataset.get_gene_rate(gene=gene_int, mc_type=mc_type)
+    gene_data = dataset.get_gene_rate(gene_int=gene_int, mc_type=mc_type)
     selected_plot_df[gene_name] = gene_data.reindex(selected_plot_df.index)
     unselected_plot_df[gene_name] = gene_data.reindex(unselected_plot_df.index)
 
