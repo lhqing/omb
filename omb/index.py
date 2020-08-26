@@ -40,6 +40,11 @@ def get_header():
                     className="tab first",
                 ),
                 dcc.Link(
+                    "Gene Browser",
+                    href="/gene?gene=Cux2",
+                    className="tab",
+                ),
+                dcc.Link(
                     "Brain Region Browser",
                     href="/brain_region",
                     className="tab",
@@ -65,15 +70,16 @@ def display_page(pathname, search, total_url):
     # print('url.pathname', pathname)
     # print('url.search', search)
     app_layout = get_header()
+    search_dict = search_to_dict(search)
+
     if pathname is None:
         # init callback url is None
         raise PreventUpdate
-    elif pathname == '/home':
+    elif (pathname == '/home') or (pathname == '/'):
         pass
     elif pathname == '/brain_region':
         app_layout.children.append(region_browser_app.layout)
     elif pathname == '/cell_type':
-        search_dict = search_to_dict(search)
         if search_dict is None:
             return '404'
         # validate key here:
@@ -84,11 +90,18 @@ def display_page(pathname, search, total_url):
             return '404'
         else:
             app_layout.children.append(layout)
+    elif pathname == '/gene':
+        if search_dict is None:
+            return '404'
+        # validate key here:
+        if 'gene' not in search_dict:
+            return '404'
+        layout = create_gene_browser_layout(gene=search_dict['gene'])
+        if layout is None:
+            return '404'
+        app_layout.children.append(layout)
     elif pathname == '/test':
         app_layout.children.append(test_app.layout)
-    elif pathname == '/gene':
-        layout = create_gene_browser_layout()
-        app_layout.children.append(layout)
     else:
         return '404'
     return app_layout

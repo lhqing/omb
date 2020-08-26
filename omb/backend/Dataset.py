@@ -103,7 +103,7 @@ class Dataset:
                                        for k, v in self._palette['Region'].items()}
 
         # gene rate
-        self._gene_meta_table = pd.read_csv(GENE_META_PATH, index_col=0)  # index is gene int gene_id is a column
+        self._gene_meta_table = pd.read_hdf(GENE_META_PATH)  # index is gene int gene_id is a column
         self.gene_id_to_int = {v: k for k, v in self._gene_meta_table['gene_id'].items()}
         # TODO gene name is not unique
         self.gene_name_to_int = {v: k for k, v in self._gene_meta_table['gene_name'].items()}
@@ -120,10 +120,6 @@ class Dataset:
         self._annoj_gene_track_id = self._annoj_track_meta.loc['Gene', 'id']
         self._subtype_to_annoj_track_id = self._annoj_track_meta[self._annoj_track_meta['type'] == 'MethTrack'][
             'id'].to_dict()
-
-        # print('dataset.categorical_var', self.categorical_var)
-        # print('dataset.continuous_var', self.continuous_var)
-
         return
 
     def get_coords(self, name):
@@ -136,13 +132,7 @@ class Dataset:
         return self._variables[name].copy()
 
     @lru_cache(maxsize=256)
-    def get_gene_rate(self, gene, mc_type='CHN'):
-        if isinstance(gene, int):
-            gene_int = gene
-        elif gene.startswith('ENSMUSG'):
-            gene_int = self._gene_id_to_int[gene]
-        else:
-            gene_int = self._gene_name_to_int[gene]
+    def get_gene_rate(self, gene_int, mc_type='CHN'):
         mcds_path = self._gene_to_mcds_path[gene_int]
 
         # it took 250ms to get a gene value series for 100k cell
@@ -218,8 +208,15 @@ class Dataset:
 
                     # weight on DMG for similar clusters (dist close to 1)
                     this_dist = self._cluster_dist[(hypo, hyper)]  # this is symmetric
-                    records[(hypo, hyper)] = hdf[f'{hypo} vs {hyper}'] * this_dist  # AUROC * dist
-                    records[(hyper, hypo)] = hdf[f'{hyper} vs {hypo}'] * -this_dist
+                    try:
+                        records[(hypo, hyper)] = hdf[f'{hypo} vs {hyper}'] * this_dist  # AUROC * dist
+                    except KeyError:
+                        pass
+                    try:
+                        records[(hyper, hypo)] = hdf[f'{hyper} vs {hypo}'] * -this_dist
+                    except KeyError:
+                        pass
+
         sorted_genes = pd.DataFrame(records).sum(axis=1).sort_values(ascending=False)
         final_genes = sorted_genes[sorted_genes > 0][:top_n]  # size <= top_n
 
@@ -242,6 +239,25 @@ class Dataset:
 
     def annoj_url(self, active_clusters, chrom, start, end, track_type='CG', mc_track_height=50,
                   hide_sidebar=True, hide_toolbar=False, cell_type_color=True):
+        """
+
+        Parameters
+        ----------
+        active_clusters
+        chrom
+        start
+        end
+        track_type
+            CH, CG or cov
+        mc_track_height
+        hide_sidebar
+        hide_toolbar
+        cell_type_color
+
+        Returns
+        -------
+
+        """
         # chrom, annoj removed chr...
         chrom = chrom.strip('chr')
 
@@ -256,7 +272,7 @@ class Dataset:
             mc_track_class = 'CG -CH -coverage'
         elif track_type.upper() == 'CH':
             mc_track_class = '-CG CH -coverage'
-        elif track_type.lower():
+        elif track_type.lower() == 'cov':
             mc_track_class = '-CG -CH coverage'
         else:
             raise ValueError(f'Unknown track type: {track_type}')

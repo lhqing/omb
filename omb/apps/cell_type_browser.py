@@ -132,6 +132,14 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
     dmg_level, hypo_clusters, hyper_clusters = _determine_default_dmg_comparison(cell_type_name)
     cell_type_markdown = _prepare_cell_type_markdown(cell_type_name, total_url)
 
+    # default gene mC type
+    if (cell_type_name == 'NonN') or (
+            (cluster_level == 'SubType') and (dataset.child_to_parent[cell_type_name] == 'NonN')) or (
+            (cluster_level == 'SubType') and (dataset.sub_type_to_cell_class[cell_type_name] == 'NonN')):
+        default_mc_type = 'CGN'
+    else:
+        default_mc_type = 'CHN'
+
     layout = html.Div(children=[
         # first row is cell_type_card and region_compo_sunburst
         html.Div(
@@ -186,7 +194,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                         dcc.Dropdown(
                             options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
                                      {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
-                            value='CHN',
+                            value=default_mc_type,
                             clearable=False,
                             id='mc_type_dropdown',
                             className="dcc_control"),

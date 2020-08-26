@@ -48,18 +48,22 @@ VARIABLE_PATH = f'{DATASET_DIR}/Variables.h5'
 PALETTE_PATH = f'{DATASET_DIR}/Palette.msg'
 BRAIN_REGION_PATH = f'{DATASET_DIR}/BrainRegion.csv'
 CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
-GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.csv'
+GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.h5'
 GENE_TO_MCDS_PATH = f'{DATASET_DIR}/GeneToMCDSName.json'  # int to name of the MCDS chunk that contain this gene
-GENE_MCDS_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
 
+GENE_MCDS_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
 if not pathlib.Path(GENE_MCDS_DIR).exists():
     # neomorph location
     GENE_MCDS_DIR = '/home/hanliu/gene_rate_for_app/CEMBA_RS1_45Region'
 
 # pairwise DMG
-CLUSTER_DIST_PATH = f'{DATASET_DIR}/ClusterDistance.h5'
-TOTAL_PAIRWISE_DMG_PATH = f'{DATASET_DIR}/TotalPairwiseDMG.h5'
-PROTEIN_CODING_PAIRWISE_DMG_PATH = f'{DATASET_DIR}/ProteinCodingPairwiseDMG.h5'
+PAIRWISE_DMG_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/pairwise_dmg'
+if not pathlib.Path(GENE_MCDS_DIR).exists():
+    # neomorph location
+    PAIRWISE_DMG_DIR = '/home/hanliu/gene_rate_for_app/pairwise_dmg'
+CLUSTER_DIST_PATH = f'{PAIRWISE_DMG_DIR}/ClusterDistance.h5'
+TOTAL_PAIRWISE_DMG_PATH = f'{PAIRWISE_DMG_DIR}/TotalPairwiseDMG.h5'
+PROTEIN_CODING_PAIRWISE_DMG_PATH = f'{PAIRWISE_DMG_DIR}/ProteinCodingPairwiseDMG.h5'
 
 # AnnoJ
 ANNOJ_META_PATH = f'{DATASET_DIR}/AnnoJMeta.csv'
