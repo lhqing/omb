@@ -90,16 +90,21 @@ def get_gene_info_markdown(gene_int):
 
 
 def standardize_gene(gene):
-    if gene in dataset.gene_name_to_int:
-        gene_name = gene
-        gene_int = dataset.gene_name_to_int[gene_name]
+    try:
+        gene_int = int(gene)
         gene_id = GENE_META_DF.loc[gene_int, 'gene_id']
-    elif gene in dataset.gene_id_to_int:
-        gene_id = gene
-        gene_int = dataset.gene_id_to_int[gene_id]
         gene_name = GENE_META_DF.loc[gene_int, 'gene_name']
-    else:
-        return None, None, None
+    except ValueError:
+        if gene in dataset.gene_name_to_int:
+            gene_name = gene
+            gene_int = dataset.gene_name_to_int[gene_name]
+            gene_id = GENE_META_DF.loc[gene_int, 'gene_id']
+        elif gene in dataset.gene_id_to_int:
+            gene_id = gene
+            gene_int = dataset.gene_id_to_int[gene_id]
+            gene_name = GENE_META_DF.loc[gene_int, 'gene_name']
+        else:
+            return None, None, None
     return gene_int, gene_id, gene_name
 
 
@@ -181,7 +186,7 @@ def create_gene_browser_layout(gene):
                     value='L1UMAP',
                     clearable=False
                 ),
-                html.P('Metadata'),
+                html.P('Cell Metadata'),
                 dcc.Dropdown(
                     options=[{'label': name, 'value': name}
                              for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
@@ -227,7 +232,7 @@ def create_gene_browser_layout(gene):
                 children=[
                     dcc.Tab(
                         value='control-tab',
-                        label='Genome Browser Control',
+                        label='I. Genome Browser Control',
                         children=[
                             html.H5('View the Gene in the AnnoJ Browser'),
                             html.P('Control the layout and active tracks below, '
@@ -272,7 +277,7 @@ def create_gene_browser_layout(gene):
                         ]),
                     dcc.Tab(
                         value='browser-tab',
-                        label='Genome Browser',
+                        label='II. Genome Browser',
                         children=html.Div([
                             # url saved in this hidden P,
                             # only update when click the update button on control tab

@@ -76,7 +76,7 @@ def display_page(pathname, search, total_url):
         # init callback url is None
         raise PreventUpdate
     elif (pathname == '/home') or (pathname == '/'):
-        pass
+        app_layout.children.append(home_layout)
     elif pathname == '/brain_region':
         app_layout.children.append(region_browser_app.layout)
     elif pathname == '/cell_type':

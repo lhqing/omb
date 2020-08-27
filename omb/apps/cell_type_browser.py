@@ -185,7 +185,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                                 className="control_label"),
                         dcc.Dropdown(
                             clearable=False,
-                            value=15397,  # TODO change a best default for each cluster
+                            value=15397,  # This is Cux2, TODO change a best default for each cluster
                             id='dynamic_gene_dropdown',
                             className="dcc_control"),
                         html.H6('Color By',
