@@ -150,6 +150,8 @@ body {
     border-top-style: none;
     border-right-style: none;
     padding: 5px 10px;
+    color: #333333;
+    text-decoration: none;
 }
 
 .tab.first {
@@ -157,9 +159,13 @@ body {
 }
 
 .all-tabs {
-    text-align: center;
-    font-size: 13px;
-    margin-top: 10px;
+    text-align: left;
+    font-size: 1.2em;
+    margin-top: 0px;
+    margin-bottom: 30px;
+    background-color: #FFFFFF;
+    overflow: hidden;
+    padding: 30px 26px;
 }
 
 @media only screen and (max-width: 550px) {

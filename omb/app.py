@@ -16,5 +16,5 @@ app = dash.Dash(
         }
     ]
 )
-
+app.title = 'mC Browser'
 server = app.server

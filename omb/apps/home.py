@@ -41,18 +41,12 @@ REFERENCE_MARKDOWN = """
 ABOUT_MARKDOWN = """
 We are continually adding new functionality and improving documentations. 
 Please consider [post an issue](https://github.com/lhqing/omb/issues/new) on github if you have 
-questions/suggestions/requirements about the browser or the dataset.
+questions / suggestions / requirements about the browser or the dataset.
 
 ------
 
-This browser is made by [Hanqing Liu](https://github.com/lhqing) with input from collaborators 
-in [the Ecker Lab](https://ecker.salk.edu/) and the Center for Epigenomics of the Mouse Brain Atlas. 
-Huaming Chen helped establish the AnnoJ browser for cell-type level tracks. 
-
-------
-
+This browser is made by [plotly-dash](https://dash.plotly.com/). 
 See the source code of this browser on [github](https://github.com/lhqing/omb), 
-powered by [plotly-dash](https://dash.plotly.com/)
 """
 
 layout = html.Div(children=[
