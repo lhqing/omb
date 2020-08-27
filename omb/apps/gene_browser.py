@@ -169,8 +169,9 @@ def create_gene_browser_layout(gene):
                         clearable=False
                     ),
                 ], className='row'),
-                dcc.Graph(id='gene_violin_plot',
-                          config={'displayModeBar': False})
+                dcc.Loading(children=[
+                    dcc.Graph(id='gene_violin_plot',
+                              config={'displayModeBar': False})], type='circle')
             ], className='pretty_container eight columns')
         ], className='row container-display'),
 
@@ -216,11 +217,15 @@ def create_gene_browser_layout(gene):
             ], className='pretty_container three columns'),
             html.Div(children=[
                 html.H6('Cell Metadata Scatter Plot'),
-                dcc.Graph(id='cell-meta-scatter-plot'),
+                dcc.Loading(children=[
+                    dcc.Graph(id='cell-meta-scatter-plot')],
+                    type="circle"),
             ], className='pretty_container five columns'),
             html.Div(children=[
                 html.H6('Gene mC Rate Scatter Plot'),
-                dcc.Graph(id='gene-scatter-plot'),
+                dcc.Loading(children=[
+                    dcc.Graph(id='gene-scatter-plot')],
+                    type="circle"),
             ], className='pretty_container five columns'),
         ], className='row container-display'),
 
@@ -385,25 +390,18 @@ def update_iframe(n_clicks, url):
 
 
 @app.callback(
-    [Output('cell-meta-scatter-plot', 'figure'),
-     Output('gene-scatter-plot', 'figure')],
+    Output('cell-meta-scatter-plot', 'figure'),
     [Input('cell-meta-dropdown', 'value'),
-     Input('coords-dropdown', 'value'),
-     Input('gene_int', 'children'),
-     Input('mc-type-dropdown', 'value')],
-    [State('gene_name', 'children')]
+     Input('coords-dropdown', 'value')]
 )
-def get_scatter_fig(var_name, coord_name, gene_int, mc_type, gene_name):
+def get_scatter_fig(var_name, coord_name):
     data = dataset.get_coords(coord_name)
     data[var_name] = dataset.get_variables(var_name)
     if var_name != 'SubType':
         data['SubType'] = dataset.get_variables('SubType')
 
-    gene_col_name = f'{gene_name} m{mc_type[:-1]}'
-    data[gene_col_name] = dataset.get_gene_rate(gene_int, mc_type)
-
     sample = 10000
-    _data = data if data.shape[0] <= sample else data.sample(sample)
+    _data = data if data.shape[0] <= sample else data.sample(sample, random_state=0)
 
     # cell meta figure
     if var_name in CONTINUOUS_VAR:
@@ -452,6 +450,26 @@ def get_scatter_fig(var_name, coord_name, gene_int, mc_type, gene_name):
                                 plot_bgcolor='rgba(0,0,0,0)',
                                 paper_bgcolor='rgba(0,0,0,0)')
 
+    return fig_cell_meta
+
+
+@app.callback(
+    Output('gene-scatter-plot', 'figure'),
+    [Input('coords-dropdown', 'value'),
+     Input('gene_int', 'children'),
+     Input('mc-type-dropdown', 'value')],
+    [State('gene_name', 'children')]
+)
+def get_scatter_fig(coord_name, gene_int, mc_type, gene_name):
+    data = dataset.get_coords(coord_name)
+    data['SubType'] = dataset.get_variables('SubType')
+
+    gene_col_name = f'{gene_name} m{mc_type[:-1]}'
+    data[gene_col_name] = dataset.get_gene_rate(gene_int, mc_type)
+
+    sample = 10000
+    _data = data if data.shape[0] <= sample else data.sample(sample, random_state=0)
+
     # gene figure
     fig_gene = px.scatter(data_frame=_data,
                           x='x',
@@ -479,4 +497,4 @@ def get_scatter_fig(var_name, coord_name, gene_int, mc_type, gene_name):
                                                  zeroline=False),
                            plot_bgcolor='rgba(0,0,0,0)',
                            paper_bgcolor='rgba(0,0,0,0)')
-    return fig_cell_meta, fig_gene
+    return fig_gene

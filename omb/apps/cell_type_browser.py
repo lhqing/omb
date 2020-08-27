@@ -147,21 +147,21 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 html.Div(children=[
                     html.H6(children=cell_type_name, id='cell_type_name'),
                     dcc.Markdown(cell_type_markdown, id='cell_mark_down'),
-                ], className='pretty_container three columns'),
+                ], className='pretty_container four columns'),
                 html.Div(children=[
-                    html.H6('Mapping Metrics'),
-                    dcc.Graph(id='metric_violin',
-                              config={'displayModeBar': False})
-                ], className='pretty_container three columns'),
+                    html.H6('Brain Region Composition'),
+                    dcc.Graph(id='region_sunburst')
+                ], className='pretty_container four columns'),
                 html.Div(children=[
                     html.H6('Dissection Region'),
                     dcc.Graph(id='region_bar_plot',
                               config={'displayModeBar': False})
                 ], className='pretty_container two columns'),
                 html.Div(children=[
-                    html.H6('Brain Region Composition'),
-                    dcc.Graph(id='region_sunburst')
-                ], className='pretty_container four columns')
+                    html.H6('Mapping Metrics'),
+                    dcc.Graph(id='metric_violin',
+                              config={'displayModeBar': False})
+                ], className='pretty_container two columns')
             ],
             className='row container-display'
         ),
@@ -215,8 +215,9 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 html.Div(
                     children=[
                         html.H6('Scatter Plot - Cell Type'),
-                        dcc.Graph(id='scatter_plot_1',
-                                  config={'displayModeBar': False})
+                        dcc.Loading(children=[
+                            dcc.Graph(id='scatter_plot_1',
+                                      config={'displayModeBar': False})], type='circle')
                     ],
                     className='pretty_container four columns'
                 ),
@@ -416,7 +417,7 @@ def update_region_bar_plot(cell_type_name):
     fig.update_traces(
         hovertemplate='<b>%{hovertext}</b><br>'
                       '<b>Count: </b>%{customdata[0]}<br>'
-                      '<b>Portion: </b>%{customdata[1]:.3f}')
+                      '<b>Proportion: </b>%{customdata[1]:.3f}')
     return fig
 
 

@@ -9,12 +9,6 @@ from dash.exceptions import PreventUpdate
 from omb.app import app
 from omb.apps import *
 
-app.config.suppress_callback_exceptions = True
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
-])
-
 
 def search_to_dict(search):
     if search is None:
@@ -60,6 +54,14 @@ def get_header():
     )
 
 
+app.config.suppress_callback_exceptions = True
+app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
+    get_header(),  # nav bar
+    html.Div(id='page-content', className='content')
+])
+
+
 @app.callback(
     Output('page-content', 'children'),
     [Input('url', 'pathname')],
@@ -69,16 +71,16 @@ def get_header():
 def display_page(pathname, search, total_url):
     # print('url.pathname', pathname)
     # print('url.search', search)
-    app_layout = get_header()
+    app_layout = []
     search_dict = search_to_dict(search)
 
     if pathname is None:
         # init callback url is None
         raise PreventUpdate
     elif (pathname == '/home') or (pathname == '/'):
-        app_layout.children.append(home_layout)
+        app_layout.append(home_layout)
     elif pathname == '/brain_region':
-        app_layout.children.append(region_browser_app.layout)
+        app_layout.append(region_browser_app.layout)
     elif pathname == '/cell_type':
         if search_dict is None:
             return '404'
@@ -89,7 +91,7 @@ def display_page(pathname, search, total_url):
         if layout is None:
             return '404'
         else:
-            app_layout.children.append(layout)
+            app_layout.append(layout)
     elif pathname == '/gene':
         if search_dict is None:
             return '404'
@@ -99,9 +101,9 @@ def display_page(pathname, search, total_url):
         layout = create_gene_browser_layout(gene=search_dict['gene'])
         if layout is None:
             return '404'
-        app_layout.children.append(layout)
+        app_layout.append(layout)
     elif pathname == '/test':
-        app_layout.children.append(test_app.layout)
+        app_layout.append(test_app.layout)
     else:
         return '404'
     return app_layout
