@@ -33,22 +33,22 @@ def get_header():
                     className='nav-icon'),
                 dcc.Link(
                     "Home",
-                    href="/home",
+                    href=f"/{APP_ROOT_NAME}/home",
                     className="tab first",
                 ),
                 dcc.Link(
                     "Gene Browser",
-                    href="/gene?gene=Cux2",
+                    href=f"/{APP_ROOT_NAME}/gene?gene=Cux2",
                     className="tab",
                 ),
                 dcc.Link(
                     "Brain Region Browser",
-                    href="/brain_region",
+                    href=f"/{APP_ROOT_NAME}/brain_region",
                     className="tab",
                 ),
                 dcc.Link(
                     "Cell Type Browser",
-                    href="/cell_type?ct=Exc",
+                    href=f"/{APP_ROOT_NAME}/cell_type?ct=Exc",
                     className="tab",
                 )
             ],
