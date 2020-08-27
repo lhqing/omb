@@ -58,7 +58,7 @@ if not pathlib.Path(GENE_MCDS_DIR).exists():
 
 # pairwise DMG
 PAIRWISE_DMG_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/pairwise_dmg'
-if not pathlib.Path(GENE_MCDS_DIR).exists():
+if not pathlib.Path(PAIRWISE_DMG_DIR).exists():
     # neomorph location
     PAIRWISE_DMG_DIR = '/home/hanliu/gene_rate_for_app/pairwise_dmg'
 CLUSTER_DIST_PATH = f'{PAIRWISE_DMG_DIR}/ClusterDistance.h5'
