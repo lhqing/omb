@@ -28,6 +28,9 @@ def get_header():
     return html.Div(
         children=[
             html.Div(children=[
+                html.Img(
+                    src='https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/navbar_icon.gif',
+                    className='nav-icon'),
                 dcc.Link(
                     "Home",
                     href="/home",

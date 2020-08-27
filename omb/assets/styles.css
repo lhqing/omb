@@ -160,7 +160,7 @@ body {
 
 /* Page content */
 .content {
-  padding: 70px;
+    padding: 70px;
 }
 
 .all-tabs {
@@ -169,7 +169,7 @@ body {
     text-align: left;
     font-size: 1.2em;
     overflow: hidden;
-    padding: 25px;
+    padding: 20px;
     position: fixed;
     left: 0;
     top: 0;
@@ -177,7 +177,10 @@ body {
     z-index: 9999;
 }
 
-.sticky {
+.nav-icon {
+    height: 30px;
+    width: auto;
+    margin-right:10px;
 }
 
 @media only screen and (max-width: 550px) {
