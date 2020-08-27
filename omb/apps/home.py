@@ -17,13 +17,13 @@ INTRODUCTION_TEXT = "Mammalian brain cells are remarkably diverse in gene expres
                     "explore this single cell methylome dataset in three different ways."
 
 GENE_BROWSER_TEXT = 'Explore the methylation diversity of each gene at single-cell or cell-type level.'
-GENE_BROWSER_IMG_URL = 'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/dissection_region_img/brain_region_demo.jpg'
+GENE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_gene.jpg'
 
 CELL_TYPE_BROWSER_TEXT = 'Explore the spatial distribution and methylation signature genes of each cell type.'
-CELL_TYPE_BROWSER_IMG_URL = 'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/dissection_region_img/brain_region_demo.jpg'
+CELL_TYPE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_cell_type.jpg'
 
 BRAIN_REGION_BROWSER_TEXT = 'Explore the cell type composition of adult mouse brain anatomical regions.'
-BRAIN_REGION_BROWSER_IMG_URL = 'https://raw.githubusercontent.com/lhqing/omb/master/omb/assets/dissection_region_img/brain_region_demo.jpg'
+BRAIN_REGION_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_brain_region.jpg'
 
 ALL_CELL_TYPES = []
 for col in ['CellClass', 'MajorType', 'SubType']:
@@ -78,13 +78,13 @@ layout = html.Div(children=[
 
         ], className='four columns pretty_container'),
         html.Div(children=[
-            html.Img(src=GENE_BROWSER_IMG_URL, style={'width': '100%'}),
+            html.Img(src=BRAIN_REGION_BROWSER_IMG_URL, style={'width': '100%'}),
             html.H4('Brain Region Browser'),
             html.P(BRAIN_REGION_BROWSER_TEXT),
             html.A(html.Button(children='GO'), id='brain-region-url', href='brain_region')
         ], className='four columns pretty_container'),
         html.Div(children=[
-            html.Img(src=GENE_BROWSER_IMG_URL, style={'width': '100%'}),
+            html.Img(src=CELL_TYPE_BROWSER_IMG_URL, style={'width': '100%'}),
             html.H4('Cell Type Browser'),
             html.P(CELL_TYPE_BROWSER_TEXT),
             html.Div(children=[
