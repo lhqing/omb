@@ -39,14 +39,14 @@ REFERENCE_MARKDOWN = """
 """
 
 ABOUT_MARKDOWN = """
-We are continually adding new functionality and improving documentations. 
-Please consider [post an issue](https://github.com/lhqing/omb/issues/new) on github if you have 
-questions / suggestions / requirements about the browser or the dataset.
+We are continually adding new functionality and improving documentation. 
+If you have questions / suggestions / requirements about the browser or the dataset, 
+please consider posting an issue on [github](https://github.com/lhqing/omb/issues/new).
 
 ------
 
 This browser is made by [plotly-dash](https://dash.plotly.com/). 
-See the source code of this browser on [github](https://github.com/lhqing/omb), 
+See the source code of this browser on [github](https://github.com/lhqing/omb).
 """
 
 layout = html.Div(children=[
