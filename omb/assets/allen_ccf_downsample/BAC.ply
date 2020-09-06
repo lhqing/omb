@@ -1,0 +1,21 @@
+ply
+format ascii 1.0
+comment Created by Blender 2.80 (sub 75) - www.blender.org, source file: 'downsample_ccf.blend'
+element vertex 6
+property float x
+property float y
+property float z
+property float nx
+property float ny
+property float nz
+element face 2
+property list uchar uint vertex_indices
+end_header
+5437.799316 5150.694336 6261.076660 0.456728 -0.704378 0.543370
+5396.100098 5077.149902 6200.790039 0.456728 -0.704378 0.543370
+5456.097168 5116.540527 6201.422363 0.456728 -0.704378 0.543370
+5469.065918 5093.866211 6236.475098 0.281906 0.507574 -0.814185
+5396.100098 5077.149902 6200.790039 0.281906 0.507574 -0.814185
+5437.799316 5150.694336 6261.076660 0.281906 0.507574 -0.814185
+3 0 1 2
+3 3 4 5
