@@ -12,7 +12,7 @@ setup(
     long_description=open('README.md').read(),
     include_package_data=True,
     package_data={
-        '': ['*.msg', '*.h5', '*.csv', '*.json', '*.lib', '*.css', '*.js', '*.png', '*.jpeg']
+        '': ['*.msg', '*.ply', '*.h5', '*.csv', '*.json', '*.lib', '*.css', '*.js', '*.png', '*.jpeg']
     },
     install_requires=[
         'dash',
@@ -22,7 +22,8 @@ setup(
         'xarray',
         'msgpack',
         'plotly',
-        'joblib'
+        'joblib',
+        'plyfile'
     ],
 )
 

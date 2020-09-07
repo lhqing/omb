@@ -20,12 +20,6 @@ Several main things
 - Associated with continuous variable, categorical variable, and region values
 
 # Gene
-- TODO
-
-# Additional Genome Region
-- With cell level value or without cell level value?
-- If without cell level value, the value must associate to certain category var.
-- TODO
 
 """
 import pathlib
@@ -45,7 +39,7 @@ COORDS_PATH = f'{DATASET_DIR}/Coords.h5'
 COORDS_CELL_TYPE_PATH = f'{DATASET_DIR}/CellTypeOccurInCoords.lib'
 CELL_ID_PATH = f'{DATASET_DIR}/CellIDMap.msg'
 VARIABLE_PATH = f'{DATASET_DIR}/Variables.h5'
-PALETTE_PATH = f'{DATASET_DIR}/Palette.msg'
+PALETTE_PATH = f'{DATASET_DIR}/Palette.json'
 BRAIN_REGION_PATH = f'{DATASET_DIR}/BrainRegion.csv'
 CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
 GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.h5'
@@ -68,6 +62,10 @@ PROTEIN_CODING_PAIRWISE_DMG_PATH = f'{PAIRWISE_DMG_DIR}/ProteinCodingPairwiseDMG
 # AnnoJ
 ANNOJ_META_PATH = f'{DATASET_DIR}/AnnoJMeta.csv'
 ANNOJ_URL_BASE = 'http://neomorph.salk.edu/mouse_brain.php'
+
+# Allen CCF metadata
+ALLEN_CCF_META_PATH = f'{DATASET_DIR}/allen_ccf_meta.csv'
+
 """
 Default data types
 """

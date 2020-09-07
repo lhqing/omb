@@ -6,31 +6,13 @@ Dataset load gene or other large data lazily from xarray netCDF file, with lru_c
 Dataset only has "getter" but not "setter", TODO let's think about front-end user provided custom info later.
 """
 import json
-import pathlib
 from functools import lru_cache
 
 import joblib
-import numpy as np
-import pandas as pd
 import xarray as xr
+from plyfile import PlyData
 
-from .ingest import \
-    DATASET_DIR, \
-    COORDS_PATH, \
-    COORDS_CELL_TYPE_PATH, \
-    CELL_ID_PATH, \
-    VARIABLE_PATH, \
-    PALETTE_PATH, \
-    BRAIN_REGION_PATH, \
-    CELL_TYPE_PATH, \
-    GENE_MCDS_DIR, \
-    GENE_META_PATH, \
-    GENE_TO_MCDS_PATH, \
-    CLUSTER_DIST_PATH, \
-    TOTAL_PAIRWISE_DMG_PATH, \
-    PROTEIN_CODING_PAIRWISE_DMG_PATH, \
-    ANNOJ_META_PATH, \
-    ANNOJ_URL_BASE
+from .ingest import *
 from .utilities import *
 
 
@@ -45,6 +27,49 @@ def _validate_dataset_dir():
     if has_error:
         raise FileNotFoundError('The dataset dir may be incomplete, cause some file path not found.')
     return
+
+
+def read_allen_ply(region_name):
+    """take region name (SSp, MOp, etc.)
+    return x, y, z, i, j, k"""
+    ply_path = f'{DATASET_DIR}/allen_ccf_downsample/{region_name}.ply'
+    ply_data = PlyData.read(ply_path)
+
+    x = ply_data['vertex']['x']
+    y = ply_data['vertex']['y']
+    z = ply_data['vertex']['z']
+
+    # these changes are according to go.Mesh3d defaults
+    y *= -1
+    x *= -1
+    y, z = z, y
+
+    face_data = np.vstack(ply_data['face']['vertex_indices'])
+    i = face_data[:, 0]
+    j = face_data[:, 1]
+    k = face_data[:, 2]
+    return x, y, z, i, j, k
+
+
+def read_cemba_ply(region_id):
+    """take region id (3C, 4B, etc.)
+    return x, y, z, i, j, k"""
+    ply_path = f'{DATASET_DIR}/cemba_ply/{region_id}.ply'
+    ply_data = PlyData.read(ply_path)
+
+    x = ply_data['vertex']['x']
+    y = ply_data['vertex']['y']
+    z = ply_data['vertex']['z']
+
+    # these changes are according to go.Mesh3d defaults
+    x *= -1
+    y, x = x, y
+
+    face_data = np.vstack(ply_data['face']['vertex_indices'])
+    i = face_data[:, 0]
+    j = face_data[:, 1]
+    k = face_data[:, 2]
+    return x, y, z, i, j, k
 
 
 class Dataset:
@@ -98,7 +123,8 @@ class Dataset:
         self.cluster_name_to_level = self._cell_type_table['Cluster Level'].to_dict()
 
         # load palette for Categorical var
-        self._palette = read_msgpack(self.dataset_dir / PALETTE_PATH)
+        with open(self.dataset_dir / PALETTE_PATH) as f:
+            self._palette = json.load(f)
         self._palette['RegionName'] = {self.cemba_name_to_region_label[k]: v
                                        for k, v in self._palette['Region'].items()}
 
@@ -120,6 +146,9 @@ class Dataset:
         self._annoj_gene_track_id = self._annoj_track_meta.loc['Gene', 'id']
         self._subtype_to_annoj_track_id = self._annoj_track_meta[self._annoj_track_meta['type'] == 'MethTrack'][
             'id'].to_dict()
+
+        # Allen CCF metadata
+        self._allen_ccf_meta = pd.read_csv(ALLEN_CCF_META_PATH, index_col=0)  # region acronym is the index
         return
 
     def get_coords(self, name):
@@ -314,3 +343,27 @@ class Dataset:
 
         total_url = f'{ANNOJ_URL_BASE}?{location}&{active}&{config}&{settings}'
         return total_url
+
+    @lru_cache()
+    def read_ply(self, region_name):
+        """
+
+        Parameters
+        ----------
+        region_name
+        CEMBA id (3C, 4B) or Allen CCF arconym (MOp, SSp)
+
+        Returns
+        -------
+        (x, y, z, i, j, k), region_name, region_type, region_color
+        """
+        if region_name in self._allen_ccf_meta.index:
+            region_type = 'Allen CCFv3'
+            color = self._allen_ccf_meta.loc[region_name, 'color']
+            return read_allen_ply(region_name), region_name, region_type, color
+        elif region_name in self.cemba_name_to_region_label:
+            region_label = self.cemba_name_to_region_label[region_name]
+            color = self._palette['RegionName'][region_label]
+            return read_cemba_ply(region_name), region_label, 'Dissection Region', color
+        else:
+            raise ValueError(f'{region_name} missing in neither CCF or CEMBA region list')
