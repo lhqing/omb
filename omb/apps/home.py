@@ -20,10 +20,13 @@ GENE_BROWSER_TEXT = 'Explore the methylation diversity of one gene at single-cel
 GENE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_gene.jpg'
 
 CELL_TYPE_BROWSER_TEXT = 'Explore the spatial distribution and methylation signature genes of one cell type.'
-CELL_TYPE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_cell_type.jpg'
+CELL_TYPE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/' \
+                            'dissection_region_img/home_cell_type.jpg'
 
-BRAIN_REGION_BROWSER_TEXT = 'Explore the cell type composition of adult mouse brain anatomical regions.'
-BRAIN_REGION_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_brain_region.jpg'
+BRAIN_REGION_BROWSER_TEXT = 'Explore the cell type composition of adult mouse brain ' \
+                            'dissection regions and anatomical structures.'
+BRAIN_REGION_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/' \
+                               'dissection_region_img/home_brain_region.jpg'
 
 ALL_CELL_TYPES = []
 for col in ['CellClass', 'MajorType', 'SubType']:
@@ -69,13 +72,19 @@ layout = html.Div(children=[
                              className='nine columns'),
                 html.A(html.Button(children='GO'), id='gene-url', href='gene?gene=Cux2')
             ], className='row'),
-
         ], className='four columns pretty_container'),
         html.Div(children=[
             html.Img(src=BRAIN_REGION_BROWSER_IMG_URL, style={'width': '100%'}),
             html.H4('Brain Region Browser'),
             html.P(BRAIN_REGION_BROWSER_TEXT),
-            html.A(html.Button(children='GO'), id='brain-region-url', href='brain_region')
+            html.Div(children=[
+                dcc.Dropdown(options=[{'label': region, 'value': region}
+                                      for region in dataset.region_label_to_dissection_region_dict.keys()],
+                             placeholder='Select a brain region.',
+                             id="brain-region-dropdown",
+                             className='nine columns'),
+                html.A(html.Button(children='GO'), id='brain-region-url', href='brain_region?br=MOp')
+            ], className='row')
         ], className='four columns pretty_container'),
         html.Div(children=[
             html.Img(src=CELL_TYPE_BROWSER_IMG_URL, style={'width': '100%'}),
@@ -139,5 +148,16 @@ def get_gene_url(gene_int):
 def get_cell_type_url(cell_type):
     if cell_type:
         return f'cell_type?ct={cell_type}'
+    else:
+        raise PreventUpdate
+
+
+@app.callback(
+    Output('brain-region-url', 'href'),
+    [Input('brain-region-dropdown', 'value')]
+)
+def get_brain_region_url(brain_region):
+    if brain_region:
+        return f'brain_region?br={brain_region}'
     else:
         raise PreventUpdate

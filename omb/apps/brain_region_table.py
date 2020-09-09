@@ -67,3 +67,4 @@ def update_brain_region_table(data):
     print(data)
     selected_rows = [dataset.dissection_regions.index(r) for r in data['selected_region_names']]
     return [selected_rows]
+

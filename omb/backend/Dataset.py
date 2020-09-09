@@ -149,6 +149,7 @@ class Dataset:
 
         # Allen CCF metadata
         self._allen_ccf_meta = pd.read_csv(ALLEN_CCF_META_PATH, index_col=0)  # region acronym is the index
+        self.allen_ccf_regions = sorted(self._allen_ccf_meta.index)
         return
 
     def get_coords(self, name):

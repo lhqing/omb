@@ -1,216 +1,357 @@
 from functools import lru_cache
 
-import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import dash_table
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from dash.dependencies import Input, Output
-from dash.dependencies import State
-
-from .default_values import *
+from dash.dependencies import Input, Output, State
 from .sunburst import create_sunburst
-from .utilities import n_cell_to_marker_size, get_split_plot_df
+from .default_values import *
+from .utilities import n_cell_to_marker_size
 from ..app import app
 
-DEFAULT_BRAIN_REGION_IMG_TITLE = 'Click a cell on the left to display its dissection region'
 
-cell_type_table = dataset.cell_type_table.reset_index()
+def _background_mesh(region_name, color=None, opacity=0.1):
+    (x, y, z, i, j, k), region_name, region_type, region_color = dataset.read_ply(
+        region_name)
+    if color is None:
+        color = region_color
+    if region_name == 'root':
+        region_name = 'Brain'
+    data = go.Mesh3d(
+        x=x,
+        y=y,
+        z=z,
+        # i, j and k give the vertices of triangles
+        i=i,
+        j=j,
+        k=k,
+        color=color,
+        name=region_name,
+        hoverinfo='skip',
+        showlegend=True,
+        opacity=opacity)
+    return data
 
-region_browser_app = dash.Dash(__name__)
 
-region_browser_app.layout = html.Div(children=[
-    # store for selected regions
-    dcc.Store(id='selected_brain_regions'),
+def _roi_mesh(region_name, color=None, hoverinfo='text+name', opacity=1):
+    (x, y, z, i, j, k), region_name, region_type, region_color = dataset.read_ply(
+        region_name)
+    if color is None:
+        color = region_color
+    data = go.Mesh3d(
+        x=x,
+        y=y,
+        z=z,
+        # i, j and k give the vertices of triangles
+        i=i,
+        j=j,
+        k=k,
+        color=color,
+        text=region_type,
+        name=region_name,
+        hoverinfo=hoverinfo,
+        showlegend=True,
+        opacity=opacity)
+    return data
 
-    # first column, for control panel
-    html.Div(children=[
-        html.Div(
-            children=[
-                html.H6('Selected Data', className='control_label'),
-                # basic numbers
-                html.Div([
-                    html.Div(
-                        [html.H6(id="region_browser_n_cells", children='0'), html.P("Nuclei")],
-                        className="mini_container six columns",
-                    ),
-                    html.Div(
-                        [html.H6(id="region_browser_n_regions", children='0'), html.P("Dissection Region")],
-                        className="mini_container six columns",
-                    )
-                ], className='row container-display')],
-            className='pretty_container'),
 
-        # control components
-        html.Div([
-            html.H6(children='Select Regions', className='control_label'),
-            html.P('(Showing the union of selected labels)', className="control_label"),
-            dcc.Dropdown(
-                options=[{'label': region, 'value': region}
-                         for region in dataset.region_label_to_dissection_region_dict.keys()],
-                id="region_selector",
-                value=[],
-                multi=True,
-                placeholder='Showing all regions',
-                className="dcc_control",
-            )], className="mini_container"),
-        html.Div([
-            html.H6("Select Coordinates", className="control_label"),
-            dcc.Dropdown(
-                options=[{'label': name, 'value': name}
-                         for name in dataset.coord_names],
-                value='L1UMAP',
-                id="coord_selector",
-                clearable=False,
-                className="dcc_control"
-            ),
-            dcc.ConfirmDialog(
-                id='no_cell_warning',
-                message='No cells from current selected regions appear in this coordinate set, '
-                        'the plot will not update.',
-            ),
-        ], className="mini_container"),
-        html.Div([
-            html.H6(children='Select Color', className='control_label'),
-            html.P("Region Level", className="control_label"),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Dissection Region', 'value': 'Region'},
-                    {'label': 'Sub-Region', 'value': 'SubRegion'},
-                    {'label': 'Major Region', 'value': 'MajorRegion'},
+def _get_valid_coords(region_name):
+    dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
+    region_and_subtype = dataset.get_variables(['RegionName', 'SubType'])
+    occur_subtypes = set(region_and_subtype.loc[
+                             region_and_subtype['RegionName'].isin(dissection_regions),
+                             'SubType'].unique())
+    valid_coords = [
+        k for k, v in dataset.coord_cell_type_occur.items()
+        if len(v & occur_subtypes) > 0
+    ]
+    return set(valid_coords)
+
+
+def _brain_region_info_markdown(region_name):
+    dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
+    this_region_table = dataset.brain_region_table.loc[dissection_regions]
+
+    n_cells = this_region_table['Number of total cells'].sum()
+    n_region = this_region_table.shape[0]
+
+    if n_region == 1:
+        cemba_id = dataset.brain_region_table.loc[dissection_regions, 'Slice'].unique()[0]
+        slice_str = f"**Cornal Slice**: {cemba_id}"
+        cemba_id = dataset.brain_region_table.loc[dissection_regions, 'Dissection Region ID'].unique()[0]
+        dissection_region_str = f"**Dissection Region ID**: {cemba_id}"
+
+        potential_overlap = ','.join(this_region_table['Potential Overlap'].dropna().tolist()).replace(',', ', ')
+        if potential_overlap != '':
+            potential_overlap_str = f'**Potentially Overlap With**: {potential_overlap}'
+        else:
+            potential_overlap_str = ''
+    else:
+        slice_str = ''
+        dissection_region_str = ''
+        potential_overlap_str = ''
+
+    anatomical_str = ''
+    for major_region, sub_df in this_region_table.groupby('Major Region'):
+        sub_region_str = ', '.join([f"[{r}](brain_region?br={r})" for r in sub_df['Sub-Region'].unique()])
+        anatomical_str += f'- [{major_region}](brain_region?br={major_region}): {sub_region_str}\n'
+
+    if region_name != 'ALL REGIONS':
+        all_region_link = 'View [ALL](brain_region?br=ALL%20REGIONS) dissection regions.'
+        if n_region > 1:
+            dissection_region_list = ', '.join([f"[{r}](brain_region?br={r})" for r in dissection_regions])
+            dissection_region_list_str = f'**Dissection Regions**: {dissection_region_list}'
+        else:
+            dissection_region_list_str = ''
+    else:
+        all_region_link = ''
+        dissection_region_list_str = ''
+
+    markdown = f"""
+**Description**: {n_cells} cells from {n_region} dissection region{"s" if n_region != 1 else ""}.
+
+{dissection_region_str}
+
+{slice_str}
+
+**Dissected Anatomical Structures**: 
+{anatomical_str}
+{potential_overlap_str}
+
+{dissection_region_list_str}
+
+{all_region_link}
+"""
+    return markdown
+
+
+def _default_ccf_mesh_selection(region_name):
+    dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
+    this_region_table = dataset.brain_region_table.loc[dissection_regions]
+
+    include_regions = ['root'] + this_region_table['Major Region'].unique().tolist()  # always add the whole brain
+    return include_regions
+
+
+def create_brain_region_browser_layout(region_name):
+    region_name = region_name.replace('%20', ' ')
+    valid_coords = _get_valid_coords(region_name)
+    if region_name not in dataset.region_label_to_dissection_region_dict:
+        return None
+
+    layout = html.Div(children=[
+        # first row, info and anatomy
+        html.Div(children=[
+            # brain region info
+            html.Div(
+                children=[
+                    html.H1(region_name, id='region-name'),
+                    dcc.Markdown(children=_brain_region_info_markdown(region_name))
                 ],
-                value='SubRegion',
-                id="region_level_selector",
-                clearable=False,
-                className="dcc_control"),
-            html.P("Cell Type Level", className="control_label"),
-            dcc.Dropdown(
-                options=[
-                    {'label': 'Cell Class', 'value': 'CellClass'},
-                    {'label': 'Major Type', 'value': 'MajorType'},
-                    {'label': 'Subtype', 'value': 'SubType'},
-                ],
-                value='MajorType',
-                id="cell_type_level_selector",
-                clearable=False,
-                className="dcc_control"
-            )], className="mini_container"),
-        html.Button('Update Graphs', id='update_button', n_clicks=0,
-                    className='offset-by-two columns eight columns'),
-    ], id='control_panel', className='pretty_container three columns'),
+                className='pretty_container two columns'),
 
-    # second column, for all data panels
-    html.Div(children=[
-        # first row is for region plots
+            # anatomy 3d control
+            html.Div([
+                html.Div(
+                    html.H5('3D Mesh Control')
+                ),
+                html.Br(),
+                html.H6(children='Anatomical Structures'),
+                dcc.Markdown('Load any anatomical structures from [the Allen CCFv3](http://atlas.brain-map.org/).'),
+                dcc.Dropdown(
+                    options=[{'label': region if region != 'root' else 'Brain', 'value': region}
+                             for region in dataset.allen_ccf_regions],
+                    id="ccf-mesh-dropdown",
+                    value=_default_ccf_mesh_selection(region_name),
+                    multi=True),
+                html.Br(),
+                html.P('CCF mesh opacity: '),
+                dcc.Slider(
+                    id='ccf-mesh-opacity-slider',
+                    min=0.1,
+                    max=1,
+                    step=0.05,
+                    value=0.1,
+                    marks={i: str(i) for i in [0.1, 0.3, 0.5, 0.7, 0.9]}
+                ),
+                html.Br(),
+                html.H6('Dissection Regions'),
+                dcc.Dropdown(
+                    options=[{'label': region, 'value': region}
+                             for region in dataset.region_label_to_dissection_region_dict.keys()],
+                    id="cemba-mesh-dropdown",
+                    value=[region_name],
+                    multi=True),
+            ], className="pretty_container three columns"),
+
+            # 3-D mesh graph
+            html.Div(
+                children=[
+                    html.H5('Brain Dissection Region & Anatomical Structures'),
+                    html.P('Click legend to toggle structures. '
+                           'Note that tissues were dissected from both hemisphere.'),
+                    dcc.Loading(children=[dcc.Graph(id='3d-mesh-graph',
+                                                    config={'displayModeBar': False})],
+                                type='circle')
+                ],
+                className='pretty_container seven columns'
+            )
+        ], className='row container-display'),
+
+        # second row, UMAP control
         html.Div(
             children=[
                 html.Div(
-                    children=[dcc.Graph(id='region_scatter')],
-                    className='six columns pretty_container',
-                    style={'margin': '2px',
-                           'padding': '2px'}),
+                    html.H5('UMAP Control'),
+                    className='two columns'
+                ),
                 html.Div(
                     children=[
-                        html.H6(DEFAULT_BRAIN_REGION_IMG_TITLE,
-                                id='brain_region_img_title'),
-                        html.Img(
-                            id='brain_region_img',
-                            src=DEFAULT_BRAIN_REGION_IMG_SRC,
-                            style={
-                                "max-width": "100%",
-                                "height": "auto"
-                            })],
-                    className='six columns pretty_container',
-                    style={'margin': '2px',
-                           'padding': '2px'})],
-            id='region_row',
-            className='row container-display',
-            style={'margin': '2px',
-                   'padding': '2px'}),
-
-        # second row is for cell type plots
-        html.Div(
-            children=[
+                        html.H6('Scatter Coords'),
+                        dcc.Dropdown(
+                            options=[{'label': name, 'value': name,
+                                      'disabled': False if (name in valid_coords) else True}
+                                     for name in dataset.coord_names],
+                            value='L1UMAP',
+                            id="scatter-coords-dropdown",
+                            clearable=False,
+                            className="dcc_control"
+                        )
+                    ], className='four columns'
+                ),
                 html.Div(
-                    children=[dcc.Graph(id='cell_type_scatter')],
-                    className='six columns pretty_container',
-                    style={'margin': '2px',
-                           'padding': '2px'}),
+                    children=[
+                        html.H6('Region Level'),
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'Dissection Region', 'value': 'RegionName'},
+                                {'label': 'Sub-Region', 'value': 'SubRegion'},
+                                {'label': 'Major Region', 'value': 'MajorRegion'},
+                            ],
+                            value='RegionName',
+                            id="region-level-dropdown",
+                            clearable=False,
+                            className="dcc_control")
+                    ], className='four columns'
+                ),
                 html.Div(
-                    children=[dcc.Graph(id='cell_type_sunburst')],
-                    className='six columns pretty_container',
-                    style={'margin': '2px',
-                           'padding': '2px'})],
-            id='cell_type_row',
-            className='row container-display',
-            style={'margin': '2px',
-                   'padding': '2px'}),
-
-        # third row is for cell type table
-        html.Div(
-            children=[
-                dash_table.DataTable(
-                    id='cell_type_table',
-                    style_cell={
-                        'whiteSpace': 'normal',
-                        # 'height': 'auto',
-                        'textAlign': 'left',
-                    },
-                    style_header={
-                        'fontWeight': 'bold',
-                        'height': '50px'
-                    },
-                    style_data_conditional=[
-                        {
-                            'if': {'row_index': 'odd'},
-                            'backgroundColor': 'rgb(248, 248, 248)'
-                        }
-                    ],
-                    filter_action='native',
-                    sort_action="native",
-                    sort_mode="multi",
-                    style_as_list_view=True,
-                    columns=[{"name": i, "id": i} for i in cell_type_table.columns],
-                    data=cell_type_table.to_dict('records'),
-                    page_size=20
-                )
+                    children=[
+                        html.H6('Cell Type Level'),
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'Cell Class', 'value': 'CellClass'},
+                                {'label': 'Major Type', 'value': 'MajorType'},
+                                {'label': 'Subtype', 'value': 'SubType'},
+                            ],
+                            value='MajorType',
+                            id="cell-type-level-selector",
+                            clearable=False,
+                            className="dcc_control"
+                        )
+                    ], className='four columns'
+                ),
             ],
-            className='row pretty_container container-display'),
-    ], id='data_panel', className='nine columns')
-], id='region_browser_div')
+            className='pretty_container row container-display'
+        ),
+
+        # third row, UMAP graphs
+        html.Div(
+            children=[
+                html.Div(
+                    [html.H5('UMAP Color By Dissection Region'),
+                     dcc.Graph(id='dissection-umap-graph')],
+                    className='pretty_container four columns'
+                ),
+                html.Div(
+                    [html.H5('UMAP Color By Cell Type'),
+                     dcc.Graph(id='cell-type-umap-graph')],
+                    className='pretty_container four columns'
+                ),
+                html.Div(
+                    [html.H5('Cell Type Sunburst'),
+                     dcc.Graph(id='sunburst-graph')],
+                    className='pretty_container four columns'
+                ),
+            ],
+            className='row container-display'
+        )
+    ])
+    return layout
+
+
+@app.callback(
+    Output('3d-mesh-graph', 'figure'),
+    [Input('ccf-mesh-dropdown', 'value'),
+     Input('cemba-mesh-dropdown', 'value'),
+     Input('ccf-mesh-opacity-slider', 'value')]
+)
+def make_3d_brain_mesh_figure(background_names, roi_names, background_opacity):
+    data = []
+
+    for region_name in sorted(background_names):
+        data.append(_background_mesh(region_name, opacity=background_opacity))
+
+    total_dissection_regions = []
+    for region_name in sorted(roi_names):
+        dissection_region_names = [dataset.region_label_to_cemba_name[i]
+                                   for i in dataset.region_label_to_dissection_region_dict[region_name]]
+        total_dissection_regions += dissection_region_names
+    # dedup
+    for region in set(total_dissection_regions):
+        data.append(_roi_mesh(region))
+
+    fig = go.Figure(data)
+
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(visible=False),
+            yaxis=dict(visible=False),
+            zaxis=dict(visible=False),
+            camera=dict(
+                eye=dict(  # this zoom in the initial view
+                    x=0.9,
+                    y=0.9,
+                    z=0.9
+                )
+            )
+        ),
+        margin=dict(t=0, l=0, r=0, b=0),
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+    return fig
 
 
 @lru_cache()
-def cached_getting_cells(region_tuple):
-    cell_region_names = dataset.get_variables('RegionName')
-    selected_cells = cell_region_names.index[cell_region_names.isin(region_tuple)]
-    return selected_cells
+def _get_active_and_background_data(coord_name, region_name, region_level, cell_type_level, max_cells=7500):
+    dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
+    data = dataset.get_coords(coord_name)
+    cell_meta = dataset.get_variables(list({'RegionName', region_level, cell_type_level})) \
+        .reindex(data.index).astype(str)
+    data = pd.concat([data, cell_meta], axis=1)
+
+    active_data = data[data['RegionName'].isin(dissection_regions)]
+    if active_data.shape[0] > max_cells:
+        active_data = active_data.sample(max_cells, random_state=0)
+
+    background_data = data[~data['RegionName'].isin(dissection_regions)]
+    if background_data.shape[0] > max_cells:
+        background_data = background_data.sample(max_cells, random_state=0)
+    return active_data, background_data
 
 
-def get_selected_cells_from_selected_brain_regions(data):
-    if data is not None:
-        # this is the initial fire where data haven't been initiated
-        # showing all regions by default
-        selected_regions = data['regions']
-    else:
-        selected_regions = dataset.dissection_regions
-
-    selected_cells = cached_getting_cells(tuple(selected_regions))
-    return selected_cells
-
-
-def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_name, hover_cols):
+def generate_scatter(active_data, background_data, hue, hover_name, hover_text):
     # selected_plot_df is colored and hover_data
-    fig = px.scatter(selected_plot_df,
+    fig = px.scatter(active_data,
                      x="x",
                      y="y",
                      color=hue,
-                     color_discrete_map=palette,
+                     color_discrete_map=dataset.get_palette(hue),
                      hover_name=hover_name,
-                     hover_data=hover_cols)
-    fig.update_layout(showlegend=True,
+                     hover_data=[hover_text])
+    fig.update_layout(showlegend=False,
                       margin=dict(t=15, l=0, r=0, b=15),
                       xaxis=go.layout.XAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
                       yaxis=go.layout.YAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
@@ -219,19 +360,19 @@ def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_n
 
     # update marker size and hover template
     fig.update_traces(mode='markers',
-                      marker_size=n_cell_to_marker_size(selected_plot_df.shape[0]),
+                      marker_size=n_cell_to_marker_size(active_data.shape[0]),
                       hovertemplate='<b>%{hovertext}</b><br>'
-                                    '<b>Dissection Region: </b>%{customdata[0]}<br>'
-                                    '<b>SubType: </b>%{customdata[1]}')
+                                    f'<b>{hover_text}: </b>%{{customdata[0]}}<br>')
 
     # unselected_plot_df is gray background, no hover
-    if unselected_plot_df.shape[0] > 100:
+    if background_data.shape[0] > 10:
         fig.add_trace(
             go.Scattergl(
-                x=unselected_plot_df['x'],
-                y=unselected_plot_df['y'],
+                x=background_data['x'],
+                y=background_data['y'],
                 mode='markers',
-                marker_size=n_cell_to_marker_size(unselected_plot_df.shape[0]) - 1,
+                name='Others',
+                marker_size=n_cell_to_marker_size(background_data.shape[0]) - 1,
                 marker_color='rgba(200, 200, 200, .5)',
                 hoverinfo='skip')
         )
@@ -240,184 +381,64 @@ def generate_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_n
     return fig
 
 
-def region_selector_to_region_list(input_list):
-    total_selected_regions = []
-    region_to_dissect_region_map = dataset.region_label_to_dissection_region_dict
-    for region in input_list:
-        total_selected_regions += region_to_dissect_region_map[region]
-    region_selected = list(set(total_selected_regions))
-    return region_selected
+@app.callback(
+    Output('dissection-umap-graph', 'figure'),
+    [Input('scatter-coords-dropdown', 'value'),
+     Input('region-level-dropdown', 'value')],
+    [State('region-name', 'children'),
+     State('cell-type-level-selector', 'value')]
+)
+def update_region_umap_figure(coord_name, region_level, region_name, cell_type_level):
+    active_data, background_data = _get_active_and_background_data(
+        coord_name=coord_name,
+        region_name=region_name,
+        region_level=region_level,
+        cell_type_level=cell_type_level)
 
-
-@app.callback([Output('selected_brain_regions', 'data'),
-               Output('region_browser_n_cells', 'children'),
-               Output('region_browser_n_regions', 'children')],
-              [Input('region_selector', 'value')])
-def update_selected_regions(region_selected):
-    # use all the regions on initial load/no region selected.
-    if (region_selected is None) or (len(region_selected) == 0):
-        region_selected = dataset.dissection_regions
-    else:
-        region_selected = region_selector_to_region_list(region_selected)
-
-    # n regions
-    n_regions = len(region_selected)
-
-    # update data
-    data = {'regions': region_selected}
-
-    # n cells
-    region_cell_counts = dataset.get_variables('RegionName').value_counts()
-    n_cells = sum([region_cell_counts[r] for r in region_selected])
-
-    return data, n_cells, n_regions
-
-
-@app.callback(Output('region_scatter', 'figure'),
-              [Input('update_button', 'n_clicks')],
-              [State('coord_selector', 'value'),
-               State('region_level_selector', 'value'),
-               State('selected_brain_regions', 'data')])
-def update_region_scatter(n_clicks, coord_base, region_level, data):
-    selected_cells = get_selected_cells_from_selected_brain_regions(data)
-
-    selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
-        coord_base=coord_base,
-        variable_name=region_level,
-        selected_cells=selected_cells,
-        hover_cols=('RegionName', 'SubType'))
-
-    if selected_plot_df.shape[0] > DOWN_SAMPLE:
-        selected_plot_df = selected_plot_df.sample(DOWN_SAMPLE, random_state=0)
-    if unselected_plot_df.shape[0] > DOWN_SAMPLE:
-        unselected_plot_df = unselected_plot_df.sample(DOWN_SAMPLE, random_state=0)
-
-    # make figure
     fig = generate_scatter(
-        selected_plot_df,
-        unselected_plot_df,
+        active_data,
+        background_data,
         hue=region_level,
-        palette=palette,
         hover_name=region_level,
-        hover_cols=hover_cols)
+        hover_text=cell_type_level)
     return fig
 
 
 @app.callback(
-    Output('no_cell_warning', 'displayed'),
-    [Input('coord_selector', 'value'),
-     Input('region_selector', 'value')]
+    Output('cell-type-umap-graph', 'figure'),
+    [Input('scatter-coords-dropdown', 'value'),
+     Input('cell-type-level-selector', 'value')],
+    [State('region-name', 'children'),
+     State('region-level-dropdown', 'value')]
 )
-def validate_coord_base_and_region_selection(coord_base, region_selected):
-    if (region_selected == []) or (region_selected is None):
-        region_selected = ['ALL REGIONS']
-    cell_dissection_region = dataset.get_variables('RegionName')
-    region_selected = region_selector_to_region_list(region_selected)
+def update_cell_type_umap_figure(coord_name, cell_type_level, region_name, region_level):
+    active_data, background_data = _get_active_and_background_data(
+        coord_name=coord_name,
+        region_name=region_name,
+        region_level=region_level,
+        cell_type_level=cell_type_level)
 
-    selected_cells = cell_dissection_region[cell_dissection_region.isin(region_selected)].index
-    coord_df = dataset.get_coords(coord_base)
-    if (coord_df.index & selected_cells).size == 0:
-        return True
-    else:
-        return False
-
-
-@app.callback(Output('cell_type_scatter', 'figure'),
-              [Input('update_button', 'n_clicks')],
-              [State('coord_selector', 'value'),
-               State('cell_type_level_selector', 'value'),
-               State('selected_brain_regions', 'data')])
-def update_cell_type_scatter(_, coord_base, cell_type_level, data):
-    selected_cells = get_selected_cells_from_selected_brain_regions(data)
-
-    selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
-        coord_base=coord_base,
-        variable_name=cell_type_level,
-        selected_cells=selected_cells,
-        hover_cols=('RegionName', 'SubType'))
-
-    if selected_plot_df.shape[0] > DOWN_SAMPLE:
-        selected_plot_df = selected_plot_df.sample(DOWN_SAMPLE, random_state=0)
-    if unselected_plot_df.shape[0] > DOWN_SAMPLE:
-        unselected_plot_df = unselected_plot_df.sample(DOWN_SAMPLE, random_state=0)
-
-    # make figure
     fig = generate_scatter(
-        selected_plot_df,
-        unselected_plot_df,
+        active_data,
+        background_data,
         hue=cell_type_level,
-        palette=palette,
         hover_name=cell_type_level,
-        hover_cols=hover_cols)
+        hover_text=region_level)
     return fig
 
 
 @app.callback(
-    Output('cell_type_sunburst', 'figure'),
-    [Input('update_button', 'n_clicks')],
-    [State('selected_brain_regions', 'data')]
+    Output('sunburst-graph', 'figure'),
+    [Input('region-name', 'children')]
 )
-def update_cell_type_sunburst(n_clicks, data):
-    selected_cells = get_selected_cells_from_selected_brain_regions(data)
+def update_cell_type_sunburst(region_name):
+    dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
+    region_judge = dataset.get_variables('RegionName').isin(dissection_regions)
+    active_cells = region_judge[region_judge].index
 
     levels = CELL_TYPE_LEVELS
     fig = create_sunburst(
         levels=levels,
-        selected_cells=selected_cells
+        selected_cells=active_cells
     )
     return fig
-
-
-@app.callback(
-    [Output('brain_region_img_title', 'children'),
-     Output('brain_region_img', 'src')],
-    [Input('region_scatter', 'clickData'),
-     Input('update_button', 'n_clicks')]
-)
-def update_brain_region_img(clicked_cell_id, n_clicks):
-    # if the update_button triggered this callback, reset the img
-    if dash.callback_context.triggered[0]['prop_id'] == 'update_button.n_clicks':
-        return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
-
-    # example input from clickData
-    # {'points': [{'curveNumber': 5,
-    #              'pointNumber': 246,
-    #              'pointIndex': 246,
-    #              'x': -7.69921875,
-    #              'y': -29.4375,
-    #              'hovertext': 'MOp',
-    #              'customdata': ['MOp-3', 'IT-L5 Grik3', 'MOp']}]}
-    # print('click', clicked_cell_id)
-
-    # this is always dissection region unless the above code changed.
-    try:
-        dissection_region, subtype = clicked_cell_id['points'][0]['customdata'][:2]
-    except TypeError:
-        # init trigger where this no clicked data
-        return DEFAULT_BRAIN_REGION_IMG_TITLE, DEFAULT_BRAIN_REGION_IMG_SRC
-
-    cell_class = dataset.sub_type_to_cell_class[subtype]
-    major_region = dataset.dissection_region_to_major_region[dissection_region]
-
-    title = f'A "{subtype}" ({cell_class}) cell from {dissection_region} ({major_region})'
-    src = BRAIN_REGION_IMG_PATTERN.format(dissection_region=dissection_region)
-
-    return title, src
-
-
-@app.callback(
-    Output('cell_type_table', 'data'),
-    [Input('update_button', 'n_clicks')],
-    [State('selected_brain_regions', 'data')]
-)
-def update_data_table(n_clicks, data):
-    selected_cells = get_selected_cells_from_selected_brain_regions(data)
-
-    new_cell_counts = pd.concat([
-        dataset.get_variables(column).loc[selected_cells].astype(str).value_counts()
-        for column in CELL_TYPE_LEVELS
-    ])
-    _cell_type_table = cell_type_table.copy()
-    _cell_type_table['Number of total cells'] = new_cell_counts.reindex(pd.Index(cell_type_table['UniqueName'])).values
-    _cell_type_table = _cell_type_table.dropna(subset=['Number of total cells'])
-    return _cell_type_table.to_dict('records')

@@ -23,7 +23,6 @@ fr,allen_ccf,595,#CCCCCC
 RSPagl5,allen_ccf,774,#1AA698
 mtt,allen_ccf,690,#CCCCCC
 TTv,allen_ccf,605,#62D09F
-SSp-bfd,allen_ccf,329,#188064
 HY,allen_ccf,1097,#E64438
 och,allen_ccf,117,#CCCCCC
 PALm,allen_ccf,826,#96A7D3
@@ -31,7 +30,6 @@ DEC,allen_ccf,936,#FFFC91
 SS,allen_ccf,453,#188064
 ATN,allen_ccf,239,#FF909F
 PH,allen_ccf,946,#FF4C3E
-VISp,allen_ccf,385,#08858C
 SIM,allen_ccf,1007,#FFFC91
 CNU,allen_ccf,623,#98D6F9
 VISp,allen_ccf,385,#08858C
@@ -41,19 +39,16 @@ RSPv1,allen_ccf,542,#1AA698
 AIv1,allen_ccf,704,#219866
 PVZ,allen_ccf,157,#FF5D50
 AUDd,allen_ccf,1011,#019399
-ACAd,allen_ccf,39,#40A666
 ILA,allen_ccf,44,#59B363
 PAS,allen_ccf,859,#FFB3D9
 BLAp,allen_ccf,311,#9DE79C
 PL5,allen_ccf,363,#2FA850
 VMPO,allen_ccf,576073699,#FF5547
 ENTm,allen_ccf,926,#32B825
-ORBl,allen_ccf,723,#248A5E
 VISpm6a,allen_ccf,257,#08858C
 Eth,allen_ccf,560581551,#FF909F
 IAD,allen_ccf,1113,#FF909F
 LSr,allen_ccf,258,#90CBED
-VISam,allen_ccf,394,#08858C
 PCN,allen_ccf,907,#FF909F
 RSPd6a,allen_ccf,274,#1AA698
 MBsta,allen_ccf,348,#FF90FF
@@ -68,7 +63,6 @@ cbc,allen_ccf,744,#CCCCCC
 AMBd,allen_ccf,939,#FFB3D9
 ANcr2,allen_ccf,1064,#FFFC91
 fp,allen_ccf,971,#CCCCCC
-SSp-m,allen_ccf,345,#188064
 VERM,allen_ccf,645,#FFFC91
 DN,allen_ccf,846,#FFFDBC
 GU,allen_ccf,1057,#009C75
@@ -89,14 +83,10 @@ SG,allen_ccf,318,#FFBA86
 SubG,allen_ccf,321,#FF909F
 AUDp,allen_ccf,1002,#019399
 LGv,allen_ccf,178,#FF909F
-MOs,allen_ccf,993,#1F9D5A
 PAG,allen_ccf,795,#FF90FF
-RSPd,allen_ccf,879,#1AA698
 POL,allen_ccf,1029,#FF909F
-SSp-ul,allen_ccf,369,#188064
 PMd,allen_ccf,980,#FF4C3E
 Pa5,allen_ccf,589508451,#FFA5D2
-VISrl,allen_ccf,417,#009FAC
 VPMpc,allen_ccf,741,#FF8084
 ENT,allen_ccf,909,#32B825
 PYR,allen_ccf,951,#FFFC91
@@ -124,7 +114,6 @@ ACA,allen_ccf,31,#40A666
 AUDp4,allen_ccf,816,#019399
 AOB,allen_ccf,151,#9DF0D2
 CUN,allen_ccf,616,#FF90FF
-SSp-un,allen_ccf,182305689,#188064
 AUDd1,allen_ccf,527,#019399
 MMp,allen_ccf,606826655,#FF4C3E
 rust,allen_ccf,863,#CCCCCC
@@ -144,7 +133,6 @@ BLAv,allen_ccf,451,#9DE79C
 PMv,allen_ccf,1004,#FF4C3E
 ORBl6b,allen_ccf,488,#248A5E
 PL1,allen_ccf,171,#2FA850
-AIv,allen_ccf,119,#219866
 LSc,allen_ccf,250,#90CBED
 LPO,allen_ccf,226,#F2483B
 PVi,allen_ccf,118,#FF5D50
@@ -153,7 +141,6 @@ AIv5,allen_ccf,800,#219866
 ACAv,allen_ccf,48,#40A666
 PL,allen_ccf,972,#2FA850
 VISC,allen_ccf,677,#11AD83
-SSs,allen_ccf,378,#188064
 SSp,allen_ccf,322,#188064
 In,allen_ccf,840,#CCCCCC
 CUL,allen_ccf,928,#FFFC91
@@ -178,7 +165,6 @@ IO,allen_ccf,83,#FFB3D9
 Isocortex,allen_ccf,315,#70FF71
 PERI5,allen_ccf,692,#0E9684
 MMd,allen_ccf,606826659,#FF4C3E
-AUDv,allen_ccf,1018,#019399
 RE,allen_ccf,181,#FF909F
 CEAc,allen_ccf,544,#80C0E2
 sV,allen_ccf,229,#CCCCCC
@@ -189,7 +175,6 @@ PVH,allen_ccf,38,#FF5D50
 AUDv,allen_ccf,1018,#019399
 PAA,allen_ccf,788,#59DAAB
 SPFm,allen_ccf,414,#FF8084
-VISpor,allen_ccf,312782628,#08858C
 ORBl6a,allen_ccf,440,#248A5E
 CENT3,allen_ccf,984,#FFFC91
 ENTm5,allen_ccf,727,#32B825
@@ -203,9 +188,7 @@ SLC,allen_ccf,350,#FFC395
 uf,allen_ccf,850,#CCCCCC
 TU,allen_ccf,614,#F2483B
 ACVII,allen_ccf,576,#FFB3D9
-VISpl,allen_ccf,425,#08858C
 SSp-un6a,allen_ccf,182305709,#188064
-AUDpo,allen_ccf,1027,#019399
 ACAd5,allen_ccf,1015,#40A666
 AVPV,allen_ccf,272,#FF5547
 VISa4,allen_ccf,312782558,#009FAC
@@ -274,7 +257,6 @@ VISrl4,allen_ccf,312782612,#009FAC
 VI,allen_ccf,653,#FFB3D9
 SAG,allen_ccf,271,#FF7AFF
 SSp-un6b,allen_ccf,182305713,#188064
-TEa,allen_ccf,541,#15B0B3
 SCO,allen_ccf,599626923,#FF7AFF
 VISpl6b,allen_ccf,393,#08858C
 SUB,allen_ccf,502,#4FC244
@@ -300,7 +282,6 @@ VISrl5,allen_ccf,312782616,#009FAC
 VISli6b,allen_ccf,312782598,#08858C
 SSp-n4,allen_ccf,654,#188064
 SSp-un5,allen_ccf,182305705,#188064
-ACAv,allen_ccf,48,#40A666
 PSV,allen_ccf,7,#FFAE6F
 PRE,allen_ccf,1084,#59B947
 AIp1,allen_ccf,120,#219866
@@ -310,10 +291,8 @@ ENTl3,allen_ccf,52,#32B825
 AUDp6b,allen_ccf,1005,#019399
 ACAd6a,allen_ccf,919,#40A666
 RSP,allen_ccf,254,#1AA698
-AId,allen_ccf,104,#219866
 ENTm3,allen_ccf,664,#32B825
 VISrl6b,allen_ccf,312782624,#009FAC
-AUDp,allen_ccf,1002,#019399
 LRNm,allen_ccf,955,#FFB3D9
 MBsen,allen_ccf,339,#FF7AFF
 III,allen_ccf,35,#FF90FF
@@ -358,16 +337,13 @@ ORBm6a,allen_ccf,910,#248A5E
 TRS,allen_ccf,581,#96A7D3
 mp,allen_ccf,673,#CCCCCC
 AIv,allen_ccf,119,#219866
-AIp,allen_ccf,111,#219866
 SLD,allen_ccf,358,#FFC395
 VeCB,allen_ccf,589508455,#FFFDBC
 cic,allen_ccf,633,#CCCCCC
 VISl4,allen_ccf,573,#08858C
 TR,allen_ccf,566,#A8ECD3
 ASO,allen_ccf,332,#FF5D50
-VISl,allen_ccf,409,#08858C
 VM,allen_ccf,685,#FF8084
-AUDd,allen_ccf,1011,#019399
 SSp-n1,allen_ccf,558,#188064
 NTS,allen_ccf,651,#FFA5D2
 gVIIn,allen_ccf,1116,#CCCCCC
@@ -375,7 +351,6 @@ GPe,allen_ccf,1022,#8599CC
 PERI6a,allen_ccf,335,#0E9684
 PL6a,allen_ccf,84,#2FA850
 AIp6a,allen_ccf,314,#219866
-RSPagl,allen_ccf,894,#1AA698
 VIIIn,allen_ccf,933,#CCCCCC
 AId1,allen_ccf,996,#219866
 RSPd1,allen_ccf,442,#1AA698
@@ -419,7 +394,6 @@ ACAd1,allen_ccf,935,#40A666
 MGd,allen_ccf,1072,#FF8084
 Vn,allen_ccf,901,#CCCCCC
 ARH,allen_ccf,223,#FF5D50
-SSp-tr,allen_ccf,361,#188064
 SMT,allen_ccf,366,#FF909F
 VPM,allen_ccf,733,#FF8084
 SSp-ll,allen_ccf,337,#188064
@@ -448,7 +422,6 @@ BLA,allen_ccf,295,#9DE79C
 SSp-ll4,allen_ccf,1094,#188064
 PGRNl,allen_ccf,978,#FFB3D9
 MOs6b,allen_ccf,1085,#1F9D5A
-FRP,allen_ccf,184,#268F45
 MEV,allen_ccf,460,#FF7AFF
 SSp-bfd4,allen_ccf,1047,#188064
 MEA,allen_ccf,403,#80C0E2
@@ -474,7 +447,6 @@ ND,allen_ccf,587,#FF90FF
 Xi,allen_ccf,560581559,#FF909F
 VISC4,allen_ccf,1010,#11AD83
 SCs,allen_ccf,302,#FF7AFF
-VISal,allen_ccf,402,#08858C
 opt,allen_ccf,125,#CCCCCC
 fxpo,allen_ccf,737,#CCCCCC
 ORBm2,allen_ccf,524,#248A5E
@@ -504,7 +476,6 @@ APN,allen_ccf,215,#FF90FF
 PDTg,allen_ccf,599626927,#FFBA86
 VISli5,allen_ccf,312782590,#08858C
 VISpor,allen_ccf,312782628,#08858C
-ECT,allen_ccf,895,#0D9F91
 CA,allen_ccf,375,#7ED04B
 MPT,allen_ccf,531,#FF90FF
 SSs5,allen_ccf,1090,#188064
@@ -528,7 +499,6 @@ GPi,allen_ccf,1031,#8599CC
 TEa5,allen_ccf,289,#15B0B3
 SSp-tr,allen_ccf,361,#188064
 FRP1,allen_ccf,68,#268F45
-GU,allen_ccf,1057,#009C75
 AUDpo5,allen_ccf,791,#019399
 VISal5,allen_ccf,233,#08858C
 RPF,allen_ccf,549009203,#FF90FF
@@ -544,7 +514,6 @@ TEa1,allen_ccf,97,#15B0B3
 DORpm,allen_ccf,856,#FF909F
 dscp,allen_ccf,812,#CCCCCC
 P-sen,allen_ccf,1132,#FFAE6F
-VISli,allen_ccf,312782574,#08858C
 RSPagl6b,allen_ccf,279,#1AA698
 ISN,allen_ccf,106,#FFB3D9
 SSp-m5,allen_ccf,974,#188064
@@ -589,8 +558,6 @@ SSp-tr6a,allen_ccf,9,#188064
 VISa6b,allen_ccf,312782570,#009FAC
 PFL,allen_ccf,1041,#FFFC91
 VISam4,allen_ccf,401,#08858C
-MOp,allen_ccf,985,#1F9D5A
-ORBvl,allen_ccf,746,#248A5E
 mfbc,allen_ccf,768,#CCCCCC
 RPA,allen_ccf,230,#FFC6E2
 SSp-n6a,allen_ccf,889,#188064
@@ -610,7 +577,6 @@ MED,allen_ccf,444,#FF909F
 VISli,allen_ccf,312782574,#08858C
 SOC,allen_ccf,398,#FFAE6F
 TEa6a,allen_ccf,729,#15B0B3
-SSp-n,allen_ccf,353,#188064
 ml,allen_ccf,697,#CCCCCC
 SUM,allen_ccf,525,#FF4C3E
 AHN,allen_ccf,88,#FF4C3E
@@ -639,7 +605,6 @@ BMA,allen_ccf,319,#84EA81
 VISa6a,allen_ccf,312782566,#009FAC
 NOD,allen_ccf,968,#FFFC91
 RSPagl,allen_ccf,894,#1AA698
-VISC,allen_ccf,677,#11AD83
 PAL,allen_ccf,803,#8599CC
 LSX,allen_ccf,275,#90CBED
 root,allen_ccf,997,#FFFFFF
@@ -740,7 +705,6 @@ COAp,allen_ccf,647,#61E7B7
 int,allen_ccf,6,#CCCCCC
 ICd,allen_ccf,820,#FF7AFF
 POR,allen_ccf,122,#FFAE6F
-VISpm,allen_ccf,533,#08858C
 NDB,allen_ccf,596,#96A7D3
 epsc,allen_ccf,760,#CCCCCC
 PVT,allen_ccf,149,#FF909F
@@ -786,7 +750,6 @@ PC5,allen_ccf,549009223,#FFBA86
 SPFp,allen_ccf,422,#FF8084
 DG-sg,allen_ccf,632,#66A83D
 ICc,allen_ccf,811,#FF7AFF
-PERI,allen_ccf,922,#0E9684
 LRN,allen_ccf,235,#FFB3D9
 MDRNv,allen_ccf,1107,#FFB3D9
 LDT,allen_ccf,162,#FFC395
@@ -802,7 +765,6 @@ MMl,allen_ccf,606826647,#FF4C3E
 MOs,allen_ccf,993,#1F9D5A
 COApl,allen_ccf,655,#61E7B7
 mfbse,allen_ccf,1083,#CCCCCC
-VISa,allen_ccf,312782546,#009FAC
 VISrl,allen_ccf,417,#009FAC
 AMv,allen_ccf,1104,#FF909F
 IP,allen_ccf,91,#FFFDBC
@@ -811,7 +773,6 @@ IG,allen_ccf,19,#7ED04B
 ILA5,allen_ccf,827,#59B363
 STRd,allen_ccf,485,#98D6F9
 MTN,allen_ccf,571,#FF909F
-SSp-ll,allen_ccf,337,#188064
 ee,allen_ccf,964,#CCCCCC
 V4r,allen_ccf,153,#AAAAAA
 fi,allen_ccf,603,#CCCCCC
