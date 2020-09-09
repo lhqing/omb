@@ -43,7 +43,7 @@ def get_header():
                 ),
                 dcc.Link(
                     "Brain Region Browser",
-                    href=f"/{APP_ROOT_NAME}/brain_region",
+                    href=f"/{APP_ROOT_NAME}/brain_region?br=MOp",
                     className="tab",
                 ),
                 dcc.Link(
@@ -95,9 +95,14 @@ def display_page(pathname, search, total_url):
         # init callback url is None
         raise PreventUpdate
     elif (pathname == f'/{APP_ROOT_NAME}/home') or (pathname == f'/{APP_ROOT_NAME}/'):
-        app_layout.append(home_layout)
+        layout = home_layout
     elif pathname == f'/{APP_ROOT_NAME}/brain_region':
-        app_layout.append(region_browser_app.layout)
+        if search_dict is None:
+            return '404'
+        # validate key here:
+        if 'br' not in search_dict:
+            return '404'
+        layout = create_brain_region_browser_layout(region_name=search_dict['br'])
     elif pathname == f'/{APP_ROOT_NAME}/cell_type':
         if search_dict is None:
             return '404'
@@ -105,10 +110,6 @@ def display_page(pathname, search, total_url):
         if 'ct' not in search_dict:
             return '404'
         layout = create_cell_type_browser_layout(cell_type_name=search_dict['ct'], total_url=total_url)
-        if layout is None:
-            return '404'
-        else:
-            app_layout.append(layout)
     elif pathname == f'/{APP_ROOT_NAME}/gene':
         if search_dict is None:
             return '404'
@@ -116,11 +117,14 @@ def display_page(pathname, search, total_url):
         if 'gene' not in search_dict:
             return '404'
         layout = create_gene_browser_layout(gene=search_dict['gene'])
-        if layout is None:
-            return '404'
-        app_layout.append(layout)
     elif pathname == f'/{APP_ROOT_NAME}/test':
-        app_layout.append(test_app.layout)
+        layout = test_app.layout
     else:
         return '404'
+
+    # final validate, if any parameter does not found, layout is None
+    if layout is None:
+        return '404'
+    else:
+        app_layout.append(layout)
     return app_layout
