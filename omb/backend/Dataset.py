@@ -352,7 +352,7 @@ class Dataset:
         Parameters
         ----------
         region_name
-        CEMBA id (3C, 4B) or Allen CCF arconym (MOp, SSp)
+        CEMBA id (3C, 4B) or Allen CCF acronym (MOp, SSp)
 
         Returns
         -------
