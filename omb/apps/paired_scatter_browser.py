@@ -12,7 +12,6 @@ from ..app import app
 
 
 def paired_scatter_api(search_dict):
-    print(search_dict)
     if search_dict is None:
         search_dict = {}
     # scatter plot api
@@ -192,9 +191,9 @@ def create_paired_scatter_layout(coords='L1UMAP', downsample=10000,
                                    'text-align': 'center',
                                    'padding': '20px 10px 50px 10px'})
             ], className='one column',
-                style={'align-items': 'center',
+                style={'alignItems': 'center',
                        'display': 'flex',
-                       'justify-content': 'center'})
+                       'justifyContent': 'center'})
         ], className='row container-display'),
 
         # second row is two scatter graph, left is cell metadata, right is gene
