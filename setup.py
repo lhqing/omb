@@ -12,7 +12,8 @@ setup(
     long_description=open('README.md').read(),
     include_package_data=True,
     package_data={
-        '': ['*.msg', '*.ply', '*.h5', '*.csv', '*.json', '*.lib', '*.css', '*.js', '*.png', '*.jpeg']
+        '': ['*.msg', '*.ply', '*.h5', '*.csv', '*.json', '*.lib', '*.css', '*.js',
+             '*.png', '*.jpeg', '*.jpg', '*.gif', '*.ico']
     },
     install_requires=[
         'dash',

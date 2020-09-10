@@ -26,11 +26,10 @@ def search_to_dict(search):
 
 def get_header():
     return html.Div(
-        html.A(rel='icon', type="image/x-icon", href="http://neomorph.salk.edu/omb_static/favicon.ico"),
         children=[
             html.Div(children=[
                 html.Img(
-                    src='https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/navbar_icon.gif',
+                    src='http://neomorph.salk.edu/omb_static/dissection_region_img/navbar_icon.gif',
                     className='nav-icon'),
                 dcc.Link(
                     "Home",

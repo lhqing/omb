@@ -17,16 +17,16 @@ INTRODUCTION_TEXT = "Mammalian brain cells are remarkably diverse in gene expres
                     "explore this single cell methylome dataset in three different ways."
 
 GENE_BROWSER_TEXT = 'Explore the methylation diversity of one gene at single-cell or cell-type level.'
-GENE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/dissection_region_img/home_gene.jpg'
+GENE_BROWSER_IMG_URL = 'http://neomorph.salk.edu/omb_static/dissection_region_img/home_gene.jpg'
 
 CELL_TYPE_BROWSER_TEXT = 'Explore the spatial distribution and methylation signature genes of one cell type.'
-CELL_TYPE_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/' \
-                            'dissection_region_img/home_cell_type.jpg'
+CELL_TYPE_BROWSER_IMG_URL = 'http://neomorph.salk.edu/omb_static/dissection_region_img/' \
+                            'home_cell_type.jpg'
 
 BRAIN_REGION_BROWSER_TEXT = 'Explore the cell type composition of adult mouse brain ' \
                             'dissection regions and anatomical structures.'
-BRAIN_REGION_BROWSER_IMG_URL = 'https://github.com/lhqing/omb/raw/master/omb/assets/' \
-                               'dissection_region_img/home_brain_region.jpg'
+BRAIN_REGION_BROWSER_IMG_URL = 'http://neomorph.salk.edu/omb_static/dissection_region_img/' \
+                               'home_brain_region.jpg'
 
 ALL_CELL_TYPES = []
 for col in ['CellClass', 'MajorType', 'SubType']:
