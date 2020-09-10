@@ -26,6 +26,7 @@ def search_to_dict(search):
 
 def get_header():
     return html.Div(
+        html.A(rel='icon', type="image/x-icon", href="http://neomorph.salk.edu/omb_static/favicon.ico"),
         children=[
             html.Div(children=[
                 html.Img(

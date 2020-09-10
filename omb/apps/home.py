@@ -82,6 +82,7 @@ layout = html.Div(children=[
                                       for region in dataset.region_label_to_dissection_region_dict.keys()],
                              placeholder='Select a brain region.',
                              id="brain-region-dropdown",
+                             value='Isocortex',
                              className='nine columns'),
                 html.A(html.Button(children='GO'), id='brain-region-url', href='brain_region?br=MOp')
             ], className='row')
@@ -95,6 +96,7 @@ layout = html.Div(children=[
                              placeholder='Select a cell type.',
                              options=[{'label': ct, 'value': ct}
                                       for ct in ALL_CELL_TYPES],
+                             value='IT-L23',
                              className='nine columns'),
                 html.A(html.Button(children='GO'), id='cell-type-url', href='cell_type?ct=IT-L23')
             ], className='row'),
