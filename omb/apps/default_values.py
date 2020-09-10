@@ -1,6 +1,5 @@
 from ..backend import dataset
 
-
 N_CELLS = dataset.n_cells
 N_REGION = dataset.get_variables('Region').unique().size
 N_MAJOR_TYPE = dataset.get_variables('MajorType').unique().size
@@ -17,3 +16,29 @@ CELL_TYPE_LEVELS = ['CellClass', 'MajorType', 'SubType']
 REGION_LEVELS = ['MajorRegion', 'SubRegion', 'RegionName']
 
 DOWN_SAMPLE = 10000
+
+GENE_META_DF = dataset.gene_meta_table
+MAX_TRACKS = 12
+CATEGORICAL_VAR = [
+    'RegionName', 'MajorRegion', 'SubRegion', 'CellClass', 'MajorType',
+    'SubType'
+]
+
+CONTINUOUS_VAR = [
+    'CCC_Rate', 'CG_Rate', 'CG_RateAdj', 'CH_Rate', 'CH_RateAdj',
+    'FinalReads', 'InputReads', 'MappedReads', 'BamFilteringRate',
+    'MappingRate', 'Slice'
+]
+
+CONTINUOUS_VAR_NORMS = {
+    'CCC_Rate': (0, 0.03),
+    'CG_Rate': (0.65, 0.85),
+    'CG_RateAdj': (0.65, 0.85),
+    'CH_Rate': (0, 0.04),
+    'CH_RateAdj': (0, 0.04),
+    'FinalReads': (5e5, 2e6),
+    'InputReads': (1e6, 5e6),
+    'MappedReads': (5e5, 3e6),
+    'BamFilteringRate': (0.5, 0.8),
+    'MappingRate': (0.5, 0.8)
+}

@@ -12,32 +12,6 @@ from .default_values import *
 from .utilities import n_cell_to_marker_size
 from ..app import app
 
-GENE_META_DF = dataset.gene_meta_table
-MAX_TRACKS = 12
-CATEGORICAL_VAR = [
-    'RegionName', 'MajorRegion', 'SubRegion', 'CellClass', 'MajorType',
-    'SubType'
-]
-
-CONTINUOUS_VAR = [
-    'CCC_Rate', 'CG_Rate', 'CG_RateAdj', 'CH_Rate', 'CH_RateAdj',
-    'FinalReads', 'InputReads', 'MappedReads', 'BamFilteringRate',
-    'MappingRate', 'Slice'
-]
-
-CONTINUOUS_VAR_NORMS = {
-    'CCC_Rate': (0, 0.02),
-    'CG_Rate': (0.65, 0.85),
-    'CG_RateAdj': (0.65, 0.85),
-    'CH_Rate': (0, 0.04),
-    'CH_RateAdj': (0, 0.04),
-    'FinalReads': (5e5, 2e6),
-    'InputReads': (1e6, 5e6),
-    'MappedReads': (5e5, 3e6),
-    'BamFilteringRate': (0.5, 0.8),
-    'MappingRate': (0.5, 0.8)
-}
-
 
 def get_gene_info_markdown(gene_int):
     gene_info = dataset.gene_meta_table.loc[gene_int].to_dict()
@@ -213,7 +187,9 @@ def create_gene_browser_layout(gene):
                            3: '3'},
                     value=[0.5, 1.5],
                     id='mc-range-slider',
-                    className="dcc_control")
+                    className="dcc_control"),
+                html.Br(),
+                dcc.Markdown(id='gene-browser-pair-scatter-markdown')
             ], className='pretty_container three columns'),
             html.Div(children=[
                 html.H6('Cell Metadata Scatter Plot'),
@@ -394,7 +370,7 @@ def update_iframe(n_clicks, url):
     [Input('cell-meta-dropdown', 'value'),
      Input('coords-dropdown', 'value')]
 )
-def get_scatter_fig(var_name, coord_name):
+def get_cell_meta_scatter_fig(var_name, coord_name):
     data = dataset.get_coords(coord_name)
     data[var_name] = dataset.get_variables(var_name)
     if var_name != 'SubType':
@@ -460,7 +436,7 @@ def get_scatter_fig(var_name, coord_name):
      Input('mc-type-dropdown', 'value')],
     [State('gene_name', 'children')]
 )
-def get_scatter_fig(coord_name, gene_int, mc_type, gene_name):
+def get_gene_scatter_fig(coord_name, gene_int, mc_type, gene_name):
     data = dataset.get_coords(coord_name)
     data['SubType'] = dataset.get_variables('SubType')
 
@@ -498,3 +474,17 @@ def get_scatter_fig(coord_name, gene_int, mc_type, gene_name):
                            plot_bgcolor='rgba(0,0,0,0)',
                            paper_bgcolor='rgba(0,0,0,0)')
     return fig_gene
+
+
+@app.callback(
+    Output('gene-browser-pair-scatter-markdown', 'children'),
+    [Input('coords-dropdown', 'value'),
+     Input('cell-meta-dropdown', 'value'),
+     Input('gene_name', 'children'),
+     Input('mc-type-dropdown', 'value'),
+     Input('mc-range-slider', 'value')]
+)
+def make_pair_scatter_markdown(coords, cell_meta, gene, mc_type, cnorm):
+    url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
+    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
+    return text

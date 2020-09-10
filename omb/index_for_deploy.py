@@ -37,18 +37,23 @@ def get_header():
                     className="tab first",
                 ),
                 dcc.Link(
-                    "Gene Browser",
+                    "Gene",
                     href=f"/{APP_ROOT_NAME}/gene?gene=Cux2",
                     className="tab",
                 ),
                 dcc.Link(
-                    "Brain Region Browser",
+                    "Brain Region",
                     href=f"/{APP_ROOT_NAME}/brain_region?br=MOp",
                     className="tab",
                 ),
                 dcc.Link(
-                    "Cell Type Browser",
+                    "Cell Type",
                     href=f"/{APP_ROOT_NAME}/cell_type?ct=Exc",
+                    className="tab",
+                ),
+                dcc.Link(
+                    "Paired Scatter",
+                    href=f"/{APP_ROOT_NAME}/scatter",
                     className="tab",
                 )
             ],
@@ -117,6 +122,8 @@ def display_page(pathname, search, total_url):
         if 'gene' not in search_dict:
             return '404'
         layout = create_gene_browser_layout(gene=search_dict['gene'])
+    elif pathname == f'/{APP_ROOT_NAME}/scatter':
+        layout = create_paired_scatter_layout(**paired_scatter_api(search_dict))
     elif pathname == f'/{APP_ROOT_NAME}/test':
         layout = test_app.layout
     else:

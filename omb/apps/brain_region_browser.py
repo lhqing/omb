@@ -6,8 +6,9 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output, State
-from .sunburst import create_sunburst
+
 from .default_values import *
+from .sunburst import create_sunburst
 from .utilities import n_cell_to_marker_size
 from ..app import app
 
@@ -204,7 +205,8 @@ def create_brain_region_browser_layout(region_name):
         html.Div(
             children=[
                 html.Div(
-                    html.H5('UMAP Control'),
+                    [html.H5('UMAP Control'),
+                     dcc.Markdown(id='brain-region-pair-scatter-markdown')],
                     className='two columns'
                 ),
                 html.Div(
@@ -442,3 +444,15 @@ def update_cell_type_sunburst(region_name):
         selected_cells=active_cells
     )
     return fig
+
+
+@app.callback(
+    Output('brain-region-pair-scatter-markdown', 'children'),
+    [Input('scatter-coords-dropdown', 'value'),
+     Input('cell-type-level-selector', 'value'),
+     Input('region-name', 'children')]
+)
+def make_pair_scatter_markdown(coords, cell_type_level, region_name):
+    url = f'/scatter?coords={coords};meta={cell_type_level};br={region_name}'
+    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
+    return text

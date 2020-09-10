@@ -208,7 +208,9 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                                    3: '3'},
                             value=[0.5, 1.5],
                             id='mc_range_slider',
-                            className="dcc_control")
+                            className="dcc_control"),
+                        html.Br(),
+                        dcc.Markdown(id='cell-type-pair-scatter-markdown')
                     ],
                     id='scatter_control',
                     className='pretty_container two columns'),
@@ -654,3 +656,19 @@ def update_gene_selection(active_cell, table_data):
         raise PreventUpdate
 
     return gene_int
+
+
+@app.callback(
+    Output('cell-type-pair-scatter-markdown', 'children'),
+    [Input('coords_cluster_level_dropdown', 'value'),
+     Input('dynamic_gene_dropdown', 'value'),
+     Input('mc_type_dropdown', 'value'),
+     Input('mc_range_slider', 'value'),
+     Input('cell_type_name', 'children')]
+)
+def make_pair_scatter_markdown(coord_and_level, gene, mc_type, cnorm, cell_type_name):
+    coords, cell_meta = coord_and_level.split(' - ')
+    url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};' \
+          f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
+    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
+    return text
