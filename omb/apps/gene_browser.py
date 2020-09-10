@@ -133,7 +133,7 @@ def create_gene_browser_layout(gene):
             ], className='pretty_container four columns'),
             html.Div(children=[
                 html.Div(children=[
-                    html.H6('Gene - Cell Type Violin Plot'),
+                    html.H6('Gene - Cell Type Box Plot'),
                     dcc.Dropdown(
                         id='violin-level-dropdown',
                         options=[{'label': 'CellClass', 'value': 'CellClass'},

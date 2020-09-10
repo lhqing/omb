@@ -145,7 +145,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
         html.Div(
             children=[
                 html.Div(children=[
-                    html.H6(children=cell_type_name, id='cell_type_name'),
+                    html.H1(children=cell_type_name, id='cell_type_name'),
                     dcc.Markdown(cell_type_markdown, id='cell_mark_down'),
                 ], className='pretty_container four columns'),
                 html.Div(children=[
@@ -351,7 +351,7 @@ def update_metric_violin(cell_type_name):
     cell_ids = _cell_type_name_to_cell_ids(cell_type_name, sample=10000)
 
     metric_df = dataset.get_variables(
-        ['CG_RateAdj', 'CH_RateAdj', 'FinalReads', 'MappingRate']).loc[cell_ids]
+        ['CH_RateAdj', 'CG_RateAdj', 'FinalReads', 'MappingRate']).loc[cell_ids]
 
     titles = ["Overall mCH / CH", "Overall mCG / CG", "Final Reads", "Mapping Rate"]
 
