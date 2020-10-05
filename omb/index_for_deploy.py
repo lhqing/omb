@@ -83,11 +83,18 @@ app.config.update({
     # remove the default of '/'
     'requests_pathname_prefix': f'/{APP_ROOT_NAME}/'
 })
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    get_header(),  # nav bar
-    html.Div(id='page-content', className='content')
-])
+
+app.layout = html.Div(
+    [
+        dcc.Location(id='url', refresh=False),
+        get_header(),  # nav bar
+        html.Div(
+            id='page-content',
+            # Global style of all APPs
+            className='page-content'
+        )
+    ]
+)
 
 
 @app.callback(

@@ -70,15 +70,17 @@ def get_header():
 
 app.config.suppress_callback_exceptions = True
 
-app.layout = html.Div([
-    dcc.Location(id='url', refresh=False),
-    get_header(),  # nav bar
-    html.Div(
-        id='page-content',
-        # Global style of all APPs
-        className='page-content'
-    )
-])
+app.layout = html.Div(
+    [
+        dcc.Location(id='url', refresh=False),
+        get_header(),  # nav bar
+        html.Div(
+            id='page-content',
+            # Global style of all APPs
+            className='page-content'
+        )
+    ]
+)
 
 
 @app.callback(
