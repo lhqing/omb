@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_table
@@ -106,8 +107,6 @@ DMG_COLUMNS = {
     'end': 'End',
     'strand': 'Strand',
     'gene_type': 'Gene Type',
-    'level': 'GENCODE Level',
-    'tag': 'Gencode Tag',
     'rank': 'Rank'}
 
 
@@ -140,193 +139,343 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
     else:
         default_mc_type = 'CHN'
 
-    layout = html.Div(children=[
-        # first row is cell_type_card and region_compo_sunburst
-        html.Div(
-            children=[
-                html.Div(children=[
-                    html.H1(children=cell_type_name, id='cell_type_name'),
-                    dcc.Markdown(cell_type_markdown, id='cell_mark_down'),
-                ], className='pretty_container four columns'),
-                html.Div(children=[
-                    html.H6('Brain Region Composition'),
-                    dcc.Graph(id='region_sunburst')
-                ], className='pretty_container four columns'),
-                html.Div(children=[
-                    html.H6('Dissection Region'),
-                    dcc.Graph(id='region_bar_plot',
-                              config={'displayModeBar': False})
-                ], className='pretty_container two columns'),
-                html.Div(children=[
-                    html.H6('Mapping Metrics'),
-                    dcc.Graph(id='metric_violin',
-                              config={'displayModeBar': False})
-                ], className='pretty_container two columns')
-            ],
-            className='row container-display'
-        ),
+    first_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Jumbotron(
+                        [
+                            html.H1(children=cell_type_name, id='cell_type_name'),
+                            dcc.Markdown(cell_type_markdown, id='cell_mark_down')
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4,
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Brain Region Composition'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='region_sunburst')
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4,
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Dissection Region'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='region_bar_plot',
+                                              config={'displayModeBar': False})
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, md=6, xl=2,
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Mapping Metrics'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='metric_violin',
+                                              config={'displayModeBar': False})
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, md=6, xl=2,
+            ),
+        ]
+    )
 
-        # second row has two scatter plots that can be plotted differently
-        html.Div(
-            children=[
-                html.Div(
-                    children=[
-                        html.H6('Scatter Control'),
-                        html.H6('Layout',
-                                className="control_label"),
-                        dcc.Dropdown(
-                            options=[{'label': coord_and_level, 'value': coord_and_level}
-                                     for coord_and_level in coord_and_cluster_levels],
-                            clearable=False,
-                            value=default_layout_choice,
-                            id='coords_cluster_level_dropdown',
-                            className="dcc_control"),
-                        html.H6('Gene Body of',
-                                className="control_label"),
-                        dcc.Dropdown(
-                            clearable=False,
-                            value=15397,  # This is Cux2, TODO change a best default for each cluster
-                            id='dynamic_gene_dropdown',
-                            className="dcc_control"),
-                        html.H6('Color By',
-                                className="control_label"),
-                        dcc.Dropdown(
-                            options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
-                                     {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
-                            value=default_mc_type,
-                            clearable=False,
-                            id='mc_type_dropdown',
-                            className="dcc_control"),
-                        html.H6('Color Range',
-                                className="control_label"),
-                        dcc.RangeSlider(
-                            min=0,
-                            max=3,
-                            step=0.1,
-                            marks={0: '0', 0.5: '0.5', 1: '1',
-                                   1.5: '1.5', 2: '2', 2.5: '2.5',
-                                   3: '3'},
-                            value=[0.5, 1.5],
-                            id='mc_range_slider',
-                            className="dcc_control"),
-                        html.Br(),
-                        dcc.Markdown(id='cell-type-pair-scatter-markdown')
-                    ],
-                    id='scatter_control',
-                    className='pretty_container two columns'),
-                html.Div(
-                    children=[
-                        html.H6('Scatter Plot - Cell Type'),
-                        dcc.Loading(children=[
-                            dcc.Graph(id='scatter_plot_1',
-                                      config={'displayModeBar': False})], type='circle')
-                    ],
-                    className='pretty_container four columns'
-                ),
-                html.Div(
-                    children=[
-                        html.H6('Scatter Plot - Gene Body +/- 2Kb mC Fraction'),
-                        dcc.Graph(id='scatter_plot_2')
-                    ],
-                    className='pretty_container four columns'
-                ),
-                html.Div(
-                    children=[
-                        html.H6('mC Frac. Dist.'),
-                        dcc.Graph(id='gene_violin',
-                                  config={'displayModeBar': False})
-                    ],
-                    className='pretty_container two columns'
-                ),
-            ], className='row container-display'
-        ),
+    control_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Coordinates'),
+                    dcc.Dropdown(
+                        options=[{'label': coord_and_level, 'value': coord_and_level}
+                                 for coord_and_level in coord_and_cluster_levels],
+                        clearable=False,
+                        value=default_layout_choice,
+                        id='coords_cluster_level_dropdown'),
+                    dbc.FormText('Coordinates of both scatter plots.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene'),
+                    dcc.Dropdown(
+                        clearable=False,
+                        value=15397,  # This is Cux2, TODO change a best default for each cluster
+                        id='dynamic_gene_dropdown'),
+                    dbc.FormText('Gene of the right scatter plot.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Body mC Type'),
+                    dcc.Dropdown(
+                        options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
+                                 {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
+                        value=default_mc_type,
+                        clearable=False,
+                        id='mc_type_dropdown'),
+                    dbc.FormText('Color per cell normalized mCH or mCG fraction of the gene body.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Color Scale'),
+                    dcc.RangeSlider(
+                        min=0,
+                        max=3,
+                        step=0.1,
+                        marks={0: '0', 0.5: '0.5', 1: '1',
+                               1.5: '1.5', 2: '2', 2.5: '2.5',
+                               3: '3'},
+                        value=[0.5, 1.5],
+                        id='mc_range_slider'),
+                    dbc.FormText('Color scale of the right scatter plot.')
+                ]
+            ),
+            html.Hr(className='my-2'),
+            dcc.Markdown(id='cell-type-pair-scatter-markdown')
+        ]
+    )
 
-        # third row is CH-DMG table
-        html.Div(
-            children=[
-                # control panel of the dmg table
-                html.Div(
-                    children=[
-                        html.H6('CH-DMG Control',
-                                className="control_label"),
-                        dcc.Markdown(children=f'DMG Comparison Level: **{dmg_level}**',
-                                     id='dmg_level_markdown',
-                                     className="control_label"),
-                        html.P('Cluster set A (hypo-methylated)',
-                               className="control_label"),
-                        html.Div(
-                            dcc.Dropdown(
-                                options=[{'label': ct, 'value': ct}
-                                         for ct in dataset.get_variables(dmg_level).unique()],
-                                value=hypo_clusters,
-                                multi=True,
-                                id='hypo_cluster_dropdown'
-                            ),
-                            className="dcc_control"),
-                        html.P('Cluster set B (hyper-methylated)',
-                               className="control_label"),
-                        html.Div(
-                            dcc.Dropdown(
-                                options=[{'label': ct, 'value': ct}
-                                         for ct in dataset.get_variables(dmg_level).unique()],
-                                value=hyper_clusters,
-                                multi=True,
-                                id='hyper_cluster_dropdown'
-                            ),
-                            className="dcc_control"),
-                        html.P('Gene Type',
-                               className="control_label"),
-                        html.Div(
-                            dcc.Dropdown(
-                                options=[{'label': 'All Genes', 'value': 'All'},
-                                         {'label': 'Protein Coding Genes Only', 'value': 'ProteinCoding'}],
-                                multi=False,
-                                clearable=False,
-                                value='ProteinCoding',
-                                id='gene_type_dropdown'
-                            ),
-                            className="dcc_control"),
-                        html.Button(children='Update DMG Table',
-                                    id='dmg_trigger_button',
-                                    n_clicks=0,
-                                    className='offset-by-two columns eight columns')
-                    ],
-                    className='pretty_container three columns'
-                ),
-                # dmg table
-                html.Div(
-                    children=[
-                        html.H6('DMG Table (Click on gene name to view scatter plot)'),
-                        dash_table.DataTable(
-                            id='dmg_table',
-                            style_cell={
-                                'whiteSpace': 'normal',
-                                # 'height': 'auto',
-                                'textAlign': 'left',
-                            },
-                            style_header={
-                                'fontWeight': 'bold',
-                                'height': '50px'
-                            },
-                            style_data_conditional=[
-                                {
-                                    'if': {'row_index': 'odd'},
-                                    'backgroundColor': 'rgb(248, 248, 248)'
-                                }
-                            ],
-                            filter_action='native',
-                            sort_action="native",
-                            sort_mode="multi",
-                            style_as_list_view=True,
-                            columns=[{"name": name, "id": col} for col, name in DMG_COLUMNS.items()],
-                            data=[],
-                            page_size=20)
-                    ],
-                    className='pretty_container nine columns'
-                )
-            ], className='row container-display'
-        )
-    ])
+    second_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Scatter Control'),
+                            dbc.CardBody(
+                                [
+                                    control_form
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=2
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Cell Type Scatter'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Loading(
+                                        [
+                                            dcc.Graph(id='scatter_plot_1',
+                                                      config={'displayModeBar': False},
+                                                      style={"height": "50vh", "width": "auto"})
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Gene Scatter'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Loading(
+                                        dcc.Graph(id='scatter_plot_2',
+                                                  style={"height": "50vh", "width": "auto"})
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('mC Frac. Dist.'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='gene_violin',
+                                              config={'displayModeBar': False},
+                                              style={"height": "50vh", "width": "auto"})
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=2
+            ),
+        ],
+        className='my-4'
+    )
+
+    third_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('DMG Table Control'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Markdown(children=f'DMG Comparison Level: **{dmg_level}**',
+                                                 id='dmg_level_markdown',
+                                                 className="control_label"),
+                                    html.P('Top 100 Differentially Methylated Genes (DMG) between the two '
+                                           'cell type sets below are shown on the right table. Cell types related '
+                                           'to this page is loaded by default, but you can use any combination '
+                                           'of your interest to customize the DMG table.', className='text-muted'),
+                                    dbc.Form(
+                                        [
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Cell Type Set A (hypo-methylated)'),
+                                                    dcc.Dropdown(
+                                                        options=[{'label': ct, 'value': ct}
+                                                                 for ct in dataset.get_variables(dmg_level).unique()],
+                                                        value=hypo_clusters,
+                                                        multi=True,
+                                                        id='hypo_cluster_dropdown'
+                                                    ),
+                                                    dbc.FormText(
+                                                        'Cell types having hypo-methylation in the listed genes. '
+                                                        'Selecting cell type(s) of this page by default.')
+                                                ]
+                                            ),
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Cell Type Set B (hyper-methylated)'),
+                                                    dcc.Dropdown(
+                                                        options=[{'label': ct, 'value': ct}
+                                                                 for ct in dataset.get_variables(dmg_level).unique()],
+                                                        value=hyper_clusters,
+                                                        multi=True,
+                                                        id='hyper_cluster_dropdown'
+                                                    ),
+                                                    dbc.FormText('Cell types having hyper-methylation in the '
+                                                                 'listed genes. Selecting all sibling(s) of the '
+                                                                 'Cell Type Set A by default.')
+                                                ]
+                                            ),
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Gene Type'),
+                                                    dcc.Dropdown(
+                                                        options=[{'label': 'All Genes', 'value': 'All'},
+                                                                 {'label': 'Protein Coding Genes Only',
+                                                                  'value': 'ProteinCoding'}],
+                                                        multi=False,
+                                                        clearable=False,
+                                                        value='ProteinCoding',
+                                                        id='gene_type_dropdown'
+                                                    )
+                                                ]
+                                            ),
+                                            dbc.Button(
+                                                'Update DMG Table',
+                                                id='dmg_trigger_button',
+                                                n_clicks=0,
+                                                color='success',
+                                                className='m-auto')
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('DMG Table (Click on gene name to view in the right scatter plot)'),
+                            dbc.CardBody(
+                                [
+                                    dash_table.DataTable(
+                                        id='dmg_table',
+                                        style_cell={
+                                            'whiteSpace': 'normal',
+                                            # 'height': 'auto',
+                                            'textAlign': 'left',
+                                        },
+                                        style_header={
+                                            'fontWeight': 'bold',
+                                            'height': '50px'
+                                        },
+                                        style_data_conditional=[
+                                            {
+                                                'if': {'row_index': 'odd'},
+                                                'backgroundColor': 'rgb(248, 248, 248)'
+                                            }
+                                        ],
+                                        filter_action='native',
+                                        sort_action="native",
+                                        sort_mode="multi",
+                                        style_as_list_view=True,
+                                        columns=[{"name": name, "id": col}
+                                                 for col, name in DMG_COLUMNS.items()],
+                                        data=[],
+                                        page_size=20)
+                                ],
+                                className='p-3'
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=8
+            )
+        ],
+        className='my-4'
+    )
+
+    layout = html.Div(
+        [
+            # first row is cell_type_card and region_compo_sunburst
+            first_row,
+            # second row has two scatter plots that can be plotted differently
+            second_row,
+            # third row is CH-DMG table
+            third_row,
+        ]
+    )
     return layout
 
 
@@ -557,8 +706,8 @@ def update_scatter_plot_1(coord_and_cell_type_level, cell_type_name):
 
 
 @app.callback(
-    [Output('scatter_plot_2', 'figure'),
-     Output('gene_violin', 'figure')],
+    [Output('gene_violin', 'figure'),
+     Output('scatter_plot_2', 'figure')],
     [Input('coords_cluster_level_dropdown', 'value'),
      Input('dynamic_gene_dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
@@ -613,7 +762,7 @@ def update_scatter_plot_2(coord_and_cell_type_level, gene_int, mc_type, hue_norm
                              paper_bgcolor='rgba(0,0,0,0)')
     violin_fig.update_xaxes(range=[-0.5, 0.5])
     violin_fig.update_yaxes(range=[0, 3])
-    return scatter_fig, violin_fig
+    return violin_fig, scatter_fig
 
 
 @app.callback(
@@ -637,6 +786,9 @@ def update_dmg_table(_, hypo_clusters, hyper_clusters, gene_type, dmg_level_str)
                                   cluster_level=cluster_level,
                                   top_n=100,
                                   protein_coding=protein_coding)
+    del (dmg_table['level'])
+    del (dmg_table['tag'])
+
     return dmg_table.to_dict('records')
 
 
@@ -670,5 +822,5 @@ def make_pair_scatter_markdown(coord_and_level, gene, mc_type, cnorm, cell_type_
     coords, cell_meta = coord_and_level.split(' - ')
     url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};' \
           f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
-    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
+    text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")}).'
     return text

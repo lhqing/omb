@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -142,144 +143,283 @@ def create_brain_region_browser_layout(region_name):
     if region_name not in dataset.region_label_to_dissection_region_dict:
         return None
 
-    layout = html.Div(children=[
-        # first row, info and anatomy
-        html.Div(children=[
+    first_row = dbc.Row(
+        [
             # brain region info
-            html.Div(
-                children=[
-                    html.H1(region_name, id='region-name'),
-                    dcc.Markdown(children=_brain_region_info_markdown(region_name))
+            dbc.Col(
+                [
+                    dbc.Jumbotron(
+                        [
+                            html.H1(region_name, id='region-name'),
+                            dcc.Markdown(children=_brain_region_info_markdown(region_name))
+                        ],
+                        className='h-100'
+                    )
                 ],
-                className='pretty_container two columns'),
-
-            # anatomy 3d control
-            html.Div([
-                html.Div(
-                    html.H5('3D Mesh Control')
-                ),
-                html.Br(),
-                html.H6(children='Anatomical Structures'),
-                dcc.Markdown('Load any anatomical structures from [the Allen CCFv3](http://atlas.brain-map.org/).'),
-                dcc.Dropdown(
-                    options=[{'label': region if region != 'root' else 'Brain', 'value': region}
-                             for region in dataset.allen_ccf_regions],
-                    id="ccf-mesh-dropdown",
-                    value=_default_ccf_mesh_selection(region_name),
-                    multi=True),
-                html.Br(),
-                html.P('CCF mesh opacity: '),
-                dcc.Slider(
-                    id='ccf-mesh-opacity-slider',
-                    min=0.1,
-                    max=1,
-                    step=0.05,
-                    value=0.1,
-                    marks={i: str(i) for i in [0.1, 0.3, 0.5, 0.7, 0.9]}
-                ),
-                html.Br(),
-                html.H6('Dissection Regions'),
-                dcc.Dropdown(
-                    options=[{'label': region, 'value': region}
-                             for region in dataset.region_label_to_dissection_region_dict.keys()],
-                    id="cemba-mesh-dropdown",
-                    value=[region_name],
-                    multi=True),
-            ], className="pretty_container three columns"),
-
-            # 3-D mesh graph
-            html.Div(
-                children=[
-                    html.H5('Brain Dissection Region & Anatomical Structures'),
-                    html.P('Click legend to toggle structures. '
-                           'Note that tissues were dissected from both hemisphere.'),
-                    dcc.Loading(children=[dcc.Graph(id='3d-mesh-graph',
-                                                    config={'displayModeBar': False})],
-                                type='circle')
+                width=12, lg=3
+            ),
+            # 3D mesh control
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('3D Mesh Control'),
+                            dbc.CardBody(
+                                [
+                                    dbc.FormGroup(
+                                        [
+                                            dbc.Label('Dissection Regions', html_for='cemba-mesh-dropdown'),
+                                            dcc.Dropdown(
+                                                options=[
+                                                    {'label': region,
+                                                     'value': region}
+                                                    for region in
+                                                    dataset.region_label_to_dissection_region_dict.keys()],
+                                                id="cemba-mesh-dropdown",
+                                                value=[region_name],
+                                                multi=True),
+                                            dbc.FormText('Load dissection regions from this study.')
+                                        ]
+                                    ),
+                                    html.Hr(className='my-3'),
+                                    dbc.FormGroup(
+                                        [
+                                            dbc.Label('Anatomical Structures',
+                                                      html_for="ccf-mesh-dropdown"),
+                                            dcc.Dropdown(
+                                                options=[
+                                                    {'label': region if region != 'root' else 'Brain',
+                                                     'value': region}
+                                                    for region in dataset.allen_ccf_regions
+                                                ],
+                                                id="ccf-mesh-dropdown",
+                                                value=_default_ccf_mesh_selection(region_name),
+                                                multi=True),
+                                            dbc.FormText(
+                                                dcc.Markdown(
+                                                    "Load anatomical structures from "
+                                                    "[the Allen CCFv3]"
+                                                    "(http://atlas.brain-map.org/). "
+                                                    "All the abbreviations are from "
+                                                    "[the Allen Mouse Reference Atlas]"
+                                                    "(http://atlas.brain-map.org/atlas?atlas=602630314)."
+                                                )
+                                            ),
+                                            dbc.Label('Anatomical Structures Opacity',
+                                                      html_for='ccf-mesh-opacity-slider',
+                                                      className='mt-2'),
+                                            dcc.Slider(
+                                                id='ccf-mesh-opacity-slider',
+                                                min=0.1,
+                                                max=1,
+                                                step=0.05,
+                                                value=0.1,
+                                                marks={i: str(i) for i in [0.1, 0.3, 0.5, 0.7, 0.9]}
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
                 ],
-                className='pretty_container seven columns'
+                width=12, lg=3
+            ),
+            # 3D mesh
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Brain Dissection Regions & Anatomical Structures'),
+                            dbc.CardBody(
+                                [
+                                    html.P(
+                                        'Click legend to toggle structures. '
+                                        'Note that tissues were dissected from both hemisphere.',
+                                        className="text-muted"),
+                                    dcc.Loading(
+                                        [
+                                            dcc.Graph(
+                                                id='3d-mesh-graph',
+                                                config={'displayModeBar': False}
+                                            )
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, lg=6
             )
-        ], className='row container-display'),
+        ]
+    )
 
-        # second row, UMAP control
-        html.Div(
-            children=[
-                html.Div(
-                    [html.H5('UMAP Control'),
-                     dcc.Markdown(id='brain-region-pair-scatter-markdown')],
-                    className='two columns'
-                ),
-                html.Div(
-                    children=[
-                        html.H6('Scatter Coords'),
-                        dcc.Dropdown(
-                            options=[{'label': name, 'value': name,
-                                      'disabled': False if (name in valid_coords) else True}
-                                     for name in dataset.coord_names],
-                            value='L1UMAP',
-                            id="scatter-coords-dropdown",
-                            clearable=False,
-                            className="dcc_control"
-                        )
-                    ], className='four columns'
-                ),
-                html.Div(
-                    children=[
-                        html.H6('Region Level'),
-                        dcc.Dropdown(
-                            options=[
-                                {'label': 'Dissection Region', 'value': 'RegionName'},
-                                {'label': 'Sub-Region', 'value': 'SubRegion'},
-                                {'label': 'Major Region', 'value': 'MajorRegion'},
-                            ],
-                            value='RegionName',
-                            id="region-level-dropdown",
-                            clearable=False,
-                            className="dcc_control")
-                    ], className='four columns'
-                ),
-                html.Div(
-                    children=[
-                        html.H6('Cell Type Level'),
-                        dcc.Dropdown(
-                            options=[
-                                {'label': 'Cell Class', 'value': 'CellClass'},
-                                {'label': 'Major Type', 'value': 'MajorType'},
-                                {'label': 'Subtype', 'value': 'SubType'},
-                            ],
-                            value='MajorType',
-                            id="cell-type-level-selector",
-                            clearable=False,
-                            className="dcc_control"
-                        )
-                    ], className='four columns'
-                ),
-            ],
-            className='pretty_container row container-display'
-        ),
+    second_row = dbc.Card(
+        [
+            dbc.CardHeader(
+                [
+                    html.P(
+                        [
+                            'Cell Scatter Control (For more details, go to the ',
+                            dbc.CardLink('Paired Scatter Browser', id='brain-region-pair-scatter-url'),
+                            ')'
+                        ],
+                        className='mb-0'
+                    )
+                ]
+            ),
+            dbc.CardBody(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dbc.FormGroup(
+                                        [
+                                            dbc.Label('Scatter Coords',
+                                                      html_for='scatter-coords-dropdown',
+                                                      className='mr-2'),
+                                            dcc.Dropdown(
+                                                options=[
+                                                    {'label': name,
+                                                     'value': name,
+                                                     'disabled': False if (name in valid_coords) else True}
+                                                    for name in dataset.coord_names],
+                                                value='L1UMAP',
+                                                id="scatter-coords-dropdown",
+                                                clearable=False
+                                            ),
+                                            dbc.FormText(
+                                                'Coordinates of both scatter plots.'
+                                            )
+                                        ],
+                                        className='mr-3'
+                                    )
+                                ]
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.FormGroup(
+                                        [
+                                            dbc.Label('Region Level',
+                                                      html_for='region-level-dropdown',
+                                                      className='mr-2'),
+                                            dcc.Dropdown(
+                                                options=[
+                                                    {'label': 'Dissection Region', 'value': 'RegionName'},
+                                                    {'label': 'Sub-Region', 'value': 'SubRegion'},
+                                                    {'label': 'Major Region', 'value': 'MajorRegion'},
+                                                ],
+                                                value='RegionName',
+                                                id="region-level-dropdown",
+                                                clearable=False
+                                            ),
+                                            dbc.FormText('Color of the left scatter plot.')
+                                        ],
+                                        className='mr-3'
+                                    )
+                                ]
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.FormGroup(
+                                        [
+                                            dbc.Label('Cell Type Level',
+                                                      html_for='cell-type-level-selector',
+                                                      className='mr-2'),
+                                            dcc.Dropdown(
+                                                options=[
+                                                    {'label': 'Cell Class', 'value': 'CellClass'},
+                                                    {'label': 'Major Type', 'value': 'MajorType'},
+                                                    {'label': 'Subtype', 'value': 'SubType'},
+                                                ],
+                                                value='MajorType',
+                                                id="cell-type-level-selector",
+                                                clearable=False
+                                            ),
+                                            dbc.FormText('Color of the middle scatter plots.')
+                                        ],
+                                        className='mr-3'
+                                    )
+                                ]
+                            )
+                        ],
+                        form=True
+                    )
+                ]
+            )
+        ],
+        className='my-3'
+    )
 
-        # third row, UMAP graphs
-        html.Div(
-            children=[
-                html.Div(
-                    [html.H5('UMAP Color By Dissection Region'),
-                     dcc.Graph(id='dissection-umap-graph')],
-                    className='pretty_container four columns'
-                ),
-                html.Div(
-                    [html.H5('UMAP Color By Cell Type'),
-                     dcc.Graph(id='cell-type-umap-graph')],
-                    className='pretty_container four columns'
-                ),
-                html.Div(
-                    [html.H5('Cell Type Sunburst'),
-                     dcc.Graph(id='sunburst-graph')],
-                    className='pretty_container four columns'
-                ),
-            ],
-            className='row container-display'
-        )
-    ])
+    third_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Brain Region Scatter'),
+                            dbc.Container(
+                                [
+                                    dcc.Graph(id='dissection-umap-graph')
+                                ],
+                                className='pt-3'
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Cell Type Scatter'),
+                            dbc.Container(
+                                [
+                                    dcc.Graph(id='cell-type-umap-graph')
+                                ],
+                                className='pt-3'
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Cell Type Sunburst'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='sunburst-graph')
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=4
+            )
+        ]
+    )
+
+    layout = html.Div(
+        children=[
+            # first row, info and anatomy
+            first_row,
+            # second row, UMAP control
+            second_row,
+            # third row, UMAP graphs
+            third_row,
+        ]
+    )
     return layout
 
 
@@ -354,11 +494,13 @@ def generate_scatter(active_data, background_data, hue, hover_name, hover_text):
                      hover_name=hover_name,
                      hover_data=[hover_text])
     fig.update_layout(showlegend=False,
-                      margin=dict(t=15, l=0, r=0, b=15),
+                      margin=dict(t=30, l=0, r=30, b=0),
                       xaxis=go.layout.XAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
                       yaxis=go.layout.YAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
                       plot_bgcolor='rgba(0,0,0,0)',
                       paper_bgcolor='rgba(0,0,0,0)')
+    fig.update_xaxes(automargin=True)
+    fig.update_yaxes(automargin=True)
 
     # update marker size and hover template
     fig.update_traces(mode='markers',
@@ -447,12 +589,11 @@ def update_cell_type_sunburst(region_name):
 
 
 @app.callback(
-    Output('brain-region-pair-scatter-markdown', 'children'),
+    Output('brain-region-pair-scatter-url', 'href'),
     [Input('scatter-coords-dropdown', 'value'),
      Input('cell-type-level-selector', 'value'),
      Input('region-name', 'children')]
 )
 def make_pair_scatter_markdown(coords, cell_type_level, region_name):
-    url = f'/scatter?coords={coords};meta={cell_type_level};br={region_name}'
-    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
-    return text
+    url = f'/scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
+    return url

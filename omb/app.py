@@ -3,12 +3,14 @@ Main Dash apps
 """
 
 import dash
+import dash_bootstrap_components as dbc
 
 APP_ROOT_NAME = 'omb'
 
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
+    # external_stylesheets=[dbc.themes.FLATLY],
     meta_tags=[
         {
             "name": "viewport",
@@ -16,5 +18,5 @@ app = dash.Dash(
         }
     ]
 )
-app.title = 'mC Browser'
+app.title = 'mC Viewer'
 server = app.server

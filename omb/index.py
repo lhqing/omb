@@ -1,6 +1,7 @@
 """
 Main app entry point and routing control
 """
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output, State
@@ -25,48 +26,58 @@ def search_to_dict(search):
 
 
 def get_header():
-    return html.Div(
-        children=[
-            html.Div(children=[
-                html.Img(
-                    src='http://neomorph.salk.edu/omb_static/dissection_region_img/navbar_icon.gif',
-                    className='nav-icon'),
-                dcc.Link(
-                    "Home",
-                    href="/home",
-                    className="tab first",
-                ),
-                dcc.Link(
-                    "Gene",
-                    href="/gene?gene=Cux2",
-                    className="tab",
-                ),
-                dcc.Link(
-                    "Brain Region",
-                    href="/brain_region?br=MOp",
-                    className="tab",
-                ),
-                dcc.Link(
-                    "Cell Type",
-                    href="/cell_type?ct=Exc",
-                    className="tab",
-                ),
-                dcc.Link(
-                    "Paired Scatter",
-                    href="/scatter",
-                    className="tab",
-                )
-            ],
-                className="row all-tabs")
-        ]
+    logo_img_url = 'http://neomorph.salk.edu/omb_static/dissection_region_img/navbar_icon.gif'
+    nav = dbc.Row(
+        [
+            dbc.Nav(
+                [
+                    dbc.NavItem(dbc.NavLink('Home', href="/home")),
+                    dbc.NavItem(dbc.NavLink('Gene', href="/gene?gene=Cux2")),
+                    dbc.NavItem(dbc.NavLink('Brain Region', href="/brain_region?br=MOp")),
+                    dbc.NavItem(dbc.NavLink('Cell Type', href="/cell_type?ct=Exc")),
+                    dbc.NavItem(dbc.NavLink('Paired Scatter', href="/scatter")),
+                ],
+                className='mr-5',
+                navbar=True,
+                style={'font-size': '1.4em'}
+            )
+        ],
+        className="ml-2 flex-nowrap mt-3 mt-md-0",
+        align="center",
     )
+
+    navbar = dbc.Navbar(
+        [
+            html.A(
+                dbc.Row(
+                    [
+                        dbc.Col(html.Img(src=logo_img_url, height='50px'))
+                    ],
+                    align='left',
+                    no_gutters=True
+                ),
+                href="/",
+                className='mx-3'
+            ),
+            dbc.NavbarToggler(id="navbar-toggler"),
+            dbc.Collapse(nav, id="navbar-collapse", navbar=True),
+        ],
+        color='light',
+        className='fixed-top mb-2 p-2'
+    )
+    return navbar
 
 
 app.config.suppress_callback_exceptions = True
+
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     get_header(),  # nav bar
-    html.Div(id='page-content', className='content')
+    html.Div(
+        id='page-content',
+        # Global style of all APPs
+        className='page-content'
+    )
 ])
 
 

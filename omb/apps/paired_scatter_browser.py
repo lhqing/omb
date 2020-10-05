@@ -1,3 +1,4 @@
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.express as px
@@ -92,125 +93,272 @@ def create_paired_scatter_layout(coords='L1UMAP', downsample=10000,
         gene_int = int(gene)
     except ValueError:
         gene_int = dataset.gene_name_to_int[gene]
-
     possible_cell_types = ['ALL CELLS'] + dataset.cell_type_table.index.tolist()
 
+    # Forms
+    layout_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Coordinates', html_for='coords-dropdown'),
+                    dcc.Dropdown(
+                        id='coords-dropdown',
+                        options=[{'label': name, 'value': name}
+                                 for name in dataset.coord_names],
+                        value=coords,
+                        clearable=False),
+                    dbc.FormText('Coordinates of both scatter plots.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Down Sample Cells', html_for='down-sample-dropdown'),
+                    dcc.Dropdown(
+                        id='down-sample-dropdown',
+                        options=[{'label': '10000 (Fast)', 'value': 10000},
+                                 {'label': '50000 (Slow)', 'value': 50000},
+                                 {'label': 'ALL (Very Slow)', 'value': 9999999}],
+                        value=downsample,
+                        clearable=False
+                    ),
+                    dbc.FormText('Number of cells plotted on each scatter plot.')
+                ]
+            )
+        ]
+    )
+
+    active_cells_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Select by Brain Regions', html_for='brain-region-select-dropdown'),
+                    dcc.Dropdown(
+                        id='brain-region-select-dropdown',
+                        options=[{'label': region, 'value': region}
+                                 for region in dataset.region_label_to_dissection_region_dict.keys()],
+                        multi=True,
+                        value=brain_regions,
+                        placeholder='ALL REGIONS by default'
+                    ),
+                    dbc.FormText('Only color cells from these brain regions.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Select by Cell Types', html_for='cell-type-select-dropdown'),
+                    dcc.Dropdown(
+                        id='cell-type-select-dropdown',
+                        options=[{'label': ct, 'value': ct}
+                                 for ct in possible_cell_types],
+                        multi=True,
+                        value=cell_types,
+                        placeholder='ALL CELLS by default'
+                    ),
+                    dbc.FormText('Only color cells from these cell types.')
+                ]
+            )
+        ]
+    )
+
+    colors_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Cell Metadata', html_for='cell-meta-dropdown'),
+                    dcc.Dropdown(
+                        id='cell-meta-dropdown',
+                        options=[{'label': name, 'value': name}
+                                 for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
+                        value=cell_meta_hue,
+                        clearable=False
+                    ),
+                    dbc.FormText('Color of the left scatter plot.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene', html_for='scatter-gene-dropdown'),
+                    dcc.Dropdown(id='scatter-gene-dropdown',
+                                 value=gene_int,
+                                 placeholder='Input a gene name, e.g. Cux2'),
+                    dbc.FormText('Gene of the right scatter plot.')
+                ]
+            )
+        ]
+    )
+
+    gene_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Body mC Type', html_for='scatter-mc-type-dropdown'),
+                    dcc.Dropdown(id='scatter-mc-type-dropdown',
+                                 options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
+                                          {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
+                                 value=mc_type,
+                                 clearable=False),
+                    dbc.FormText('Color per cell normalized mCH or mCG fraction of the gene body.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Color Scale', html_for='gene-color-range-slider'),
+                    dcc.RangeSlider(
+                        id='gene-color-range-slider',
+                        min=0,
+                        max=3,
+                        step=0.1,
+                        marks={0: '0', 0.5: '0.5', 1: '1',
+                               1.5: '1.5', 2: '2', 2.5: '2.5',
+                               3: '3'},
+                        value=cnorm
+                    ),
+                    dbc.FormText('Color scale of the right scatter plot.')
+                ]
+            )
+        ]
+    )
+
+    first_row = dbc.Row(
+        [
+            # submission button
+            dbc.Col(
+                [
+                    html.H4('Scatter Control', className='card-title text-center'),
+                    dbc.Button(
+                        'CLICK TO UPDATE',
+                        id='update-button',
+                        n_clicks=0,
+                        color='success'
+                    )
+                ],
+                width=12, xl=1,
+                className='h-100 p-3 m-auto'
+            ),
+            # control
+            dbc.Col(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader('Scatter Layout'),
+                                            dbc.CardBody(
+                                                [
+                                                    layout_form
+                                                ]
+                                            )
+                                        ],
+                                        className='h-100'
+                                    )
+                                ],
+                                width=12, md=6, xl=3
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader('Active Cells'),
+                                            dbc.CardBody(
+                                                [
+                                                    active_cells_form
+                                                ]
+                                            )
+                                        ],
+                                        className='h-100'
+                                    ),
+                                ],
+                                width=12, md=6, xl=3
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader('Color By'),
+                                            dbc.CardBody(
+                                                [
+                                                    colors_form
+                                                ]
+                                            )
+                                        ],
+                                        className='h-100'
+                                    ),
+                                ],
+                                width=12, md=6, xl=3
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Card(
+                                        [
+                                            dbc.CardHeader('Gene Detail'),
+                                            dbc.CardBody(
+                                                [
+                                                    gene_form
+                                                ]
+                                            )
+                                        ],
+                                        className='h-100'
+                                    )
+                                ],
+                                width=12, md=6, xl=3
+                            ),
+                        ]
+                    )
+                ],
+                width=12, xl=11
+            )
+        ]
+    )
+
+    second_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Cell Metadata Scatter'),
+                            dbc.Container(
+                                [
+                                    dcc.Graph(id='cell-meta-graph',
+                                              style={"height": "80vh", "width": "auto"})
+                                ],
+                                className='pt-3'
+                            )
+                        ]
+                    )
+                ],
+                width=12, xl=6
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Gene Scatter'),
+                            dbc.Container(
+                                [
+                                    dcc.Graph(id='gene-graph',
+                                              style={"height": "80vh", "width": "auto"})
+                                ],
+                                className='pt-3'
+                            )
+                        ]
+                    )
+                ],
+                width=12, xl=6
+            )
+        ],
+        className='my-4'
+    )
     layout = html.Div(children=[
         # first row is controls
-        html.Div(children=[
-            # first column control layout
-            html.Div(children=[
-                html.H6('Layout'),
-                html.P('Coordinates:'),
-                dcc.Dropdown(
-                    id='coords-dropdown',
-                    options=[{'label': name, 'value': name}
-                             for name in dataset.coord_names],
-                    value=coords,
-                    clearable=False),
-                html.P('Down Sample To # Cells:'),
-                dcc.Dropdown(
-                    id='down-sample-dropdown',
-                    options=[{'label': '10000 (Fast)', 'value': 10000},
-                             {'label': '50000 (Slow)', 'value': 50000},
-                             {'label': 'ALL (Very Slow)', 'value': 9999999}],
-                    value=downsample,
-                    clearable=False
-                )
-            ], className='pretty_container four columns'),
-            # second column control subset
-            html.Div(children=[
-                html.H6('Active Cells'),
-                html.P('Select by Brain Regions:'),
-                dcc.Dropdown(
-                    id='brain-region-select-dropdown',
-                    options=[{'label': region, 'value': region}
-                             for region in dataset.region_label_to_dissection_region_dict.keys()],
-                    multi=True,
-                    value=brain_regions,
-                    placeholder='ALL REGIONS by default'
-                ),
-                html.P('Select by Cell Types:'),
-                dcc.Dropdown(
-                    id='cell-type-select-dropdown',
-                    options=[{'label': ct, 'value': ct}
-                             for ct in possible_cell_types],
-                    multi=True,
-                    value=cell_types,
-                    placeholder='ALL CELLS by default'
-                )
-            ], className='pretty_container four columns'),
-            # third column control cell meta and gene color
-            html.Div(children=[
-                html.H6('Colors'),
-                html.P('Cell Metadata:'),
-                dcc.Dropdown(
-                    id='cell-meta-dropdown',
-                    options=[{'label': name, 'value': name}
-                             for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
-                    value=cell_meta_hue,
-                    clearable=False
-                ),
-                html.P('Gene:'),
-                dcc.Dropdown(id='scatter-gene-dropdown',
-                             value=gene_int,
-                             placeholder='Input a gene name, e.g. Cux2'),
-            ], className='pretty_container four columns'),
-            # fourth column control gene detail
-            html.Div(children=[
-                html.H6('Gene Detail'),
-                html.P('Gene mC Type:'),
-                dcc.Dropdown(id='scatter-mc-type-dropdown',
-                             options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
-                                      {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
-                             value=mc_type,
-                             clearable=False
-                             ),
-                html.P('Gene Color Scale:'),
-                dcc.RangeSlider(
-                    id='gene-color-range-slider',
-                    min=0,
-                    max=3,
-                    step=0.1,
-                    marks={0: '0', 0.5: '0.5', 1: '1',
-                           1.5: '1.5', 2: '2', 2.5: '2.5',
-                           3: '3'},
-                    value=cnorm,
-                    className="dcc_control"
-                )
-            ], className='pretty_container four columns'),
-            # fifth column is update button
-            html.Div(children=[
-                html.Button('Update\nScatters',
-                            id='update-button',
-                            n_clicks=0,
-                            style={'background-color': 'DodgerBlue',
-                                   'color': 'white',
-                                   'line-height': '1.5',
-                                   'whiteSpace': 'pre-wrap',
-                                   'text-align': 'center',
-                                   'padding': '20px 10px 50px 10px'})
-            ], className='one column',
-                style={'alignItems': 'center',
-                       'display': 'flex',
-                       'justifyContent': 'center'})
-        ], className='row container-display'),
+        first_row,
 
         # second row is two scatter graph, left is cell metadata, right is gene
-        dcc.Loading(children=[
-            html.Div(children=[
-                # left is cell metadata
-                html.Div(children=[
-                    html.H6('Cell Metadata Scatter'),
-                    dcc.Graph(id='cell-meta-graph', style={"height": "80vh", "width": "auto"})
-                ], className='pretty_container six columns'),
-                # right is gene
-                html.Div(children=[
-                    html.H6('Gene Scatter'),
-                    dcc.Graph(id='gene-graph', style={"height": "80vh", "width": "auto"})
-                ], className='pretty_container six columns')
-            ], className='row container-display')
-        ], type='circle')
+        dcc.Loading(
+            second_row
+        )
     ])
     return layout
 

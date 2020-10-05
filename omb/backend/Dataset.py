@@ -144,7 +144,7 @@ class Dataset:
         # AnnoJ metadata
         self._annoj_track_meta = pd.read_csv(ANNOJ_META_PATH, index_col=0)
         self._annoj_gene_track_id = self._annoj_track_meta.loc['Gene', 'id']
-        self._subtype_to_annoj_track_id = self._annoj_track_meta[self._annoj_track_meta['type'] == 'MethTrack'][
+        self.cell_type_to_annoj_track_id = self._annoj_track_meta[self._annoj_track_meta['type'] == 'MethTrack'][
             'id'].to_dict()
 
         # Allen CCF metadata
@@ -292,10 +292,7 @@ class Dataset:
         chrom = chrom.strip('chr')
 
         # active_clusters to track ids
-        active_subtypes = []
-        for cluster in active_clusters:
-            active_subtypes += self.cluster_name_to_subtype(cluster)
-        active_track_ids = [self._subtype_to_annoj_track_id[c] for c in active_subtypes]
+        active_track_ids = [self.cell_type_to_annoj_track_id[c] for c in active_clusters]
 
         # track_type to mc_track_class
         if track_type.upper() == 'CG':
@@ -308,10 +305,13 @@ class Dataset:
             raise ValueError(f'Unknown track type: {track_type}')
 
         # color per track?
+        cell_type_palette = self._palette['SubType'].copy()
+        cell_type_palette.update(self._palette['MajorType'])
+
         if cell_type_color:
-            track_palette = {self._subtype_to_annoj_track_id[k]: v[1:]  # remove # in hex
-                             for k, v in self._palette['SubType'].items()
-                             if k in active_subtypes}
+            track_palette = {self.cell_type_to_annoj_track_id[k]: v[1:]  # remove # in hex
+                             for k, v in cell_type_palette.items()
+                             if k in active_clusters}
         else:
             track_palette = None
 

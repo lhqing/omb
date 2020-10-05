@@ -1,3 +1,4 @@
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
@@ -33,13 +34,18 @@ for col in ['CellClass', 'MajorType', 'SubType']:
     ALL_CELL_TYPES += dataset.get_variables(col).unique().tolist()
 ALL_CELL_TYPES = sorted([i for i in ALL_CELL_TYPES if 'Outlier' not in i])
 
-REFERENCE_MARKDOWN = """
-* Main reference: 
-    * [Liu, Zhou et al. 2020. “DNA Methylation Atlas of the Mouse Brain at Single-Cell Resolution.” bioRxiv](https://www.biorxiv.org/content/10.1101/2020.04.30.069377v1)
-* About the snmC-seq2 Technology:
-    * [Luo, Keown et al. 2017. “Single-Cell Methylomes Identify Neuronal Subtypes and Regulatory Elements in Mammalian Cortex.” Science](https://science.sciencemag.org/content/357/6351/600)
-    * [Luo et al. 2018. “Robust Single-Cell DNA Methylome Profiling with snmC-seq2.” Nature Communications](https://www.nature.com/articles/s41467-018-06355-2) 
-"""
+# References
+LIU_2020_TEXT = 'Liu, Zhou et al. 2020. "DNA Methylation Atlas of the Mouse Brain at ' \
+                'Single-Cell Resolution." bioRxiv'
+LIU_2020_URL = "https://www.biorxiv.org/content/10.1101/2020.04.30.069377v1"
+
+LUO_2017_TEXT = "Luo, Keown et al. 2017. “Single-Cell Methylomes Identify Neuronal Subtypes " \
+                "and Regulatory Elements in Mammalian Cortex.” Science"
+LUO_2017_URL = "https://science.sciencemag.org/content/357/6351/600"
+
+LUO_2018_TEXT = "Luo et al. 2018. “Robust Single-Cell DNA Methylome Profiling with snmC-seq2.” " \
+                "Nature Communications"
+LUO_2018_URL = "https://www.nature.com/articles/s41467-018-06355-2"
 
 ABOUT_MARKDOWN = """
 We are continually adding new functionality and improving documentation. 
@@ -52,69 +58,204 @@ This browser is made by [plotly-dash](https://dash.plotly.com/).
 See the source code of this browser on [github](https://github.com/lhqing/omb).
 """
 
-layout = html.Div(children=[
-    # first row is title and introduction
-    html.Div(children=[
-        html.H1('DNA Methylation Atlas of the Mouse Brain at Single-Cell Resolution',
-                style={'font-size': '2.5em', 'text-align': 'center'}),
-        html.P(INTRODUCTION_TEXT)
-    ], className='pretty_container'),
+jumbotron = dbc.Jumbotron(
+    [
+        html.H1("Brain Cell Methylation Viewer", className="display-6"),
+        html.P(
+            "DNA Methylation Atlas of the Mouse Brain at Single-Cell Resolution",
+            className="lead",
+        ),
+        html.Hr(className="my-2"),
+        html.P(
+            INTRODUCTION_TEXT,
+        )
+    ]
+)
 
-    # second row is link to three different browser
-    html.Div(children=[
-        html.Div(children=[
-            html.Img(src=GENE_BROWSER_IMG_URL, style={'width': '100%'}),
-            html.H4('Gene Browser'),
-            html.P(GENE_BROWSER_TEXT),
-            html.Div(children=[
-                dcc.Dropdown(id='gene-dropdown',
-                             placeholder='Input a gene name, e.g. Cux2',
-                             className='nine columns'),
-                html.A(html.Button(children='GO'), id='gene-url', href='gene?gene=Cux2')
-            ], className='row'),
-        ], className='four columns pretty_container'),
-        html.Div(children=[
-            html.Img(src=BRAIN_REGION_BROWSER_IMG_URL, style={'width': '100%'}),
-            html.H4('Brain Region Browser'),
-            html.P(BRAIN_REGION_BROWSER_TEXT),
-            html.Div(children=[
-                dcc.Dropdown(options=[{'label': region, 'value': region}
-                                      for region in dataset.region_label_to_dissection_region_dict.keys()],
-                             placeholder='Select a brain region.',
-                             id="brain-region-dropdown",
-                             value='Isocortex',
-                             className='nine columns'),
-                html.A(html.Button(children='GO'), id='brain-region-url', href='brain_region?br=MOp')
-            ], className='row')
-        ], className='four columns pretty_container'),
-        html.Div(children=[
-            html.Img(src=CELL_TYPE_BROWSER_IMG_URL, style={'width': '100%'}),
-            html.H4('Cell Type Browser'),
-            html.P(CELL_TYPE_BROWSER_TEXT),
-            html.Div(children=[
-                dcc.Dropdown(id='cell-type-dropdown',
-                             placeholder='Select a cell type.',
-                             options=[{'label': ct, 'value': ct}
-                                      for ct in ALL_CELL_TYPES],
-                             value='IT-L23',
-                             className='nine columns'),
-                html.A(html.Button(children='GO'), id='cell-type-url', href='cell_type?ct=IT-L23')
-            ], className='row'),
-        ], className='four columns pretty_container'),
-    ], className='row container-display'),
+app_cards = dbc.CardDeck(
+    [
+        # gene card
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    dbc.CardImg(src=GENE_BROWSER_IMG_URL, top=True),
+                    html.H5("Gene", className="card-title m-3"),
+                    html.P(GENE_BROWSER_TEXT, className="card-text mx-3"),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dcc.Dropdown(
+                                        id='gene-dropdown',
+                                        placeholder='Input a gene name, e.g. Cux2',
+                                        className='mr-3')
+                                ],
+                                width=10
+                            ),
+                            dbc.Col(
+                                [
+                                    html.A(
+                                        dbc.Button(
+                                            "GO",
+                                            color="success"
+                                        ),
+                                        id='gene-url',
+                                        href='gene?gene=Cux2'
+                                    )
+                                ],
+                                width=10, lg=2  # width is 2 only on large screen
+                            )
+                        ],
+                        className='m-3',
+                        no_gutters=True
+                    ),
+                ],
+                className='p-0 d-flex flex-column'
+            )
+        ),
+        # brain region card
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    dbc.CardImg(src=BRAIN_REGION_BROWSER_IMG_URL, top=True),
+                    html.H5("Brain Region", className="card-title m-3"),
+                    html.P(BRAIN_REGION_BROWSER_TEXT, className="card-text mx-3"),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dcc.Dropdown(
+                                        options=[
+                                            {'label': region, 'value': region}
+                                            for region in
+                                            dataset.region_label_to_dissection_region_dict.keys()
+                                        ],
+                                        placeholder='Select a brain region.',
+                                        id="brain-region-dropdown",
+                                        value='Isocortex',
+                                        className='mr-3'),
+                                ],
+                                width=10
+                            ),
+                            dbc.Col(
+                                [
+                                    html.A(
+                                        dbc.Button(
+                                            "GO",
+                                            color="success"
+                                        ),
+                                        id='brain-region-url',
+                                        href='brain_region?br=MOp'
+                                    )
+                                ],
+                                width=10, lg=2
+                            )
+                        ],
+                        className='m-3',
+                        no_gutters=True
+                    ),
+                ],
+                className='p-0 d-flex flex-column'
+            )
+        ),
+        # cell type card
+        dbc.Card(
+            dbc.CardBody(
+                [
+                    dbc.CardImg(src=CELL_TYPE_BROWSER_IMG_URL, top=True),
+                    html.H5("Cell Type", className="card-title m-3"),
+                    html.P(CELL_TYPE_BROWSER_TEXT, className="card-text mx-3"),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dcc.Dropdown(id='cell-type-dropdown',
+                                                 placeholder='Select a cell type.',
+                                                 options=[{'label': ct, 'value': ct}
+                                                          for ct in ALL_CELL_TYPES],
+                                                 value='IT-L23',
+                                                 className='mr-3')
+                                ],
+                                width=10
+                            ),
+                            dbc.Col(
+                                [
+                                    html.A(
+                                        dbc.Button(
+                                            "GO",
+                                            color="success"
+                                        ),
+                                        id='cell-type-url',
+                                        href='cell_type?ct=IT-L23'
+                                    )
+                                ],
+                                width=10, lg=2
+                            )
+                        ],
+                        className='m-3',
+                        no_gutters=True
+                    ),
+                ],
+                className='p-0 d-flex flex-column'
+            )
+        ),
+    ]
+)
 
-    # third row is about reference
-    html.Div(children=[
-        html.Div(children=[
-            html.H5('Reference'),
-            dcc.Markdown(REFERENCE_MARKDOWN),
-        ], className='pretty_container six columns'),
-        html.Div(children=[
-            html.H5('About'),
-            dcc.Markdown(ABOUT_MARKDOWN)
-        ], className='pretty_container six columns')
-    ], className='row container-display')
-], className='offset-by-one column ten columns')
+info_cards = dbc.Row(
+    [
+        dbc.Col(
+            [
+                # reference
+                dbc.Card(
+                    [
+                        dbc.CardHeader('Reference'),
+                        dbc.Container(
+                            [
+                                html.H5('Main Reference', className='card-title'),
+                                dbc.CardLink(LIU_2020_TEXT, href=LIU_2020_URL),
+                                html.Hr(className="my-3"),
+                                html.H5('About the snmC-seq2 Technology', className='card-title'),
+                                html.P(dbc.CardLink(LUO_2017_TEXT, href=LUO_2017_URL)),
+                                html.P(dbc.CardLink(LUO_2018_TEXT, href=LUO_2018_URL))
+                            ],
+                            className='p-3'
+                        )
+                    ],
+                    className='h-100'
+                ),
+            ],
+            width=12, lg=8
+        ),
+        dbc.Col(
+            [
+                # about
+                dbc.Card(
+                    [
+                        dbc.CardHeader('About'),
+                        dbc.CardBody(
+                            [dcc.Markdown(ABOUT_MARKDOWN)]
+                        )
+                    ],
+                    className='h-100'
+                )
+            ],
+            width=12, lg=4
+        )
+    ],
+    className='my-4'
+)
+
+layout = html.Div(
+    children=[
+        # first row is title and introduction
+        jumbotron,
+        # second row is link to three different browser
+        app_cards,
+        # third row is about reference
+        info_cards
+    ]
+)
 
 
 @app.callback(

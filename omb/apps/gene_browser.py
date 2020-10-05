@@ -1,5 +1,6 @@
 from functools import lru_cache
 
+import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
@@ -52,7 +53,7 @@ def get_gene_info_markdown(gene_int):
 
 **Gene Type**: {gene_info['gene_type'].replace('_', ' ').capitalize()}
 
-**Phenotype (Ensemble)**: {phenotype_str}
+**Phenotype (Ensembl)**: {phenotype_str}
 
 **More Details in the External Databases**:
 - **ENSEMBL**: [{ensembl_id}]({ensembl_url})
@@ -87,202 +88,352 @@ CLUSTER_DICT = {parent: sub_df['Number of total cells']  # series of subtype cel
                 for parent, sub_df in CELL_TYPES[CELL_TYPES['Cluster Level'] == 'SubType'].groupby('Parent')}
 
 
-def get_cell_type_check_box_children():
-    n_col = 5
-    total_items = sum([len(i) for i in CLUSTER_DICT.values()]) + 3 * len(CLUSTER_DICT)
-    items_per_col = round(total_items / n_col) - 2
-
-    # parent to subtype map
-    check_box_div_children = []
-    cur_div_children = []
-    items_count = 0
-    for parent, subtype_counts in CLUSTER_DICT.items():
-        cur_div_children += [html.H6(
-            children=parent),
-            dcc.Checklist(
-                options=[{'label': f'{subtype} ({number} cells)', 'value': subtype}
-                         for subtype, number in subtype_counts.items()],
-                value=[],
-                id=parent + '-checkbox')]
-        items_count += (3 + len(subtype_counts))
-        if items_count > items_per_col:
-            check_box_div_children.append(
-                html.Div(cur_div_children, style={'float': 'left', 'width': '20%'}))
-            cur_div_children = []
-            items_count = 0
-
-    # last col
-    if len(cur_div_children) != 0:
-        check_box_div_children.append(
-            html.Div(cur_div_children, style={'float': 'left', 'width': '20%'}))
-    return check_box_div_children
-
-
 def create_gene_browser_layout(gene):
     gene_int, gene_id, gene_name = standardize_gene(gene)
     if gene_int is None:
         return None
 
-    layout = html.Div(children=[
-        # first row is gene info and violin plot
-        html.Div(children=[
-            html.Div(children=[
-                html.H1(gene_name, id='gene_name'),
-                html.P(gene_int, id='gene_int', hidden=True),
-                dcc.Markdown(id='gene_contents', children=get_gene_info_markdown(gene_int)),
-            ], className='pretty_container four columns'),
-            html.Div(children=[
-                html.Div(children=[
-                    html.H6('Gene - Cell Type Box Plot'),
+    first_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Jumbotron(
+                        [
+                            html.H1(gene_name, id='gene_name'),
+                            html.P(gene_int, id='gene_int', hidden=True),
+                            dcc.Markdown(id='gene_contents',
+                                         children=get_gene_info_markdown(gene_int))
+                        ],
+                        className='p-4 m-0 h-100'
+                    )
+                ],
+                width=12, lg=6
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Gene - Cell Type Box Plot'),
+                            dbc.CardBody(
+                                [
+                                    dbc.Form(
+                                        [
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Select Cell Type Level',
+                                                              className='mr-3'),
+                                                    dcc.Dropdown(
+                                                        id='box-plot-level-dropdown',
+                                                        options=[{'label': 'CellClass', 'value': 'CellClass'},
+                                                                 {'label': 'MajorType', 'value': 'MajorType'},
+                                                                 {'label': 'SubType', 'value': 'SubType'}],
+                                                        value='MajorType',
+                                                        clearable=False,
+                                                        style={'width': '250px'}
+                                                    )
+                                                ]
+                                            )
+                                        ],
+                                        inline=True
+                                    ),
+                                    dcc.Loading(
+                                        [
+                                            dcc.Graph(id='gene_box_plot',
+                                                      config={'displayModeBar': False})
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, lg=6
+            )
+        ],
+        className='w-100'
+    )
+
+    control_form = dbc.Form(
+        [
+            dbc.FormGroup(
+                [
+                    dbc.Label('Coordinates', html_for='coords-dropdown'),
                     dcc.Dropdown(
-                        id='violin-level-dropdown',
-                        options=[{'label': 'CellClass', 'value': 'CellClass'},
-                                 {'label': 'MajorType', 'value': 'MajorType'},
-                                 {'label': 'SubType', 'value': 'SubType'}],
-                        value='MajorType',
+                        id='coords-dropdown',
+                        options=[{'label': name, 'value': name}
+                                 for name in dataset.coord_names],
+                        value='L1UMAP',
                         clearable=False
                     ),
-                ], className='row'),
-                dcc.Loading(children=[
-                    dcc.Graph(id='gene_violin_plot',
-                              config={'displayModeBar': False})], type='circle')
-            ], className='pretty_container eight columns')
-        ], className='row container-display'),
-
-        # second row is control panel and gene scatter
-        html.Div(children=[
-            html.Div(children=[
-                html.H6('Scatter Plots Control'),
-                html.P('Scatter Coords'),
-                dcc.Dropdown(
-                    id='coords-dropdown',
-                    options=[{'label': name, 'value': name}
-                             for name in dataset.coord_names],
-                    value='L1UMAP',
-                    clearable=False
-                ),
-                html.P('Cell Metadata'),
-                dcc.Dropdown(
-                    options=[{'label': name, 'value': name}
-                             for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
-                    value='MajorType',
-                    id="cell-meta-dropdown",
-                    clearable=False),
-                html.Hr(),
-                html.P('Gene mC Type'),
-                dcc.Dropdown(
-                    id='mc-type-dropdown',
-                    options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
-                             {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
-                    value='CHN',
-                    clearable=False
-                ),
-                html.P('Gene Scatter Color Range'),
-                dcc.RangeSlider(
-                    min=0,
-                    max=3,
-                    step=0.1,
-                    marks={0: '0', 0.5: '0.5', 1: '1',
-                           1.5: '1.5', 2: '2', 2.5: '2.5',
-                           3: '3'},
-                    value=[0.5, 1.5],
-                    id='mc-range-slider',
-                    className="dcc_control"),
-                html.Br(),
-                dcc.Markdown(id='gene-browser-pair-scatter-markdown')
-            ], className='pretty_container three columns'),
-            html.Div(children=[
-                html.H6('Cell Metadata Scatter Plot'),
-                dcc.Loading(children=[
-                    dcc.Graph(id='cell-meta-scatter-plot')],
-                    type="circle"),
-            ], className='pretty_container five columns'),
-            html.Div(children=[
-                html.H6('Gene mC Rate Scatter Plot'),
-                dcc.Loading(children=[
-                    dcc.Graph(id='gene-scatter-plot')],
-                    type="circle"),
-            ], className='pretty_container five columns'),
-        ], className='row container-display'),
-
-        # third row is annoj browser control
-        html.Div(children=[
-            dcc.Tabs(
-                id='genome-browser-tabs',
-                value='control-tab',
-                children=[
-                    dcc.Tab(
-                        value='control-tab',
-                        label='I. Genome Browser Control',
-                        children=[
-                            html.H5('View the Gene in the AnnoJ Browser'),
-                            html.P('Control the layout and active tracks below, '
-                                   'then click the "UPDATE BROWSER" button to view the AnnoJ browser, '
-                                   'or click the "OPEN WHOLE PAGE BROWSER" to view in a new tab.'),
-                            html.Hr(),
-                            html.Div([
-                                html.Div([
-                                    html.H6('Track Data Type'),
-                                    dcc.Dropdown(
-                                        id='browser-mc-type-dropdown',
-                                        options=[{'label': 'mCH / CH', 'value': 'CH'},
-                                                 {'label': 'mCG / CG', 'value': 'CG'},
-                                                 {'label': 'Coverage', 'value': 'cov'}],
-                                        value='CH',
-                                        clearable=False
-                                    )], className='two columns'
-                                ),
-                                html.Div([
-                                    html.H6('Browser Layout'),
-                                    dcc.Checklist(
-                                        id='browser-layout-checklist',
-                                        options=[
-                                            {'label': 'Color By Cell Type', 'value': 'cell_type_color'},
-                                            {'label': 'Hide Sidebar', 'value': 'sidebar'},
-                                            {'label': 'Hide Toolbar', 'value': 'toolbar'}
-                                        ],
-                                        value=['cell_type_color', 'sidebar']
-                                    )], className='two columns'),
-                                html.Button('Update Browser',
-                                            id='update-browser',
-                                            className='two columns'),
-                                html.A(html.Button('Open Whole Page Browser'),
-                                       id='whole_page_link',
-                                       target='_blank',  # open whole page in a new browser tab
-                                       className='two columns')
-                            ], className='row'),
-                            html.Hr(),
-                            html.Div([
-                                html.H6(f'Select at most {MAX_TRACKS} cell types'),
-                                html.Div(get_cell_type_check_box_children())])
-                        ]),
-                    dcc.Tab(
-                        value='browser-tab',
-                        label='II. Genome Browser',
-                        children=html.Div([
-                            # url saved in this hidden P,
-                            # only update when click the update button on control tab
-                            html.P('', id='iframe_url', hidden=True),
-                            html.Iframe(id='annoj-iframe',
-                                        width='100%', height='800px',
-                                        className='twelve columns')
-                        ])
+                    dbc.FormText('Coordinates of both scatter plots.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Cell Metadata', html_for="cell-meta-dropdown"),
+                    dcc.Dropdown(
+                        options=[{'label': name, 'value': name}
+                                 for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
+                        value='MajorType',
+                        id="cell-meta-dropdown",
+                        clearable=False),
+                    dbc.FormText('Color of the left scatter plot.')
+                ]
+            ),
+            html.Hr(className='my-2'),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Body mC Type', html_for='mc-type-dropdown'),
+                    dcc.Dropdown(
+                        id='mc-type-dropdown',
+                        options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
+                                 {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
+                        value='CHN',
+                        clearable=False
                     ),
-                ], persistence=True),
-        ], className='pretty_container twelve columns'),
-    ])
+                    dbc.FormText('Color of the right scatter plot, '
+                                 'using per cell normalized mCH or mCG fraction of the gene body.')
+                ]
+            ),
+            dbc.FormGroup(
+                [
+                    dbc.Label('Gene Color Scale', html_for='mc-range-slider'),
+                    dcc.RangeSlider(
+                        min=0,
+                        max=3,
+                        step=0.1,
+                        marks={0: '0', 0.5: '0.5', 1: '1',
+                               1.5: '1.5', 2: '2', 2.5: '2.5',
+                               3: '3'},
+                        value=[0.5, 1.5],
+                        id='mc-range-slider',
+                        className="dcc_control"),
+                    dbc.FormText('Color scale of the right scatter plot.')
+                ]
+            ),
+            html.Hr(className='my-2'),
+            dcc.Markdown(id='gene-browser-pair-scatter-markdown')
+        ]
+    )
+
+    second_row = dbc.Row(
+        [
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Scatter Control'),
+                            dbc.CardBody(
+                                [
+                                    control_form
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=2
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Cell Metadata Scatter'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Loading(
+                                        [
+                                            dcc.Graph(id='cell-meta-scatter-plot',
+                                                      style={"height": "65vh", "width": "auto"})
+                                        ]
+                                    ),
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=5
+            ),
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Gene Scatter'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Loading(
+                                        [
+                                            dcc.Graph(id='gene-scatter-plot',
+                                                      style={"height": "65vh", "width": "auto"})
+                                        ]
+                                    )
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=5
+            )
+        ],
+        className='my-4'
+    )
+
+    clusters_with_track = [c for c in dataset.cell_type_table.index if c in dataset.cell_type_to_annoj_track_id]
+    cell_counts = dataset.get_variables('MajorType').value_counts().to_dict()
+    cell_counts.update(dataset.get_variables('SubType').value_counts().to_dict())
+
+    third_row = dbc.Card(
+        [
+            dbc.CardHeader('Genome Browser'),
+            dbc.CardBody(
+                [
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    html.H5('View Genome Tracks in The AnnoJ Browser', className='card-title'),
+                                    html.P('Control the browser layout and active tracks below, '
+                                           'then click the button on the right to view the AnnoJ browser')
+                                ]
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Button(
+                                        'Update Browser Here',
+                                        id='update-browser',
+                                        className='mx-5'),
+                                    dbc.Button(
+                                        'Open In A New Tab',
+                                        id='whole-page-link',
+                                        target='_blank',  # open whole page in a new browser tab
+                                    )
+                                ],
+                                className='h-100 p-3 m-auto'
+                            )
+                        ]
+                    ),
+                    html.Hr(className='mb-2'),
+                    dbc.Row(
+                        [
+                            dbc.Col(
+                                [
+                                    dbc.Form(
+                                        [
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Track mC Type'),
+                                                    dcc.Dropdown(
+                                                        id='browser-mc-type-dropdown',
+                                                        options=[{'label': 'mCH / CH', 'value': 'CH'},
+                                                                 {'label': 'mCG / CG', 'value': 'CG'},
+                                                                 {'label': 'Coverage', 'value': 'cov'}],
+                                                        value='CH',
+                                                        clearable=False
+                                                    ),
+                                                    dbc.FormText('Display mCH or mCG tracks of '
+                                                                 'each selected cell type.')
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ],
+                                width=12, lg=2
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Form(
+                                        [
+                                            dbc.FormGroup(
+                                                [
+                                                    dbc.Label('Browser Layout'),
+                                                    dbc.Checklist(
+                                                        id='browser-layout-checklist',
+                                                        options=[
+                                                            {'label': 'Color By Cell Type',
+                                                             'value': 'cell_type_color'},
+                                                            {'label': 'Hide Sidebar', 'value': 'sidebar'},
+                                                            {'label': 'Hide Toolbar', 'value': 'toolbar'}
+                                                        ],
+                                                        value=['cell_type_color', 'sidebar']
+                                                    )
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ],
+                                width=12, lg=2
+                            ),
+                            dbc.Col(
+                                [
+                                    dbc.Form(
+                                        [
+                                            dbc.FormGroup(
+                                                [
+
+                                                    dbc.Label('Select Tracks'),
+                                                    dcc.Dropdown(
+                                                        id='cell-type-track-dropdown',
+                                                        options=[
+                                                            {'label': f'{ct} ({cell_counts[ct]} cells)',
+                                                             'value': ct}
+                                                            for ct in clusters_with_track],
+                                                        multi=True,
+                                                        value=[],
+                                                    ),
+                                                    dbc.FormText('Select tracks to view their methylation '
+                                                                 'level around this gene.')
+                                                ]
+                                            )
+                                        ]
+                                    )
+                                ],
+                                width=12, lg=8
+                            )
+                        ],
+                        form=True
+                    ),
+                    html.P('', id='iframe-url', hidden=True),
+                    dbc.Collapse(
+                        [
+                            html.Hr(className='mb-3'),
+                            html.Iframe(id='annoj-iframe',
+                                        style={'width': '100%', 'height': '85vh'})
+                        ],
+                        className='w-100 m-0 p-0',
+                        id='browser_collapse'
+                    )
+                ]
+            )
+        ],
+        className='mt-4',
+        style={'margin-bottom': '300px'}
+    )
+
+    layout = html.Div(
+        children=[
+            # first row is gene info and violin plot
+            first_row,
+            # second row is control panel and gene scatter
+            second_row,
+            # third row is annoj browser control
+            third_row
+        ]
+    )
     return layout
 
 
 @lru_cache()
 @app.callback(
-    Output('gene_violin_plot', 'figure'),
+    Output('gene_box_plot', 'figure'),
     [Input('gene_int', 'children'),
      Input('mc-type-dropdown', 'value'),
-     Input('violin-level-dropdown', 'value')],
+     Input('box-plot-level-dropdown', 'value')],
     [State('gene_name', 'children')]
 )
-def update_metric_violin(gene_int, mc_type, cell_type_level, gene_name):
+def update_box_plot(gene_int, mc_type, cell_type_level, gene_name):
     gene_data = dataset.get_gene_rate(gene_int=gene_int, mc_type=mc_type).copy()
 
     plot_data = pd.DataFrame({gene_name: gene_data})
@@ -313,19 +464,14 @@ def update_metric_violin(gene_int, mc_type, cell_type_level, gene_name):
 
 
 @app.callback(
-    [Output('iframe_url', 'children'),
-     Output('whole_page_link', 'href')],
+    [Output('iframe-url', 'children'),
+     Output('whole-page-link', 'href')],
     [Input('browser-mc-type-dropdown', 'value'),
      Input('browser-layout-checklist', 'value'),
-     Input('gene_int', 'children')] +
-    [Input(f'{cluster}-checkbox', 'value') for cluster in CLUSTER_DICT.keys()],
+     Input('gene_int', 'children'),
+     Input('cell-type-track-dropdown', 'value')],
 )
-def update_url(mc_type, layout, gene_int, *clusters):
-    active_clusters = []
-    for cluster_list in clusters:
-        active_clusters += cluster_list
-    active_clusters = active_clusters[:MAX_TRACKS]
-
+def update_url(mc_type, layout, gene_int, active_clusters):
     chrom, start, end = dataset.gene_meta_table.loc[gene_int, ['chrom', 'start', 'end']]
 
     iframe_url = dataset.annoj_url(
@@ -354,15 +500,26 @@ def update_url(mc_type, layout, gene_int, *clusters):
 
 
 @app.callback(
-    [Output('annoj-iframe', 'src'),
-     Output('genome-browser-tabs', 'value')],
+    Output('annoj-iframe', 'src'),
     [Input('update-browser', 'n_clicks')],
-    [State('iframe_url', 'children')]
+    [State('iframe-url', 'children')]
 )
 def update_iframe(n_clicks, url):
     if not n_clicks:
         raise PreventUpdate
-    return url, 'browser-tab'
+    return url
+
+
+@app.callback(
+    Output('browser_collapse', 'is_open'),
+    [Input('update-browser', 'n_clicks')],
+    [State('cell-type-track-dropdown', 'value')]
+)
+def toggle_collapse(n_clicks, active_clusters):
+    if n_clicks and (len(active_clusters) != 0):
+        return True
+    else:
+        return False
 
 
 @app.callback(
@@ -433,10 +590,11 @@ def get_cell_meta_scatter_fig(var_name, coord_name):
     Output('gene-scatter-plot', 'figure'),
     [Input('coords-dropdown', 'value'),
      Input('gene_int', 'children'),
-     Input('mc-type-dropdown', 'value')],
+     Input('mc-type-dropdown', 'value'),
+     Input('mc-range-slider', 'value')],
     [State('gene_name', 'children')]
 )
-def get_gene_scatter_fig(coord_name, gene_int, mc_type, gene_name):
+def get_gene_scatter_fig(coord_name, gene_int, mc_type, cnorm, gene_name):
     data = dataset.get_coords(coord_name)
     data['SubType'] = dataset.get_variables('SubType')
 
@@ -451,7 +609,7 @@ def get_gene_scatter_fig(coord_name, gene_int, mc_type, gene_name):
                           x='x',
                           y='y',
                           color=gene_col_name,
-                          range_color=(0.5, 1.5),
+                          range_color=cnorm,
                           color_continuous_scale='Viridis',
                           hover_name='SubType',
                           hover_data=[gene_col_name])
@@ -486,5 +644,5 @@ def get_gene_scatter_fig(coord_name, gene_int, mc_type, gene_name):
 )
 def make_pair_scatter_markdown(coords, cell_meta, gene, mc_type, cnorm):
     url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
-    text = f'For more details, go to the [**Paired Scatter Browser**]({url})'
+    text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")})'
     return text
