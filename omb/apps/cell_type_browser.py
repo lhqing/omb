@@ -111,21 +111,19 @@ DMG_COLUMNS = {
 
 
 def create_cell_type_browser_layout(cell_type_name, total_url):
-    cell_type_name = cell_type_name.replace('_', ' ')
-    cell_type_name = cell_type_name.replace('%20', ' ')
+    cell_type_name = cell_type_name.replace('_', ' ').replace('%20', ' ')
 
     cluster_level = dataset.cluster_name_to_level[cell_type_name]
-    occur_coords = [k for k, v in dataset.coord_cell_type_occur.items() if cell_type_name in v]
-    coord_and_cluster_levels = [f"{coord} - {'SubType' if coord.startswith('L3') else 'MajorType'}"
-                                for coord in occur_coords]
+    occur_coords = [k for k, v in dataset.coord_cell_type_occur.items()
+                    if cell_type_name in v]
     if cluster_level == 'CellClass':
-        default_layout_choice = 'L1UMAP - MajorType'
+        default_layout_choice = 'L1UMAP'
     elif cluster_level == 'MajorType':
-        default_layout_choice = [x for x in coord_and_cluster_levels if x.startswith('L2UMAP')][
-            0]  # should only have one choice
+        default_layout_choice = [x for x in occur_coords
+                                 if x.startswith('L2UMAP')][0]  # should only have one choice
     else:
-        default_layout_choice = [x for x in coord_and_cluster_levels if x.startswith('L3UMAP')][
-            0]  # should only have one choice
+        default_layout_choice = [x for x in occur_coords
+                                 if x.startswith('L3UMAP')][0]  # should only have one choice
 
     # default dmg comparison
     dmg_level, hypo_clusters, hyper_clusters = _determine_default_dmg_comparison(cell_type_name)
@@ -167,7 +165,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                         className='h-100'
                     )
                 ],
-                width=12, xl=4,
+                width=12, xl=5,
             ),
             dbc.Col(
                 [
@@ -184,8 +182,14 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                         className='h-100'
                     )
                 ],
-                width=12, md=6, xl=2,
-            ),
+                width=12, xl=3,
+            )
+        ]
+    )
+
+    second_row = dbc.Row(
+        [
+
             dbc.Col(
                 [
                     dbc.Card(
@@ -193,17 +197,37 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                             dbc.CardHeader('Mapping Metrics'),
                             dbc.CardBody(
                                 [
-                                    dcc.Graph(id='metric_violin',
-                                              config={'displayModeBar': False})
+                                    dcc.Graph(id='metric-violin',
+                                              config={'displayModeBar': False},
+                                              style={"height": "20vh", "width": "auto"})
                                 ]
                             )
                         ],
                         className='h-100'
                     )
                 ],
-                width=12, md=6, xl=2,
+                width=12, xl=7,
             ),
-        ]
+            dbc.Col(
+                [
+                    dbc.Card(
+                        [
+                            dbc.CardHeader('Gene body mC Fraction Distribution'),
+                            dbc.CardBody(
+                                [
+                                    dcc.Graph(id='gene-violin',
+                                              config={'displayModeBar': False},
+                                              style={"height": "20vh", "width": "auto"})
+                                ]
+                            )
+                        ],
+                        className='h-100'
+                    )
+                ],
+                width=12, xl=5
+            ),
+        ],
+        className='my-4'
     )
 
     control_form = dbc.Form(
@@ -212,11 +236,12 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 [
                     dbc.Label('Coordinates'),
                     dcc.Dropdown(
-                        options=[{'label': coord_and_level, 'value': coord_and_level}
-                                 for coord_and_level in coord_and_cluster_levels],
+                        options=[{'label': coord, 'value': coord}
+                                 for coord in occur_coords],
                         clearable=False,
+                        optionHeight=50,
                         value=default_layout_choice,
-                        id='coords_cluster_level_dropdown'),
+                        id='cell-type-coords-dropdown'),
                     dbc.FormText('Coordinates of both scatter plots.')
                 ]
             ),
@@ -234,8 +259,8 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 [
                     dbc.Label('Gene Body mC Type'),
                     dcc.Dropdown(
-                        options=[{'label': 'Norm. mCH / CH', 'value': 'CHN'},
-                                 {'label': 'Norm. mCG / CG', 'value': 'CGN'}],
+                        options=[{'label': 'Norm. mCH/CH', 'value': 'CHN'},
+                                 {'label': 'Norm. mCG/CG', 'value': 'CGN'}],
                         value=default_mc_type,
                         clearable=False,
                         id='mc_type_dropdown'),
@@ -262,7 +287,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
         ]
     )
 
-    second_row = dbc.Row(
+    third_row = dbc.Row(
         [
             dbc.Col(
                 [
@@ -291,7 +316,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                                         [
                                             dcc.Graph(id='scatter_plot_1',
                                                       config={'displayModeBar': False},
-                                                      style={"height": "50vh", "width": "auto"})
+                                                      style={"height": "65vh", "width": "auto"})
                                         ]
                                     )
                                 ]
@@ -300,7 +325,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                         className='h-100'
                     )
                 ],
-                width=12, xl=4
+                width=12, xl=5
             ),
             dbc.Col(
                 [
@@ -311,7 +336,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                                 [
                                     dcc.Loading(
                                         dcc.Graph(id='scatter_plot_2',
-                                                  style={"height": "50vh", "width": "auto"})
+                                                  style={"height": "65vh", "width": "auto"})
                                     )
                                 ]
                             )
@@ -319,31 +344,13 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                         className='h-100'
                     )
                 ],
-                width=12, xl=4
-            ),
-            dbc.Col(
-                [
-                    dbc.Card(
-                        [
-                            dbc.CardHeader('mC Frac. Dist.'),
-                            dbc.CardBody(
-                                [
-                                    dcc.Graph(id='gene_violin',
-                                              config={'displayModeBar': False},
-                                              style={"height": "50vh", "width": "auto"})
-                                ]
-                            )
-                        ],
-                        className='h-100'
-                    )
-                ],
-                width=12, xl=2
-            ),
+                width=12, xl=5
+            )
         ],
         className='my-4'
     )
 
-    third_row = dbc.Row(
+    fourth_row = dbc.Row(
         [
             dbc.Col(
                 [
@@ -470,10 +477,12 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
         [
             # first row is cell_type_card and region_compo_sunburst
             first_row,
-            # second row has two scatter plots that can be plotted differently
+            # second row has mapping metric and gene overall violin
             second_row,
-            # third row is CH-DMG table
+            # thrid row has two scatter plots that can be plotted differently
             third_row,
+            # third row is CH-DMG table
+            fourth_row,
         ]
     )
     return layout
@@ -493,7 +502,7 @@ def _cell_type_name_to_cell_ids(cell_type_name, sample=None):
 
 @lru_cache()
 @app.callback(
-    Output('metric_violin', 'figure'),
+    Output('metric-violin', 'figure'),
     [Input('cell_type_name', 'children')]
 )
 def update_metric_violin(cell_type_name):
@@ -504,20 +513,11 @@ def update_metric_violin(cell_type_name):
 
     titles = ["Overall mCH / CH", "Overall mCG / CG", "Final Reads", "Mapping Rate"]
 
-    fig = make_subplots(rows=4,
-                        cols=1,
-                        specs=[[{
-                            "rowspan": 1
-                        }], [{
-                            "rowspan": 1
-                        }], [{
-                            "rowspan": 1
-                        }], [{
-                            "rowspan": 1
-                        }]],
+    fig = make_subplots(rows=1,
+                        cols=4,
                         subplot_titles=titles)
 
-    for row, ((_, data), title) in enumerate(zip(metric_df.iteritems(), titles)):
+    for i, ((_, data), title) in enumerate(zip(metric_df.iteritems(), titles)):
         fig.append_trace(go.Violin(
             x=data,
             orientation='h',
@@ -527,8 +527,8 @@ def update_metric_violin(cell_type_name):
             side='positive',
             name=title
         ),
-            row=row + 1,
-            col=1)
+            row=1,
+            col=i + 1)
 
     fig.update_layout(showlegend=False,
                       margin=dict(t=30, l=0, r=0, b=15),
@@ -665,11 +665,13 @@ def generate_gene_scatter(plot_df, hue, hue_norm, hover_name, hover_cols):
     return fig
 
 
-def _prepare_for_both_scatter(coord_and_cell_type_level, cell_type_name):
-    try:
-        coord_base, cell_type_level = coord_and_cell_type_level.split(' - ')
-    except ValueError:
+def _prepare_for_both_scatter(coord_base, cell_type_name):
+    if not coord_base:
         raise PreventUpdate
+    if coord_base.startswith('L3'):
+        cell_type_level = 'SubType'
+    else:
+        cell_type_level = 'MajorType'
 
     selected_cells = _cell_type_name_to_cell_ids(cell_type_name)
 
@@ -688,12 +690,12 @@ def _prepare_for_both_scatter(coord_and_cell_type_level, cell_type_name):
 
 @app.callback(
     Output('scatter_plot_1', 'figure'),
-    [Input('coords_cluster_level_dropdown', 'value')],
+    [Input('cell-type-coords-dropdown', 'value')],
     [State('cell_type_name', 'children')]
 )
-def update_scatter_plot_1(coord_and_cell_type_level, cell_type_name):
+def update_scatter_plot_1(coord, cell_type_name):
     selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols = _prepare_for_both_scatter(
-        coord_and_cell_type_level, cell_type_name)
+        coord, cell_type_name)
     # make figure
     fig = generate_cell_type_scatter(
         selected_plot_df,
@@ -706,21 +708,21 @@ def update_scatter_plot_1(coord_and_cell_type_level, cell_type_name):
 
 
 @app.callback(
-    [Output('gene_violin', 'figure'),
+    [Output('gene-violin', 'figure'),
      Output('scatter_plot_2', 'figure')],
-    [Input('coords_cluster_level_dropdown', 'value'),
+    [Input('cell-type-coords-dropdown', 'value'),
      Input('dynamic_gene_dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
      Input('mc_range_slider', 'value')],
     [State('cell_type_name', 'children')]
 )
-def update_scatter_plot_2(coord_and_cell_type_level, gene_int, mc_type, hue_norm, cell_type_name):
+def update_scatter_plot_2(coord, gene_int, mc_type, hue_norm, cell_type_name):
     gene_name = dataset.gene_meta_table.loc[gene_int, 'gene_name']
 
     if not gene_int:
         raise PreventUpdate
     selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols = _prepare_for_both_scatter(
-        coord_and_cell_type_level, cell_type_name)
+        coord, cell_type_name)
 
     gene_data = dataset.get_gene_rate(gene_int=gene_int, mc_type=mc_type)
     selected_plot_df[gene_name] = gene_data.reindex(selected_plot_df.index)
@@ -737,31 +739,26 @@ def update_scatter_plot_2(coord_and_cell_type_level, gene_int, mc_type, hue_norm
     violin_fig = go.Figure()
     # must recalculate level based on the cell type name, the above one is for coords
     _this_cell_type_level = dataset.cluster_name_to_level[cell_type_name]
-    violin_fig.add_trace(go.Violin(y=selected_plot_df[gene_name],
-                                   legendgroup='-',
-                                   scalegroup='-',
-                                   name='Cell Type vs Background',
-                                   points=False,
-                                   side='negative',
-                                   hoverinfo='skip',
-                                   line_color=dataset.get_palette(_this_cell_type_level)[cell_type_name]))
-    violin_fig.add_trace(go.Violin(y=unselected_plot_df[gene_name],
-                                   legendgroup='-',
-                                   scalegroup='-',
-                                   name='Cell Type vs Background',
+    violin_fig.add_trace(go.Violin(x=unselected_plot_df[gene_name],
+                                   name='-',
                                    side='positive',
-                                   points=False,
-                                   hoverinfo='skip',
                                    line_color='lightgray'))
+    violin_fig.add_trace(go.Violin(x=selected_plot_df[gene_name],
+                                   name='-',
+                                   side='positive',
+                                   line_color=dataset.get_palette(_this_cell_type_level)[cell_type_name]))
     violin_fig.update_traces(meanline_visible=True,
+                             orientation='h',
+                             points=False,
+                             hoverinfo='skip',
                              showlegend=False)
     violin_fig.update_layout(violingap=0,
                              violinmode='overlay',
-                             margin=dict(t=30, l=0, r=0, b=15),
+                             margin=dict(t=0, l=0, r=0, b=0),
                              plot_bgcolor='rgba(0,0,0,0)',
                              paper_bgcolor='rgba(0,0,0,0)')
-    violin_fig.update_xaxes(range=[-0.5, 0.5])
-    violin_fig.update_yaxes(range=[0, 3])
+    violin_fig.update_yaxes(range=[0, 0.5])
+    violin_fig.update_xaxes(range=[0, 3])
     return violin_fig, scatter_fig
 
 
@@ -812,15 +809,18 @@ def update_gene_selection(active_cell, table_data):
 
 @app.callback(
     Output('cell-type-pair-scatter-markdown', 'children'),
-    [Input('coords_cluster_level_dropdown', 'value'),
+    [Input('cell-type-coords-dropdown', 'value'),
      Input('dynamic_gene_dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
      Input('mc_range_slider', 'value'),
      Input('cell_type_name', 'children')]
 )
-def make_pair_scatter_markdown(coord_and_level, gene, mc_type, cnorm, cell_type_name):
-    coords, cell_meta = coord_and_level.split(' - ')
-    url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};' \
+def make_pair_scatter_markdown(coord_base, gene, mc_type, cnorm, cell_type_name):
+    if coord_base.startswith('L3'):
+        cell_type_level = 'SubType'
+    else:
+        cell_type_level = 'MajorType'
+    url = f'/scatter?coords={coord_base};meta={cell_type_level};gene={gene};' \
           f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")}).'
     return text
