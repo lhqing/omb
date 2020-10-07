@@ -138,7 +138,7 @@ def create_gene_browser_layout(gene):
                                     ),
                                     dcc.Loading(
                                         [
-                                            dcc.Graph(id='gene_box_plot',
+                                            dcc.Graph(id='gene-box-plot',
                                                       config={'displayModeBar': False})
                                         ]
                                     )
@@ -427,7 +427,7 @@ def create_gene_browser_layout(gene):
 
 @lru_cache()
 @app.callback(
-    Output('gene_box_plot', 'figure'),
+    Output('gene-box-plot', 'figure'),
     [Input('gene_int', 'children'),
      Input('mc-type-dropdown', 'value'),
      Input('box-plot-level-dropdown', 'value')],
@@ -460,6 +460,7 @@ def update_box_plot(gene_int, mc_type, cell_type_level, gene_name):
                       margin=dict(t=30, l=0, r=0, b=15),
                       plot_bgcolor='rgba(0,0,0,0)',
                       paper_bgcolor='rgba(0,0,0,0)')
+    fig.update_yaxes(title='Gene Norm. mCH / CH')
     return fig
 
 

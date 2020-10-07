@@ -14,7 +14,7 @@ from omb.apps import *
 def search_to_dict(search):
     if search is None:
         return None
-    kv_pairs = search[1:].split(';')  # remove ?
+    kv_pairs = search[1:].split(';')  # remove "?"
     search_dict = {}
     for kv in kv_pairs:
         try:
