@@ -595,5 +595,10 @@ def update_cell_type_sunburst(region_name):
      Input('region-name', 'children')]
 )
 def make_pair_scatter_markdown(coords, cell_type_level, region_name):
-    url = f'/scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
+    from ..app import ON_NEOMORPH, APP_ROOT_NAME
+    if ON_NEOMORPH:
+        prefix = f'/{APP_ROOT_NAME}'
+    else:
+        prefix = f''
+    url = f'{prefix}/scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
     return url

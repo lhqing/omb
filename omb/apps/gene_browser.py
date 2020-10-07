@@ -643,6 +643,11 @@ def get_gene_scatter_fig(coord_name, gene_int, mc_type, cnorm, gene_name):
      Input('mc-range-slider', 'value')]
 )
 def make_pair_scatter_markdown(coords, cell_meta, gene, mc_type, cnorm):
-    url = f'/scatter?coords={coords};meta={cell_meta};gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
+    from ..app import ON_NEOMORPH, APP_ROOT_NAME
+    if ON_NEOMORPH:
+        prefix = f'/{APP_ROOT_NAME}'
+    else:
+        prefix = f''
+    url = f'{prefix}/scatter?coords={coords};meta={cell_meta};gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")})'
     return text

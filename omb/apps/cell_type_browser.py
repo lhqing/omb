@@ -820,7 +820,12 @@ def make_pair_scatter_markdown(coord_base, gene, mc_type, cnorm, cell_type_name)
         cell_type_level = 'SubType'
     else:
         cell_type_level = 'MajorType'
-    url = f'/scatter?coords={coord_base};meta={cell_type_level};gene={gene};' \
+    from ..app import ON_NEOMORPH, APP_ROOT_NAME
+    if ON_NEOMORPH:
+        prefix = f'/{APP_ROOT_NAME}'
+    else:
+        prefix = f''
+    url = f'{prefix}/scatter?coords={coord_base};meta={cell_type_level};gene={gene};' \
           f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")}).'
     return text
