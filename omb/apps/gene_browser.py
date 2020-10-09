@@ -6,12 +6,17 @@ import dash_html_components as html
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from dash import callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 
 from .default_values import *
 from .utilities import n_cell_to_marker_size
-from ..app import app
+from ..app import app, APP_ROOT_NAME
+
+CELL_TYPE_COUNTS = dataset.cell_type_table['Cluster Level'].value_counts().to_dict()
+CELL_TYPE_COUNTS.update(dataset.cell_type_table['Parent'].value_counts().to_dict())
+CELL_TYPE_COUNTS.update({'Sub-All': 161, 'Sub-Exc': 68, 'Sub-Inh': 77, 'Sub-NonN': 16})
 
 
 def get_gene_info_markdown(gene_int):
@@ -368,26 +373,83 @@ def create_gene_browser_layout(gene):
                             ),
                             dbc.Col(
                                 [
-                                    dbc.Form(
+                                    dbc.Row(
                                         [
-                                            dbc.FormGroup(
+                                            dbc.Form(
                                                 [
+                                                    dbc.FormGroup(
+                                                        [
 
-                                                    dbc.Label('Select Tracks'),
-                                                    dcc.Dropdown(
-                                                        id='cell-type-track-dropdown',
-                                                        options=[
-                                                            {'label': f'{ct} ({cell_counts[ct]} cells)',
-                                                             'value': ct}
-                                                            for ct in clusters_with_track],
-                                                        multi=True,
-                                                        value=[],
-                                                    ),
-                                                    dbc.FormText('Select tracks to view their methylation '
-                                                                 'level around this gene.')
-                                                ]
+                                                            dbc.Label('Select Tracks'),
+                                                            dcc.Dropdown(
+                                                                id='cell-type-track-dropdown',
+                                                                options=[
+                                                                    {'label': f'{ct} ({cell_counts[ct]} cells)',
+                                                                     'value': ct}
+                                                                    for ct in clusters_with_track],
+                                                                multi=True,
+                                                                value=[],
+                                                            ),
+                                                            dbc.FormText('Select tracks to view their methylation '
+                                                                         'level around this gene.')
+                                                        ]
+                                                    )
+                                                ],
+                                                className='w-100'
                                             )
                                         ]
+                                    ),
+                                    dbc.Collapse(
+                                        dbc.Row(
+                                            [
+                                                html.P('Warning: Loading too many tracks will be quite slow.',
+                                                       className='text-danger my-auto')
+                                            ],
+                                            className='my-3'
+                                        ),
+                                        id='too-much-tracks'
+                                    ),
+                                    dbc.Row(
+                                        [
+                                            html.H6(
+                                                'Load multiple MajorType tracks:',
+                                                className='my-auto'
+                                            ),
+                                            dbc.ButtonGroup(
+                                                [
+                                                    dbc.Button(f'ALL ({CELL_TYPE_COUNTS["MajorType"]})',
+                                                               id='btn-major-tracks'),
+                                                    dbc.Button(f'Exc ({CELL_TYPE_COUNTS["Exc"]})',
+                                                               id='btn-major-exc-tracks'),
+                                                    dbc.Button(f'Inh ({CELL_TYPE_COUNTS["Inh"]})',
+                                                               id='btn-major-inh-tracks'),
+                                                    dbc.Button(f'NonN ({CELL_TYPE_COUNTS["NonN"]})',
+                                                               id='btn-major-non-tracks'),
+                                                ],
+                                                size='sm',
+                                                className='align-middle ml-4'
+                                            )
+                                        ]
+                                    ),
+                                    dbc.Row(
+                                        [
+                                            html.H6('Load multiple SubType tracks:',
+                                                    className='my-auto'
+                                                    ),
+                                            dbc.ButtonGroup(
+                                                [
+                                                    dbc.Button(f'Exc ({CELL_TYPE_COUNTS["Sub-Exc"]})',
+                                                               id='btn-sub-exc-tracks'),
+                                                    dbc.Button(f'Inh ({CELL_TYPE_COUNTS["Sub-Inh"]})',
+                                                               id='btn-sub-inh-tracks'),
+                                                    dbc.Button(f'NonN ({CELL_TYPE_COUNTS["Sub-NonN"]})',
+                                                               id='btn-sub-non-tracks'),
+                                                ],
+                                                size='sm',
+                                                className='align-middle mx-4'
+                                            )
+                                        ],
+                                        className='my-3'
                                     )
                                 ],
                                 width=12, lg=8
@@ -644,11 +706,60 @@ def get_gene_scatter_fig(coord_name, gene_int, mc_type, cnorm, gene_name):
      Input('mc-range-slider', 'value')]
 )
 def make_pair_scatter_markdown(coords, cell_meta, gene, mc_type, cnorm):
-    from ..app import ON_NEOMORPH, APP_ROOT_NAME
-    if ON_NEOMORPH:
-        prefix = f'/{APP_ROOT_NAME}'
-    else:
-        prefix = f''
-    url = f'{prefix}/scatter?coords={coords};meta={cell_meta};gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
+    url = f'/{APP_ROOT_NAME}scatter?coords={coords};meta={cell_meta};' \
+          f'gene={gene};mc={mc_type};cnorm={",".join(map(str, cnorm))}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")})'
     return text
+
+
+@app.callback(
+    Output('cell-type-track-dropdown', 'value'),
+    [Input('btn-major-tracks', 'n_clicks'),
+     Input('btn-major-exc-tracks', 'n_clicks'),
+     Input('btn-major-inh-tracks', 'n_clicks'),
+     Input('btn-major-non-tracks', 'n_clicks'),
+     Input('btn-sub-exc-tracks', 'n_clicks'),
+     Input('btn-sub-inh-tracks', 'n_clicks'),
+     Input('btn-sub-non-tracks', 'n_clicks')],
+    [State('cell-type-track-dropdown', 'value')]
+)
+def load_multiple_tracks(btn1, btn2, btn3, btn4,
+                         btn6, btn7, btn8,  # can't use * here... call back do not set key_wd
+                         cur_value):
+    ctx = callback_context
+
+    if not ctx.triggered:
+        button_id = None
+    else:
+        button_id = ctx.triggered[0]['prop_id'].split('.')[0]
+
+    if button_id == 'btn-major-tracks':
+        cur_value += dataset.parent_to_children_list['Exc']
+        cur_value += dataset.parent_to_children_list['Inh']
+        cur_value += dataset.parent_to_children_list['NonN']
+    elif button_id == 'btn-major-exc-tracks':
+        cur_value += dataset.parent_to_children_list['Exc']
+    elif button_id == 'btn-major-inh-tracks':
+        cur_value += dataset.parent_to_children_list['Inh']
+    elif button_id == 'btn-major-non-tracks':
+        cur_value += dataset.parent_to_children_list['NonN']
+    elif button_id == 'btn-sub-exc-tracks':
+        cur_value += dataset.cluster_name_to_subtype('Exc')
+    elif button_id == 'btn-sub-inh-tracks':
+        cur_value += dataset.cluster_name_to_subtype('Inh')
+    elif button_id == 'btn-sub-non-tracks':
+        cur_value += dataset.cluster_name_to_subtype('NonN')
+
+    cur_value = list(sorted(set(cur_value)))
+    return cur_value
+
+
+@app.callback(
+    Output('too-much-tracks', 'is_open'),
+    [Input('cell-type-track-dropdown', 'value')]
+)
+def too_much_tracks_warning(cur_value):
+    if len(cur_value) > 15:
+        return True
+    else:
+        return False
