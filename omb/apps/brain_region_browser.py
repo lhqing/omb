@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output, State
 from .default_values import *
 from .sunburst import create_sunburst
 from .utilities import n_cell_to_marker_size
-from ..app import app
+from ..app import app, APP_ROOT_NAME
 
 
 def _background_mesh(region_name, color=None, opacity=0.1):
@@ -595,10 +595,5 @@ def update_cell_type_sunburst(region_name):
      Input('region-name', 'children')]
 )
 def make_pair_scatter_markdown(coords, cell_type_level, region_name):
-    from ..app import ON_NEOMORPH, APP_ROOT_NAME
-    if ON_NEOMORPH:
-        prefix = f'/{APP_ROOT_NAME}'
-    else:
-        prefix = f''
-    url = f'{prefix}/scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
+    url = f'/{APP_ROOT_NAME}scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
     return url

@@ -14,12 +14,15 @@ from plotly.subplots import make_subplots
 from .default_values import *
 from .sunburst import create_sunburst
 from .utilities import n_cell_to_marker_size, get_split_plot_df
-from ..app import app
+from ..app import app, APP_ROOT_NAME
+
+
+CELL_TYPE_NAME_TO_FORMAL = dataset.cell_type_table['FormalName'].to_dict()
 
 
 def _make_cell_type_url_markdown(name, total_url):
     new_url = total_url.split('?')[0] + f'?ct={name.replace(" ", "%20")}'
-    markdown = f'[{name}]({new_url})'
+    markdown = f'[{CELL_TYPE_NAME_TO_FORMAL[name]}]({new_url})'
     return markdown
 
 
@@ -27,6 +30,7 @@ def _prepare_cell_type_markdown(cell_type_name, total_url):
     # name and stats
     cell_type_series = dataset.cell_type_table.loc[cell_type_name]
     cluster_size = cell_type_series['Number of total cells']
+    short_description = cell_type_series['Description']
 
     try:
         cell_type_level = dataset.cluster_name_to_level[cell_type_name]
@@ -59,7 +63,10 @@ def _prepare_cell_type_markdown(cell_type_name, total_url):
         children_urls_str = 'None'
 
     cell_type_markdown = f"""
-**Number of Nuclei**: {cluster_size}
+**Description**: 
+{short_description}
+
+**Number of Cells**: {cluster_size}
 
 **Parent**: {parent_url}
 
@@ -70,8 +77,6 @@ def _prepare_cell_type_markdown(cell_type_name, total_url):
 **Child(ren)**: 
 
 {children_urls_str}
-
-**Description**: 
 """
     return cell_type_markdown
 
@@ -143,7 +148,9 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 [
                     dbc.Jumbotron(
                         [
-                            html.H1(children=cell_type_name, id='cell_type_name'),
+                            html.H1(children=CELL_TYPE_NAME_TO_FORMAL[cell_type_name],
+                                    id='formal-cell-type-name'),
+                            html.H1(children=cell_type_name, id='cell_type_name', hidden=True),
                             dcc.Markdown(cell_type_markdown, id='cell_mark_down')
                         ],
                         className='h-100'
@@ -251,7 +258,7 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                     dcc.Dropdown(
                         clearable=False,
                         value=15397,  # This is Cux2, TODO change a best default for each cluster
-                        id='dynamic_gene_dropdown'),
+                        id='dynamic-gene-dropdown'),
                     dbc.FormText('Gene of the right scatter plot.')
                 ]
             ),
@@ -583,8 +590,8 @@ def update_sunburst(cell_type_name):
 
 
 @app.callback(
-    Output('dynamic_gene_dropdown', 'options'),
-    [Input('dynamic_gene_dropdown', 'search_value')]
+    Output('dynamic-gene-dropdown', 'options'),
+    [Input('dynamic-gene-dropdown', 'search_value')]
 )
 def update_gene_options(search_value):
     if not search_value:
@@ -711,7 +718,7 @@ def update_scatter_plot_1(coord, cell_type_name):
     [Output('gene-violin', 'figure'),
      Output('scatter_plot_2', 'figure')],
     [Input('cell-type-coords-dropdown', 'value'),
-     Input('dynamic_gene_dropdown', 'value'),
+     Input('dynamic-gene-dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
      Input('mc_range_slider', 'value')],
     [State('cell_type_name', 'children')]
@@ -790,7 +797,7 @@ def update_dmg_table(_, hypo_clusters, hyper_clusters, gene_type, dmg_level_str)
 
 
 @app.callback(
-    Output('dynamic_gene_dropdown', 'value'),
+    Output('dynamic-gene-dropdown', 'value'),
     [Input('dmg_table', 'active_cell')],
     [State('dmg_table', 'data')]
 )
@@ -810,7 +817,7 @@ def update_gene_selection(active_cell, table_data):
 @app.callback(
     Output('cell-type-pair-scatter-markdown', 'children'),
     [Input('cell-type-coords-dropdown', 'value'),
-     Input('dynamic_gene_dropdown', 'value'),
+     Input('dynamic-gene-dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
      Input('mc_range_slider', 'value'),
      Input('cell_type_name', 'children')]
@@ -820,12 +827,7 @@ def make_pair_scatter_markdown(coord_base, gene, mc_type, cnorm, cell_type_name)
         cell_type_level = 'SubType'
     else:
         cell_type_level = 'MajorType'
-    from ..app import ON_NEOMORPH, APP_ROOT_NAME
-    if ON_NEOMORPH:
-        prefix = f'/{APP_ROOT_NAME}'
-    else:
-        prefix = f''
-    url = f'{prefix}/scatter?coords={coord_base};meta={cell_type_level};gene={gene};' \
+    url = f'{APP_ROOT_NAME}/scatter?coords={coord_base};meta={cell_type_level};gene={gene};' \
           f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")}).'
     return text

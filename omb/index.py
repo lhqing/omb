@@ -33,8 +33,24 @@ def get_header():
                 [
                     dbc.NavItem(dbc.NavLink('Home', href="/home")),
                     dbc.NavItem(dbc.NavLink('Gene', href="/gene?gene=Cux2")),
-                    dbc.NavItem(dbc.NavLink('Brain Region', href="/brain_region?br=MOp")),
-                    dbc.NavItem(dbc.NavLink('Cell Type', href="/cell_type?ct=Exc")),
+                    dbc.DropdownMenu(
+                        [
+                            dbc.DropdownMenuItem('Region Table', href="/br_table"),
+                            dbc.DropdownMenuItem('Region Viewer', href="/brain_region?br=MOp")
+                        ],
+                        label='Brain Region',
+                        nav=True,
+                        in_navbar=True
+                    ),
+                    dbc.DropdownMenu(
+                        [
+                            dbc.DropdownMenuItem('Cell Type Table', href='/ct_table'),
+                            dbc.DropdownMenuItem('Cell Type Viewer', href='/cell_type?ct=Exc')
+                        ],
+                        label='Cell Type',
+                        nav=True,
+                        in_navbar=True
+                    ),
                     dbc.NavItem(dbc.NavLink('Paired Scatter', href="/scatter")),
                 ],
                 className='mr-5',
@@ -107,6 +123,8 @@ def display_page(pathname, search, total_url):
         if 'br' not in search_dict:
             return '404'
         layout = create_brain_region_browser_layout(region_name=search_dict['br'])
+    elif pathname == '/br_table':
+        layout = create_brain_table_layout()
     elif pathname == '/cell_type':
         if search_dict is None:
             return '404'
@@ -114,6 +132,8 @@ def display_page(pathname, search, total_url):
         if 'ct' not in search_dict:
             return '404'
         layout = create_cell_type_browser_layout(cell_type_name=search_dict['ct'], total_url=total_url)
+    elif pathname == '/ct_table':
+        layout = create_cell_type_table_layout()
     elif pathname == '/gene':
         if search_dict is None:
             return '404'

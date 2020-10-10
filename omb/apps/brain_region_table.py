@@ -1,70 +1,95 @@
-import dash_core_components as dcc
+import dash_bootstrap_components as dbc
 import dash_html_components as html
-import dash_table
-from dash.dependencies import Input, Output
 
 from .default_values import *
-from ..app import app
+from .home import LIU_2020_URL
+from ..app import APP_ROOT_NAME
 
 brain_region_df = dataset.brain_region_table.reset_index()
 
-brain_table_app_layout = html.Div(children=[
-    html.Div(children=[
-        # basic numbers
-        html.Div(
-            [html.H6(id="brain_table_n_cells", children='N_CELLS'),
-             html.P("Nuclei")],
-            id="cellNumber",
-            className="mini_container",
-        ),
-        html.Div(
-            [html.H6(id="brain_table_n_regions", children='N_REGION'),
-             html.P("Dissection Region")],
-            id="regionNumber",
-            className="mini_container",
-        )],
-        id='pretty_container two columns container-display'),
-    dcc.Store(id='brain_region_table_selection_intermediate', data={'regions': []}),
-    html.Div(children=[dash_table.DataTable(
-        id='brain_region_table',
-        style_cell={
-            'whiteSpace': 'normal',
-            # 'height': 'auto',
-            'textAlign': 'left',
-        },
-        style_header={
-            'fontWeight': 'bold',
-            'height': '50px'
-        },
-        style_data_conditional=[
-            {
-                'if': {'row_index': 'odd'},
-                'backgroundColor': 'rgb(248, 248, 248)'
-            }
-        ],
-        filter_action='native',
-        sort_action="native",
-        sort_mode="multi",
-        row_selectable="multi",
-
-        # this is important, must initialize this first so
-        # update_brain_region_table_selected_rows can update this
-        selected_rows=[],
-
-        style_as_list_view=True,
-        columns=[{"name": i, "id": i} for i in brain_region_df.columns],
-        data=brain_region_df.to_dict('records'),
-        page_size=18
-    )], id='brain_region_table_div', className='ten columns pretty_container')
-], className='row flex-display')
+COLUMNS_ORDER = ['Region Name', 'Sub-Region', 'Major Region',
+                 'Slice', 'Number of total cells', 'Dissection Region ID',
+                 'Detail Region', 'Potential Overlap']
+brain_region_df = brain_region_df[COLUMNS_ORDER].copy()
 
 
-@app.callback(
-    [Output('brain_region_table', 'selected_rows')],
-    [Input('selected_dissection_region_store', "data")])
-def update_brain_region_table(data):
-    print('update_brain_region_table_selected_rows')
-    print(data)
-    selected_rows = [dataset.dissection_regions.index(r) for r in data['selected_region_names']]
-    return [selected_rows]
+# Turn brain region name into links
+def name_to_link(name):
+    return html.A(name, href=f'/{APP_ROOT_NAME}brain_region?br={name}')
 
+
+def prepare_row(row):
+    row_html = html.Tr(
+        [
+            html.Td(name_to_link(row['Region Name'])),
+            html.Td(name_to_link(row['Sub-Region'])),
+            html.Td(name_to_link(row['Major Region'])),
+            html.Td(row['Slice']),
+            html.Td(row['Number of total cells']),
+            html.Td(row['Dissection Region ID']),
+            html.Td(row['Detail Region']),
+            html.Td(row['Potential Overlap'])
+        ]
+    )
+    return row_html
+
+
+def create_brain_table_layout():
+    # prepare table
+    table_header = [
+        html.Thead(
+            html.Tr(
+                [
+                    html.Th('Name'),
+                    html.Th('Sub-Region'),
+                    html.Th('Major Region'),
+                    html.Th('Slice'),
+                    html.Th('Number of Cells'),
+                    html.Th('Dissection Region ID'),
+                    html.Th('Detail Anatomical Structures'),
+                    html.Th('Potentially Overlapped With')
+                ]
+            )
+        )
+    ]
+    rows = brain_region_df.apply(prepare_row, axis=1).tolist()
+    table_body = [html.Tbody(rows)]
+
+    table = dbc.Table(table_header + table_body,
+                      striped=True,
+                      bordered=True,
+                      hover=True)
+
+    layout = html.Div(
+        [
+            dbc.Row(
+                [
+                    dbc.Jumbotron(
+                        [
+                            html.H1('Dissection Region Table'),
+                            html.P(
+                                [
+                                    f'This table listed {brain_region_df.shape[0]} brain dissection regions included '
+                                    f'in this study. All the tissues were dissected from Adult (P56) C57BL/6J '
+                                    f'male mice brain. You can click their names to view their '
+                                    f'structure and cell-type composition in the brain region viewer. '
+                                    f'For more details, please see ',
+                                    html.A('the manuscript', href=LIU_2020_URL),
+                                    f'.'
+                                ]
+                            )
+                        ],
+                        className='w-100'
+                    )
+                ],
+                className='px-5'
+            ),
+            dbc.Row(
+                [
+                    table
+                ],
+                className='px-5'
+            )
+        ]
+    )
+    return layout

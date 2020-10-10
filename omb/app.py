@@ -5,8 +5,6 @@ Main Dash apps
 import dash
 import subprocess
 
-APP_ROOT_NAME = 'omb'
-
 app = dash.Dash(
     __name__,
     suppress_callback_exceptions=True,
@@ -24,5 +22,8 @@ server = app.server
 host_name = subprocess.run(['hostname'], stdout=subprocess.PIPE, encoding='utf-8').stdout.strip()
 if host_name.lower().startswith('neomorph'):
     ON_NEOMORPH = True
+    APP_ROOT_NAME = 'omb/'
 else:
     ON_NEOMORPH = False
+    APP_ROOT_NAME = ''
+
