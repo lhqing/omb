@@ -154,8 +154,6 @@ def display_page(pathname, search, total_url):
         layout = create_gene_browser_layout(gene=search_dict['gene'])
     elif pathname == f'/{APP_ROOT_NAME}scatter':
         layout = create_paired_scatter_layout(**paired_scatter_api(search_dict))
-    elif pathname == f'/{APP_ROOT_NAME}test':
-        layout = test_app.layout
     else:
         return '404'
 

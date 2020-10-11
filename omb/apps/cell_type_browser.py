@@ -13,11 +13,30 @@ from plotly.subplots import make_subplots
 
 from .default_values import *
 from .sunburst import create_sunburst
-from .utilities import n_cell_to_marker_size, get_split_plot_df
+from .utilities import n_cell_to_marker_size
 from ..app import app, APP_ROOT_NAME
 
-
 CELL_TYPE_NAME_TO_FORMAL = dataset.cell_type_table['FormalName'].to_dict()
+
+
+def _get_split_plot_df(coord_base, variable_name, selected_cells):
+    hue_palette = dataset.get_palette(variable_name)
+    plot_df = dataset.get_coords(coord_base)
+
+    # some coords do not have all cell so selected index need to be updated
+    selected_cell_index = selected_cells & plot_df.index
+    if len(selected_cell_index) == 0:
+        raise PreventUpdate
+    unselected_cell_index = plot_df.index[~plot_df.index.isin(selected_cell_index)]
+
+    plot_df[variable_name] = dataset.get_variables(variable_name).astype(str)
+    if variable_name != 'SubType':
+        plot_df['SubType'] = dataset.get_variables('SubType').astype(str)
+
+    # selected
+    selected_plot_df = plot_df.loc[selected_cell_index]
+    unselected_plot_df = plot_df.loc[unselected_cell_index]
+    return selected_plot_df, unselected_plot_df, hue_palette
 
 
 def _make_cell_type_url_markdown(name, total_url):
@@ -338,12 +357,21 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                 [
                     dbc.Card(
                         [
-                            dbc.CardHeader('Gene Scatter'),
+                            dbc.CardHeader(
+                                [
+                                    'Gene Scatter ',
+                                    html.A("👉 Go to this gene's page",
+                                           id='gene-page-url',
+                                           className='mx-3')
+                                ]
+                            ),
                             dbc.CardBody(
                                 [
                                     dcc.Loading(
-                                        dcc.Graph(id='scatter_plot_2',
-                                                  style={"height": "65vh", "width": "auto"})
+                                        [
+                                            dcc.Graph(id='scatter_plot_2',
+                                                      style={"height": "65vh", "width": "auto"})
+                                        ]
                                     )
                                 ]
                             )
@@ -573,8 +601,7 @@ def update_region_bar_plot(cell_type_name):
                       plot_bgcolor='rgba(0,0,0,0)',
                       paper_bgcolor='rgba(0,0,0,0)')
     fig.update_traces(
-        hovertemplate='<b>%{hovertext}</b><br>'
-                      '<b>Count: </b>%{customdata[0]}<br>'
+        hovertemplate='<b>Count: </b>%{customdata[0]}<br>'
                       '<b>Proportion: </b>%{customdata[1]:.3f}')
     return fig
 
@@ -604,7 +631,7 @@ def update_gene_options(search_value):
         return this_options
 
 
-def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_name, hover_cols):
+def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palette, hover_name):
     # selected_plot_df is colored and hover_data
     fig = px.scatter(selected_plot_df,
                      x="x",
@@ -612,7 +639,7 @@ def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palett
                      color=hue,
                      color_discrete_map=palette,
                      hover_name=hover_name,
-                     hover_data=hover_cols)
+                     hover_data=['SubType'])
     fig.update_layout(showlegend=False,
                       margin=dict(t=15, l=0, r=0, b=15),
                       xaxis=go.layout.XAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
@@ -623,9 +650,7 @@ def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palett
     # update marker size and hover template
     fig.update_traces(mode='markers',
                       marker_size=n_cell_to_marker_size(selected_plot_df.shape[0]),
-                      hovertemplate='<b>%{hovertext}</b><br>'
-                                    '<b>Dissection Region: </b>%{customdata[0]}<br>'
-                                    '<b>SubType: </b>%{customdata[1]}')
+                      hovertemplate='<b>SubType: </b>%{customdata[0]}<br>')
 
     # unselected_plot_df is gray background, no color
     if unselected_plot_df.shape[0] > 100:
@@ -638,7 +663,7 @@ def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palett
                 marker_color='rgba(200, 200, 200, .5)',
                 text=unselected_plot_df[hue],
                 name='',
-                hovertemplate='<b>Background</b>: %{text}'
+                hoverinfo='skip'
             )
         )
     # reorder data to put the background trace in first (bottom)
@@ -646,7 +671,7 @@ def generate_cell_type_scatter(selected_plot_df, unselected_plot_df, hue, palett
     return fig
 
 
-def generate_gene_scatter(plot_df, hue, hue_norm, hover_name, hover_cols):
+def generate_gene_scatter(plot_df, hue, hue_norm, hover_name):
     # selected_plot_df is colored and hover_data
     fig = px.scatter(plot_df,
                      x="x",
@@ -655,7 +680,7 @@ def generate_gene_scatter(plot_df, hue, hue_norm, hover_name, hover_cols):
                      range_color=hue_norm,
                      color_continuous_scale='Viridis',
                      hover_name=hover_name,
-                     hover_data=hover_cols)
+                     hover_data=[hue])
     fig.update_layout(showlegend=False,
                       margin=dict(t=15, l=0, r=0, b=15),
                       xaxis=go.layout.XAxis(title='', showticklabels=False, showgrid=False, zeroline=False),
@@ -667,8 +692,7 @@ def generate_gene_scatter(plot_df, hue, hue_norm, hover_name, hover_cols):
     fig.update_traces(mode='markers',
                       marker_size=n_cell_to_marker_size(plot_df.shape[0]),
                       hovertemplate='<b>%{hovertext}</b><br>'
-                                    '<b>Dissection Region: </b>%{customdata[0]}<br>'
-                                    '<b>SubType: </b>%{customdata[1]}')
+                                    f'<b>{hue}: </b>%{{customdata[0]:.3f}}')
     return fig
 
 
@@ -682,17 +706,16 @@ def _prepare_for_both_scatter(coord_base, cell_type_name):
 
     selected_cells = _cell_type_name_to_cell_ids(cell_type_name)
 
-    selected_plot_df, unselected_plot_df, hover_cols, palette = get_split_plot_df(
+    selected_plot_df, unselected_plot_df, palette = _get_split_plot_df(
         coord_base=coord_base,
         variable_name=cell_type_level,
-        selected_cells=selected_cells,
-        hover_cols=('RegionName', 'SubType'))
+        selected_cells=selected_cells)
 
     if selected_plot_df.shape[0] > DOWN_SAMPLE:
         selected_plot_df = selected_plot_df.sample(DOWN_SAMPLE, random_state=0)
     if unselected_plot_df.shape[0] > DOWN_SAMPLE:
         unselected_plot_df = unselected_plot_df.sample(DOWN_SAMPLE, random_state=0)
-    return selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols
+    return selected_plot_df, unselected_plot_df, cell_type_level, palette
 
 
 @app.callback(
@@ -701,7 +724,7 @@ def _prepare_for_both_scatter(coord_base, cell_type_name):
     [State('cell_type_name', 'children')]
 )
 def update_scatter_plot_1(coord, cell_type_name):
-    selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols = _prepare_for_both_scatter(
+    selected_plot_df, unselected_plot_df, cell_type_level, palette = _prepare_for_both_scatter(
         coord, cell_type_name)
     # make figure
     fig = generate_cell_type_scatter(
@@ -709,14 +732,14 @@ def update_scatter_plot_1(coord, cell_type_name):
         unselected_plot_df,
         hue=cell_type_level,
         palette=palette,
-        hover_name=cell_type_level,
-        hover_cols=hover_cols)
+        hover_name=cell_type_level)
     return fig
 
 
 @app.callback(
     [Output('gene-violin', 'figure'),
-     Output('scatter_plot_2', 'figure')],
+     Output('scatter_plot_2', 'figure'),
+     Output('gene-page-url', 'href')],
     [Input('cell-type-coords-dropdown', 'value'),
      Input('dynamic-gene-dropdown', 'value'),
      Input('mc_type_dropdown', 'value'),
@@ -725,32 +748,31 @@ def update_scatter_plot_1(coord, cell_type_name):
 )
 def update_scatter_plot_2(coord, gene_int, mc_type, hue_norm, cell_type_name):
     gene_name = dataset.gene_meta_table.loc[gene_int, 'gene_name']
-
+    hue_name = f'{gene_name} {"mCH" if mc_type == "CHN" else "mCG"}'
     if not gene_int:
         raise PreventUpdate
-    selected_plot_df, unselected_plot_df, cell_type_level, palette, hover_cols = _prepare_for_both_scatter(
+    selected_plot_df, unselected_plot_df, cell_type_level, palette = _prepare_for_both_scatter(
         coord, cell_type_name)
 
     gene_data = dataset.get_gene_rate(gene_int=gene_int, mc_type=mc_type)
-    selected_plot_df[gene_name] = gene_data.reindex(selected_plot_df.index)
-    unselected_plot_df[gene_name] = gene_data.reindex(unselected_plot_df.index)
+    selected_plot_df[hue_name] = gene_data.reindex(selected_plot_df.index)
+    unselected_plot_df[hue_name] = gene_data.reindex(unselected_plot_df.index)
 
     scatter_fig = generate_gene_scatter(
         pd.concat([selected_plot_df, unselected_plot_df]),
-        hue=gene_name,
+        hue=hue_name,
         hue_norm=hue_norm,
-        hover_name=cell_type_level,
-        hover_cols=hover_cols)
+        hover_name=cell_type_level)
 
     # update gene violin
     violin_fig = go.Figure()
     # must recalculate level based on the cell type name, the above one is for coords
     _this_cell_type_level = dataset.cluster_name_to_level[cell_type_name]
-    violin_fig.add_trace(go.Violin(x=unselected_plot_df[gene_name],
+    violin_fig.add_trace(go.Violin(x=unselected_plot_df[hue_name],
                                    name='-',
                                    side='positive',
                                    line_color='lightgray'))
-    violin_fig.add_trace(go.Violin(x=selected_plot_df[gene_name],
+    violin_fig.add_trace(go.Violin(x=selected_plot_df[hue_name],
                                    name='-',
                                    side='positive',
                                    line_color=dataset.get_palette(_this_cell_type_level)[cell_type_name]))
@@ -766,7 +788,11 @@ def update_scatter_plot_2(coord, gene_int, mc_type, hue_norm, cell_type_name):
                              paper_bgcolor='rgba(0,0,0,0)')
     violin_fig.update_yaxes(range=[0, 0.5])
     violin_fig.update_xaxes(range=[0, 3])
-    return violin_fig, scatter_fig
+
+    # gene page url
+    url = f'{APP_ROOT_NAME}gene?gene={gene_name}'
+
+    return violin_fig, scatter_fig, url
 
 
 @app.callback(

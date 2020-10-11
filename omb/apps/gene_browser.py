@@ -602,7 +602,7 @@ def get_cell_meta_scatter_fig(var_name, coord_name):
     # cell meta figure
     if var_name in CONTINUOUS_VAR:
         hue_norm = CONTINUOUS_VAR_NORMS.get(var_name, None)
-        data[var_name] = data[var_name].astype(float)
+        _data[var_name] = _data[var_name].astype(float)
         fig_cell_meta = px.scatter(data_frame=_data,
                                    x='x',
                                    y='y',
