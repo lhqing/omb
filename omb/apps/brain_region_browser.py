@@ -408,7 +408,19 @@ def create_brain_region_browser_layout(region_name):
                             dbc.CardHeader('Cell Type Sunburst'),
                             dbc.CardBody(
                                 [
-                                    dcc.Graph(id='sunburst-graph')
+                                    dcc.Graph(id='sunburst-graph'),
+                                    html.A('Notes on cell type composition', className='text-muted',
+                                           id='sunburst-notes'),
+                                    dbc.Popover(
+                                        [
+                                            dbc.PopoverBody(
+                                                SUNBURST_NOTES
+                                            ),
+                                        ],
+                                        id="sunburst-notes-popover",
+                                        is_open=False,
+                                        target="sunburst-notes",
+                                    ),
                                 ]
                             )
                         ],
@@ -607,3 +619,14 @@ def update_cell_type_sunburst(region_name):
 def make_pair_scatter_markdown(coords, cell_type_level, region_name):
     url = f'/{APP_ROOT_NAME}scatter?coords={coords};meta={cell_type_level};br={region_name}'.replace(' ', '%20')
     return url
+
+
+@app.callback(
+    Output("sunburst-notes-popover", "is_open"),
+    [Input("sunburst-notes", "n_clicks")],
+    [State("sunburst-notes-popover", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open

@@ -10,6 +10,7 @@ def create_sunburst(levels, selected_cells):
         data = dataset.get_variables(levels)
     if 'SubType' in levels:
         data = data[data['SubType'].apply(lambda c: 'Outlier' not in c)]
+    total_cell = data.shape[0]
 
     # prepare count table
     count_df = data.groupby(levels).apply(lambda i: i.shape[0]).reset_index()
@@ -24,7 +25,7 @@ def create_sunburst(levels, selected_cells):
     for level in levels:
         palette = dataset.get_palette(level)
         if level == 'RegionName':
-            palette = {k+' ': v for k, v in palette.items()}
+            palette = {k + ' ': v for k, v in palette.items()}
         total_palette.update(palette)
 
     # prepare sunburst
@@ -32,17 +33,30 @@ def create_sunburst(levels, selected_cells):
     parents = []
     values = []
     colors = []
+    proportion_total = []
+    proportion_parent = []
     for level, parent_level in zip(levels[::-1], levels[1::-1] + [None]):
         this_level_sum = count_df.groupby(level)['Cell Number'].sum().to_dict()
         this_level_sum = {k: v for k, v in this_level_sum.items() if v != 0}
         if parent_level is not None:
             this_parent_dict = count_df.set_index(level)[parent_level].to_dict()
+            parent_level_sum = count_df.groupby(parent_level)['Cell Number'].sum().to_dict()
+            parent_level_sum = {k: v for k, v in parent_level_sum.items() if v != 0}
         else:
             this_parent_dict = {label: '' for label in count_df[level].unique()}
+            parent_level_sum = {}
         for label in this_level_sum.keys():
             labels.append(label)
-            parents.append(this_parent_dict[label])
+            parent = this_parent_dict[label]
+            parents.append(parent)
             values.append(this_level_sum[label])
+            proportion_total.append(f'{this_level_sum[label] / total_cell * 100: .2f}% of total')
+            if parent != '':
+                proportion_parent.append(
+                    f'{this_level_sum[label] / parent_level_sum.get(parent, total_cell) * 100: .2f}%'
+                    f' of {this_parent_dict[label]}')
+            else:
+                proportion_parent.append('')
             try:
                 colors.append(total_palette[label])
             except KeyError:
@@ -59,8 +73,14 @@ def create_sunburst(levels, selected_cells):
         labels=labels,
         parents=parents,
         values=values,
+        customdata=[*zip(proportion_total, proportion_parent)],
         marker={'colors': colors},  # only in this way, I can precisely control the color
         branchvalues="total",
+        hoverlabel=None,
+        hovertemplate='<b>%{label} </b> '
+                      '<br>- %{value} nuclei'
+                      '<br>-%{customdata[1]}'
+                      '<br>-%{customdata[0]}<extra></extra>'
     ))
     # Update layout for tight margin
     # See https://plotly.com/python/creating-and-updating-figures/

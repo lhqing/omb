@@ -1,3 +1,5 @@
+import dash_html_components as html
+
 from ..backend import dataset
 
 N_CELLS = dataset.n_cells
@@ -62,3 +64,14 @@ VAR_NAME_MAP = {
     'MappingRate': 'Mapping Rate',
     'Slice': 'Brain Slice'
 }
+
+SUNBURST_NOTES = [
+    html.P('The cell numbers here can be impacted by two experimental factors:'),
+    html.P('1) We sort 92% of NeuN+ nuclei and 8% of NeuN- nuclei '
+           'before the library prep, the non-neuronal population '
+           'is depleted in our dataset.'),
+    html.P("2) Some dissection regions may contain cells from "
+           "neighboring brain regions due to lack of clear anatomical "
+           "landmark. You can go to the brain region viewer to see the potential overlaps."),
+    html.P('(Click again to close)')
+]

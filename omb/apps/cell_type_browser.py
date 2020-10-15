@@ -2,7 +2,6 @@ from functools import lru_cache
 
 import dash_bootstrap_components as dbc
 import dash_core_components as dcc
-import dash_html_components as html
 import dash_table
 import pandas as pd
 import plotly.express as px
@@ -184,7 +183,19 @@ def create_cell_type_browser_layout(cell_type_name, total_url):
                             dbc.CardHeader('Brain Region Composition'),
                             dbc.CardBody(
                                 [
-                                    dcc.Graph(id='region_sunburst')
+                                    dcc.Graph(id='region_sunburst'),
+                                    html.A('Notes on cell type composition', className='text-muted',
+                                           id='region-sunburst-notes'),
+                                    dbc.Popover(
+                                        [
+                                            dbc.PopoverBody(
+                                                SUNBURST_NOTES
+                                            ),
+                                        ],
+                                        id="region-sunburst-notes-popover",
+                                        is_open=False,
+                                        target="region-sunburst-notes",
+                                    ),
                                 ]
                             )
                         ],
@@ -857,3 +868,14 @@ def make_pair_scatter_markdown(coord_base, gene, mc_type, cnorm, cell_type_name)
           f'mc={mc_type};cnorm={",".join(map(str, cnorm))};ct={cell_type_name}'
     text = f'For more details, go to the [**Paired Scatter Browser**]({url.replace(" ", "%20")}).'
     return text
+
+
+@app.callback(
+    Output("region-sunburst-notes-popover", "is_open"),
+    [Input("region-sunburst-notes", "n_clicks")],
+    [State("region-sunburst-notes-popover", "is_open")],
+)
+def toggle_popover(n, is_open):
+    if n:
+        return not is_open
+    return is_open
