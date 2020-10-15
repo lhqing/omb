@@ -167,7 +167,7 @@ def create_paired_scatter_layout(coords='L1UMAP', downsample=10000,
                     dbc.Label('Cell Metadata', html_for='cell-meta-dropdown'),
                     dcc.Dropdown(
                         id='cell-meta-dropdown',
-                        options=[{'label': name, 'value': name}
+                        options=[{'label': VAR_NAME_MAP[name], 'value': name}
                                  for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
                         value=cell_meta_hue,
                         clearable=False

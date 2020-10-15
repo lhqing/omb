@@ -42,3 +42,23 @@ CONTINUOUS_VAR_NORMS = {
     'BamFilteringRate': (0.5, 0.8),
     'MappingRate': (0.5, 0.8)
 }
+
+VAR_NAME_MAP = {
+    'RegionName': 'Dissection Region',
+    'MajorRegion': 'Major Region',
+    'SubRegion': 'Sub-region',
+    'CellClass': 'Cell Class',
+    'MajorType': 'Major Type',
+    'SubType': 'Subtype',
+    'CCC_Rate': 'mCCC Fraction',
+    'CG_Rate': 'mCG Fraction',
+    'CH_Rate': 'mCG Fraction',
+    'CG_RateAdj': 'Adj. mCG Fraction',
+    'CH_RateAdj': 'Adj. mCG Fraction',
+    'FinalReads': 'Final Reads',
+    'InputReads': 'Input Reads',
+    'MappedReads': 'Mapped Reads',
+    'BamFilteringRate': 'BAM Filtering Rate',
+    'MappingRate': 'Mapping Rate',
+    'Slice': 'Brain Slice'
+}

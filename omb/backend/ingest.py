@@ -65,6 +65,8 @@ ANNOJ_URL_BASE = 'http://neomorph.salk.edu/mouse_brain.php'
 
 # Allen CCF metadata
 ALLEN_CCF_META_PATH = f'{DATASET_DIR}/allen_ccf_meta.csv'
+ALLEN_CCF_ACRONYM_TO_NAME = f'{DATASET_DIR}/acronym_to_name.json'
+CEMBA_ACRONYM_TO_NAME = f'{DATASET_DIR}/acronym_to_name.cemba_region.json'
 
 """
 Default data types

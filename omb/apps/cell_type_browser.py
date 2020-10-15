@@ -83,7 +83,7 @@ def _prepare_cell_type_markdown(cell_type_name, total_url):
 
     cell_type_markdown = f"""
 **Description**: 
-{short_description}
+{short_description}, {cell_type_level} level.
 
 **Number of Cells**: {cluster_size}
 

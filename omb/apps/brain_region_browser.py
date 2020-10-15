@@ -79,6 +79,12 @@ def _brain_region_info_markdown(region_name):
     n_cells = this_region_table['Number of total cells'].sum()
     n_region = this_region_table.shape[0]
 
+    try:
+        description = dataset.brain_region_acronym_to_name[region_name]
+    except KeyError:
+        description = ''
+        print(region_name, 'not found')
+
     if n_region == 1:
         cemba_id = dataset.brain_region_table.loc[dissection_regions, 'Slice'].unique()[0]
         slice_str = f"**Cornal Slice**: {cemba_id}"
@@ -112,7 +118,9 @@ def _brain_region_info_markdown(region_name):
         dissection_region_list_str = ''
 
     markdown = f"""
-**Description**: {n_cells} cells from {n_region} dissection region{"s" if n_region != 1 else ""}.
+**Description**: {description}
+
+**Number of Cells**: {n_cells} cells from {n_region} dissection region{"s" if n_region != 1 else ""}.
 
 {dissection_region_str}
 
@@ -133,7 +141,10 @@ def _default_ccf_mesh_selection(region_name):
     dissection_regions = dataset.region_label_to_dissection_region_dict[region_name]
     this_region_table = dataset.brain_region_table.loc[dissection_regions]
 
-    include_regions = ['root'] + this_region_table['Major Region'].unique().tolist()  # always add the whole brain
+    if region_name == 'ALL REGIONS':
+        include_regions = ['root'] + this_region_table['Major Region'].unique().tolist()
+    else:
+        include_regions = ['root'] + this_region_table['Sub-Region'].unique().tolist()
     return include_regions
 
 
@@ -142,7 +153,6 @@ def create_brain_region_browser_layout(region_name):
     valid_coords = _get_valid_coords(region_name)
     if region_name not in dataset.region_label_to_dissection_region_dict:
         return None
-
     first_row = dbc.Row(
         [
             # brain region info
@@ -310,7 +320,7 @@ def create_brain_region_browser_layout(region_name):
                                             dcc.Dropdown(
                                                 options=[
                                                     {'label': 'Dissection Region', 'value': 'RegionName'},
-                                                    {'label': 'Sub-Region', 'value': 'SubRegion'},
+                                                    {'label': 'Sub-region', 'value': 'SubRegion'},
                                                     {'label': 'Major Region', 'value': 'MajorRegion'},
                                                 ],
                                                 value='RegionName',

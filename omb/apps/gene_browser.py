@@ -178,7 +178,7 @@ def create_gene_browser_layout(gene):
                 [
                     dbc.Label('Cell Metadata', html_for="cell-meta-dropdown"),
                     dcc.Dropdown(
-                        options=[{'label': name, 'value': name}
+                        options=[{'label': VAR_NAME_MAP[name], 'value': name}
                                  for name in CONTINUOUS_VAR + CATEGORICAL_VAR],
                         value='MajorType',
                         id="cell-meta-dropdown",
