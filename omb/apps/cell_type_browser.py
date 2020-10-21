@@ -130,7 +130,8 @@ DMG_COLUMNS = {
     'end': 'End',
     'strand': 'Strand',
     'gene_type': 'Gene Type',
-    'rank': 'Rank'}
+    'rank': 'Rank'
+}
 
 
 def create_cell_type_browser_layout(cell_type_name, total_url):
@@ -801,7 +802,7 @@ def update_scatter_plot_2(coord, gene_int, mc_type, hue_norm, cell_type_name):
     violin_fig.update_xaxes(range=[0, 3])
 
     # gene page url
-    url = f'{APP_ROOT_NAME}gene?gene={gene_name}'
+    url = f'gene?gene={gene_name}'
 
     return violin_fig, scatter_fig, url
 
