@@ -636,7 +636,7 @@ def update_gene_options(search_value):
     if not search_value:
         raise PreventUpdate
 
-    this_options = [o for o in TOTAL_GENE_OPTIONS if search_value in o["label"]]
+    this_options = [o for o in TOTAL_GENE_OPTIONS if search_value.lower() in o["label"].lower()]
     if len(this_options) > 100:
         return [{'label': 'Keep typing...', 'value': 'NOT A GENE', 'disabled': True}]
     else:

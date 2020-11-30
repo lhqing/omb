@@ -145,6 +145,10 @@ def _default_ccf_mesh_selection(region_name):
         include_regions = ['root'] + this_region_table['Major Region'].unique().tolist()
     else:
         include_regions = ['root'] + this_region_table['Sub-Region'].unique().tolist()
+
+    if 'PFC' in include_regions:
+        include_regions.remove('PFC')
+        include_regions += ['ILA', 'PL']
     return include_regions
 
 
@@ -453,7 +457,6 @@ def create_brain_region_browser_layout(region_name):
 )
 def make_3d_brain_mesh_figure(background_names, roi_names, background_opacity):
     data = []
-
     for region_name in sorted(background_names):
         data.append(_background_mesh(region_name, opacity=background_opacity))
 

@@ -24,7 +24,7 @@ setup(
         'msgpack',
         'plotly',
         'joblib',
-        'plyfile'
+        'plyfile', 'datashader', 'scikit-learn', 'scipy'
     ],
 )
 
