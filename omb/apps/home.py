@@ -11,7 +11,7 @@ from ..app import app
 INTRODUCTION_TEXT = "Mammalian brain cells are remarkably diverse in gene expression, anatomy, and function, " \
                     "yet the regulatory DNA landscape underlying this extensive heterogeneity is poorly understood. " \
                     "We carried out a comprehensive assessment of the epigenomes of mouse brain cell types by " \
-                    "applying single nucleus DNA methylation sequencing (snmC-seq2) to profile 110,294 nuclei " \
+                    "applying single nucleus DNA methylation sequencing (snmC-seq2) to profile 103,982 nuclei " \
                     "(including 95,815 neurons and 8,167 non-neuronal cells) from 45 regions of the mouse cortex, " \
                     "hippocampus, striatum, pallidum, and olfactory areas. We identified 161 cell clusters with " \
                     "distinct spatial locations and projection targets. In this browser, you can interactively " \
@@ -35,9 +35,9 @@ for col in ['CellClass', 'MajorType', 'SubType']:
 ALL_CELL_TYPES = sorted([i for i in ALL_CELL_TYPES if 'Outlier' not in i])
 
 # References
-LIU_2020_TEXT = 'Liu, Zhou et al. 2020. "DNA Methylation Atlas of the Mouse Brain at ' \
-                'Single-Cell Resolution." bioRxiv'
-LIU_2020_URL = "https://www.biorxiv.org/content/10.1101/2020.04.30.069377v1"
+LIU_2020_TEXT = 'Liu, Zhou et al. 2021. "DNA Methylation Atlas of the Mouse Brain at ' \
+                'Single-Cell Resolution." Nature'
+LIU_2020_URL = "https://www.nature.com/articles/s41586-020-03182-8"
 
 LUO_2017_TEXT = "Luo, Keown et al. 2017. “Single-Cell Methylomes Identify Neuronal Subtypes " \
                 "and Regulatory Elements in Mammalian Cortex.” Science"
