@@ -45,13 +45,13 @@ CELL_TYPE_PATH = f'{DATASET_DIR}/CellType.csv'
 GENE_META_PATH = f'{DATASET_DIR}/GeneMeta.h5'
 GENE_TO_MCDS_PATH = f'{DATASET_DIR}/GeneToMCDSName.json'  # int to name of the MCDS chunk that contain this gene
 
-GENE_MCDS_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/CEMBA_45_Region'
+GENE_MCDS_DIR = '/home/hanliu/project/cemba/omb/CEMBA_45_Region'
 if not pathlib.Path(GENE_MCDS_DIR).exists():
     # neomorph location
     GENE_MCDS_DIR = '/home/hanliu/gene_rate_for_app/CEMBA_RS1_45Region'
 
 # pairwise DMG
-PAIRWISE_DMG_DIR = '/home/hanliu/project/cemba/gene_rate_for_browser/pairwise_dmg'
+PAIRWISE_DMG_DIR = '/home/hanliu/project/cemba/omb/pairwise_dmg'
 if not pathlib.Path(PAIRWISE_DMG_DIR).exists():
     # neomorph location
     PAIRWISE_DMG_DIR = '/home/hanliu/gene_rate_for_app/pairwise_dmg'
@@ -67,6 +67,13 @@ ANNOJ_URL_BASE = 'http://neomorph.salk.edu/mouse_brain.php'
 ALLEN_CCF_META_PATH = f'{DATASET_DIR}/allen_ccf_meta.csv'
 ALLEN_CCF_ACRONYM_TO_NAME = f'{DATASET_DIR}/acronym_to_name.json'
 CEMBA_ACRONYM_TO_NAME = f'{DATASET_DIR}/acronym_to_name.cemba_region.json'
+
+# DMR
+DMR_DATASET = f'/home/hanliu/project/cemba/omb/DMR/DMR.omb_dataset.nc'
+if not pathlib.Path(DMR_DATASET).exists():
+    # neomorph location
+    DMR_DATASET = '/home/hanliu/gene_rate_for_app/DMR/DMR.omb_dataset.nc'
+
 
 """
 Default data types

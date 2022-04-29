@@ -117,8 +117,6 @@ app.layout = html.Div(
      State('url', 'href')]
 )
 def display_page(pathname, search, total_url):
-    # print('url.pathname', pathname)
-    # print('url.search', search)
     app_layout = []
     search_dict = search_to_dict(search)
 
@@ -154,6 +152,8 @@ def display_page(pathname, search, total_url):
         layout = create_gene_browser_layout(gene=search_dict['gene'])
     elif pathname == f'/{APP_ROOT_NAME}scatter':
         layout = create_paired_scatter_layout(**paired_scatter_api(search_dict))
+    elif pathname == f'/{APP_ROOT_NAME}ct_dmr':
+        layout = create_cell_type_dmr_layout()
     else:
         return '404'
 

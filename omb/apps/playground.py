@@ -1,64 +1,275 @@
-# -*- coding: utf-8 -*-
+# coding: utf-8
+
+from collections import OrderedDict
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-from dash.dependencies import Input, Output, State
+import datashader as ds
+import datashader.transfer_functions as tf
+import numpy as np
+import pandas as pd
+from dash.dependencies import Input, Output
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#######################################################################################################################
+# Data generation
+#######################################################################################################################
 
+n = 1000000
+max_points = 100000
+
+np.random.seed(3)
+cols = ['Signal']  # Column name of signal
+start = 1456297053  # Start time
+end = start + n  # End time
+
+# Generate a fake signal
+time = np.linspace(start, end, n)
+signal = np.random.normal(0, 0.3, size=n).cumsum() + 50
+
+# Generate many noisy samples from the signal
+noise = lambda var, bias, n: np.random.normal(bias, var, n)
+data = {c: signal + noise(1, 10 * (np.random.random() - 0.5), n) for c in cols}
+
+# # Pick a few samples and really blow them out
+locs = np.random.choice(n, 10)
+
+# print locs
+data['Signal'][locs] *= 2
+
+# # Default plot ranges:
+x_range = (start, end)
+y_range = (1.2 * signal.min(), 1.2 * signal.max())
+
+# Create a dataframe
+data['Time'] = np.linspace(start, end, n)
+df = pd.DataFrame(data)
+
+time_start = df['Time'].values[0]
+time_end = df['Time'].values[-1]
+
+cvs = ds.Canvas(x_range=x_range, y_range=y_range)
+
+aggs = OrderedDict((c, cvs.line(df, 'Time', c)) for c in cols)
+img = tf.shade(aggs['Signal'])
+
+arr = np.array(img)
+z = arr.tolist()
+
+# axes
+dims = len(z[0]), len(z)
+
+x = np.linspace(x_range[0], x_range[1], dims[0])
+y = np.linspace(y_range[0], y_range[1], dims[0])
+
+#######################################################################################################################
+# Layout
+#######################################################################################################################
+
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css', '/assets/style.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-app.config['suppress_callback_exceptions'] = True
+server = app.server
 
-app.layout = html.Div(children=[
-    html.H4(children='Excel-like checkboxes'),
-    dcc.Checklist(
-        id='all',
-        options=[{'label': 'all', 'value': 'all'}],
-        value=[]
-    ),
-    dcc.Checklist(
-        id='cities',
-        options=[
-            {'label': 'New York City', 'value': 'NYC'},
-            {'label': 'Montréal', 'value': 'MTL'},
-            {'label': 'San Francisco', 'value': 'SF'}
-        ],
-        value=['MTL', 'SF']
-    ),
-    html.Div(id='loop_breaker_container', children=[])
+fig1 = {
+    'data': [{
+        'x': x,
+        'y': y,
+        'z': z,
+        'type': 'heatmap',
+        'showscale': False,
+        'colorscale': [[0, 'rgba(255, 255, 255,0)'], [1, '#a3a7b0']]}],
+    'layout': {
+        'margin': {'t': 50, 'b': 20},
+        'height': 250,
+        'xaxis': {
+            'showline': True,
+            'zeroline': False,
+            'showgrid': False,
+            'showticklabels': True,
+            'color': '#a3a7b0'
+        },
+        'yaxis': {
+            'fixedrange': True,
+            'showline': False,
+            'zeroline': False,
+            'showgrid': False,
+            'showticklabels': False,
+            'ticks': '',
+            'color': '#a3a7b0'
+        },
+        'plot_bgcolor': '#23272c',
+        'paper_bgcolor': '#23272c'}
+}
+
+fig2 = {
+    'data': [
+        {
+            'x': x,
+            'y': y,
+            'z': z,
+            'type': 'heatmap',
+            'showscale': False,
+            'colorscale': [[0, 'rgba(255, 255, 255,0)'], [1, '#75baf2']]
+        }
+    ],
+    'layout': {
+        'margin': {'t': 50, 'b': 20},
+        'height': 250,
+        'xaxis': {
+            'fixedrange': True,
+            'showline': True,
+            'zeroline': False,
+            'showgrid': False,
+            'showticklabels': True,
+            'color': '#a3a7b0'
+        },
+        'yaxis': {
+            'fixedrange': True,
+            'showline': False,
+            'zeroline': False,
+            'showgrid': False,
+            'showticklabels': False,
+            'ticks': '',
+            'color': '#a3a7b0'
+        },
+        'plot_bgcolor': '#23272c',
+        'paper_bgcolor': '#23272c'}
+}
+
+app.layout = html.Div([
+    html.Hr(),
+    html.Div([
+        html.Div([
+            dcc.Graph(
+                id='graph-1',
+                figure=fig1,
+                config={
+                    'doubleClick': 'reset'
+                }
+            )
+        ], className='twelve columns')
+    ], className='row'),
+
+    html.Div([
+        html.Div([
+            html.Div(
+                children=[
+                    html.Strong(
+                        children=['0'],
+                        id='header-2-strong'
+                    ),
+                    html.P(
+                        children=[' points selected'],
+                        id='header-2-p'
+                    ),
+                ],
+                id='header-2'
+            ),
+            dcc.Graph(
+                id='graph-2',
+                figure=fig2
+            )
+        ], className='twelve columns')
+    ], className='row'),
+
 ])
 
 
-@app.callback(Output('cities', 'value'),
-              [Input('all', 'value')])
-def update_cities(inputs):
-    if len(inputs) == 0:
-        return []
+#######################################################################################################################
+# Callbacks
+#######################################################################################################################
+
+@app.callback(
+    [Output('header-2-strong', 'children'),
+     Output('header-2-p', 'children')],
+    [Input('graph-1', 'relayoutData')]
+)
+def selectionRange(selection):
+    if selection is not None and 'xaxis.range[0]' in selection and \
+            'xaxis.range[1]' in selection:
+        x0 = selection['xaxis.range[0]']
+        x1 = selection['xaxis.range[1]']
+        sub_df = df[(df.Time >= x0) & (df.Time <= x1)]
+        num_pts = len(sub_df)
+        if num_pts < max_points:
+            number = "{:,}".format(abs(int(selection['xaxis.range[1]']) - int(selection['xaxis.range[0]'])))
+            number_print = " points selected between {0:,.4} and {1:,.4}". \
+                format(selection['xaxis.range[0]'], selection['xaxis.range[1]'])
+        else:
+            number = "{:,}".format(abs(int(selection['xaxis.range[1]']) - int(selection['xaxis.range[0]'])))
+            number_print = " points selected. Select less than {0:}k \
+            points to invoke high-res scattergl trace".format(max_points / 1000)
     else:
-        return ['NYC', 'MTL', 'SF']
+        number = "0"
+        number_print = " points selected"
+    return [number, number_print]
 
 
-@app.callback(Output('loop_breaker_container', 'children'),
-              [Input('cities', 'value')],
-              [State('all', 'value')])
-def update_all(inputs, _):
-    states = dash.callback_context.states
-    if len(inputs) == 3 and states['all.value'] == []:
-        return [html.Div(id='loop_breaker', children=True)]
-    elif len(inputs) == 0 and states['all.value'] == ['all']:
-        return [html.Div(id='loop_breaker', children=False)]
+@app.callback(
+    Output('graph-2', 'figure'),
+    [Input('graph-1', 'relayoutData')])
+def selectionHighlight(selection):
+    new_fig2 = fig2.copy()
+    if selection is not None and 'xaxis.range[0]' in selection and \
+            'xaxis.range[1]' in selection:
+        x0 = selection['xaxis.range[0]']
+        x1 = selection['xaxis.range[1]']
+        sub_df = df[(df.Time >= x0) & (df.Time <= x1)]
+        num_pts = len(sub_df)
+        if num_pts < max_points:
+            shape = dict(
+                type='rect',
+                xref='x',
+                yref='paper',
+                y0=0,
+                y1=1,
+                x0=x0,
+                x1=x1,
+                line={
+                    'width': 0,
+                },
+                fillcolor='rgba(165, 131, 226, 0.10)'
+            )
+
+            new_fig2['layout']['shapes'] = [shape]
+        else:
+            new_fig2['layout']['shapes'] = []
     else:
-        return []
+        new_fig2['layout']['shapes'] = []
+    return new_fig2
 
 
-@app.callback(Output('all', 'value'),
-              [Input('loop_breaker', 'children')])
-def update_loop(all_true):
-    if all_true:
-        return ['all']
+@app.callback(
+    Output('graph-1', 'figure'),
+    [Input('graph-1', 'relayoutData')])
+def draw_undecimated_data(selection):
+    new_fig1 = fig1.copy()
+    if selection is not None and 'xaxis.range[0]' in selection and \
+            'xaxis.range[1]' in selection:
+        x0 = selection['xaxis.range[0]']
+        x1 = selection['xaxis.range[1]']
+        sub_df = df[(df.Time >= x0) & (df.Time <= x1)]
+        num_pts = len(sub_df)
+        if num_pts < max_points:
+            high_res_data = [
+                dict(
+                    x=sub_df['Time'],
+                    y=sub_df['Signal'],
+                    type='scattergl',
+                    marker=dict(
+                        sizemin=1,
+                        sizemax=30,
+                        color='#a3a7b0'
+                    )
+                )]
+            high_res_layout = new_fig1['layout']
+            high_res = dict(data=high_res_data, layout=high_res_layout)
+        else:
+            high_res = fig1.copy()
     else:
-        return []
+        high_res = fig1.copy()
+    return high_res
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port='1234')
+    app.run_server(debug=True)

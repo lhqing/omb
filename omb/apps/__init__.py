@@ -8,3 +8,4 @@ from .home import layout as home_layout
 from .paired_scatter_browser import create_paired_scatter_layout, paired_scatter_api
 from .brain_region_table import create_brain_table_layout
 from .cell_type_table import create_cell_type_table_layout
+from .cell_type_dmr_browser import create_cell_type_dmr_layout

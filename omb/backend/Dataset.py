@@ -29,6 +29,15 @@ def _validate_dataset_dir():
     return
 
 
+def _logic_to_number(logic, options):
+    if logic == 'all':
+        return len(options)
+    elif logic == 'any':
+        return 1
+    else:
+        return min(int(logic), len(options))
+
+
 def read_allen_ply(region_name):
     """take region name (SSp, MOp, etc.)
     return x, y, z, i, j, k"""
@@ -154,6 +163,11 @@ class Dataset:
             self.brain_region_acronym_to_name = json.load(f)
         with open(CEMBA_ACRONYM_TO_NAME) as f:
             self.brain_region_acronym_to_name.update(json.load(f))
+
+        # DMR
+        self.dmr_ds = xr.open_dataset(DMR_DATASET)
+        self.dmr_index = self.dmr_ds.get_index('id')
+        self.dmr_subtype = self.dmr_ds.get_index('Subtype')
 
         return
 
@@ -373,3 +387,79 @@ class Dataset:
             return read_cemba_ply(region_name), region_label, 'Dissection Region', color
         else:
             raise ValueError(f'{region_name} missing in neither CCF or CEMBA region list')
+
+    @lru_cache()
+    def query_dmr(self,
+                  cluster_of_interest,
+                  coi_logic='all',
+                  cluster_to_exclude=None,
+                  cte_logic='any',
+                  number_of_dms=1,
+                  reptile_cutoff=0.5,
+                  delta_to_robust_mean=0.3,
+                  max_dmr_to_get_frac=500000):
+        # turn logic into number
+        coi_logic_num = _logic_to_number(coi_logic, cluster_of_interest)
+        cte_logic_num = _logic_to_number(cte_logic, cluster_to_exclude)
+
+        cluster_of_interest = list(cluster_of_interest)
+        if cluster_to_exclude is not None:
+            cluster_to_exclude = list(cluster_to_exclude)
+
+        # cluster of interest
+        interest_hypo_hits = self.dmr_ds['HypoHits'].sel(Subtype=cluster_of_interest)
+        if len(cluster_of_interest) == 1:
+            coi_judge = interest_hypo_hits.squeeze()
+        else:
+            coi_judge = interest_hypo_hits.sum(dim='Subtype') >= coi_logic_num
+
+        # cluster to exclude
+        if (cluster_to_exclude is not None) and (len(cluster_to_exclude) > 0):
+            exclude_hypo_hits = self.dmr_ds['HypoHits'].sel(Subtype=cluster_to_exclude)
+            if len(cluster_to_exclude) == 1:
+                cte_judge = exclude_hypo_hits.squeeze()
+            else:
+                cte_judge = exclude_hypo_hits.sum(dim='Subtype') < cte_logic_num
+        else:
+            cte_judge = None
+
+        # number of DMS
+        dms_judge = self.dmr_ds['number_of_dms'] >= number_of_dms
+
+        # total judge before get floats matrix
+        if cte_judge is not None:
+            total_judge = coi_judge & cte_judge & dms_judge
+        else:
+            total_judge = coi_judge & dms_judge
+        # use dmr
+        total_judge = total_judge.to_pandas().astype(bool)
+
+        if int(total_judge.sum()) == 0:
+            return pd.DataFrame([], columns=self.dmr_subtype)
+
+        # reptile
+        reptile_judge = (self.dmr_ds['REPTILE'].sel(
+            {'Subtype': cluster_of_interest, 'id': total_judge[total_judge].index}
+        ) > reptile_cutoff).sum(dim='Subtype') >= coi_logic_num
+        reptile_judge = reptile_judge.to_pandas().astype(bool)
+
+        # agg reptile judge
+        total_judge = total_judge & reptile_judge
+        if int(total_judge.sum()) == 0:
+            return pd.DataFrame([], columns=self.dmr_subtype)
+        use_dmr = total_judge[total_judge]
+
+        # downsample to extract fraction
+        if use_dmr.size > max_dmr_to_get_frac:
+            print(f'Downsample DMR to {max_dmr_to_get_frac}...')
+            use_dmr = use_dmr.sample(max_dmr_to_get_frac, random_state=0)
+        use_dmr = use_dmr.index
+
+        # get dmr frac
+        dmr_frac = self.dmr_ds['mCGFrac'].sel({'id': use_dmr})
+        robust_mean = self.dmr_ds['mCGFracRobustMean'].sel({'id': use_dmr})
+        robust_mean_judge = ((robust_mean - dmr_frac.sel({'Subtype': cluster_of_interest})) > delta_to_robust_mean).sum(
+            dim='Subtype') >= coi_logic_num
+        use_dmr = robust_mean_judge.to_pandas().astype(bool)
+        use_dmr = use_dmr[use_dmr].index.tolist()
+        return use_dmr
